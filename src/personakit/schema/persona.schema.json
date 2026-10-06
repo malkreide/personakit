@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/malkreide/personakit/schema/persona.schema.json",
+  "title": "personakit Persona",
+  "description": "Verhaltensbasierte, evidenzgestützte Persona mit JTBD-Block. Frontmatter-Teil einer *.persona.md-Datei.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["personakit", "id", "archetype", "priority", "status", "evidence_level", "version", "goals"],
+  "properties": {
+    "personakit": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Schema-Version des Formats."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stabiler Slug. Muss dem Dateinamen entsprechen (<id>.persona.md)."
+    },
+    "archetype": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Verhaltensbasierte Bezeichnung (nicht demografisch), z. B. «Neu zugezogene Eltern mit wenig Deutsch»."
+    },
+    "name": {
+      "type": "string",
+      "description": "Optionaler Vorname für die narrative Ansprache. Kann bei Archetyp-Stil weggelassen werden."
+    },
+    "tagline": {
+      "type": "string",
+      "description": "Ein Satz, der die Persona in ihren Worten zusammenfasst."
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["user", "buyer", "stakeholder", "partner", "operator"],
+      "default": "user",
+      "description": "Rolle gegenüber der Lösung: Anwender, Entscheider/Käufer, Stakeholder, Partner, Betreiber."
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["primary", "secondary", "supplemental", "negative"],
+      "description": "Cooper: genau eine primäre Persona pro Lösung; negative Personas beschreiben, für wen NICHT gebaut wird."
+    },
+    "domain": {
+      "type": "string",
+      "description": "Fachlicher Bereich, z. B. «Volksschule Stadt Zürich – Elternkommunikation»."
+    },
+    "scope": {
+      "type": "string",
+      "description": "Für welche Lösungen/Fragestellungen die Persona gilt – und für welche nicht."
+    },
+    "language": {
+      "type": "string",
+      "default": "de-CH",
+      "description": "Sprache der Persona-Beschreibung (BCP-47)."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "SemVer. major = Verhaltensmuster/Jobs geändert, minor = Inhalte ergänzt, patch = Korrekturen."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "retired"],
+      "description": "Lebenszyklus (Pruitt/Adlin): Entwurf, in Gebrauch, in Ruhestand."
+    },
+    "evidence_level": {
+      "type": "string",
+      "enum": ["proto", "qualitative", "statistical"],
+      "description": "NN/g-Härtegrad: proto = Annahmen, qualitative = Interviews/Beobachtung, statistical = Mixed Methods mit Clusteranalyse."
+    },
+    "owner": {
+      "type": "string",
+      "description": "Verantwortliche Person/Rolle für Pflege und Review."
+    },
+    "created": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
+    "review_by": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum, bis zu dem die Persona überprüft werden muss (begrenzte Halbwertszeit)."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+
+    "profile": {
+      "type": "array",
+      "description": "Biografische/demografische Fakten – nur mit Relevanz-Begründung (Tschechows Gewehr).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fact"],
+        "properties": {
+          "fact": { "type": "string" },
+          "relevance": { "type": "string", "description": "Warum beeinflusst dieser Fakt die Gestaltung?" }
+        }
+      }
+    },
+
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "role": { "type": "string", "description": "Rolle im System/Organisation." },
+        "situation": { "type": "string", "description": "Typische Nutzungssituation." },
+        "environment": { "type": "string", "description": "Ort, Zeit, Gerät, Umgebung." },
+        "channels": { "type": "array", "items": { "type": "string" }, "description": "Genutzte Kanäle und Informationsquellen." },
+        "constraints": { "type": "array", "items": { "type": "string" }, "description": "Restriktionen: Zeit, Sprache, Budget, Compliance, Barrierefreiheit." }
+      }
+    },
+
+    "behaviour": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "variables": {
+          "type": "array",
+          "description": "Verhaltensvariablen als Skalen (Cooper). Empfehlung: 3–7.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "value"],
+            "properties": {
+              "name": { "type": "string" },
+              "low": { "type": "string", "description": "Anker für Wert 1." },
+              "high": { "type": "string", "description": "Anker für Wert 5." },
+              "value": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "evidence": { "type": "string", "description": "Verweis auf evidence[].id" }
+            }
+          }
+        },
+        "patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Beobachtete Verhaltensmuster («macht X, wenn Y»)."
+        }
+      }
+    },
+
+    "goals": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "experience": { "type": "array", "items": { "type": "string" }, "description": "Wie will sich die Persona fühlen? (nie verletzen)" },
+        "end": { "type": "array", "items": { "type": "string" }, "description": "Welche Endzustände will sie erreichen?" },
+        "life": { "type": "array", "items": { "type": "string" }, "description": "Langfristige Aspirationen (optional)." }
+      }
+    },
+
+    "pains": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Validierte Frustrationen und Hürden im heutigen Prozess."
+    },
+
+    "jobs": {
+      "type": "array",
+      "description": "Jobs-to-be-Done. Pflicht: statement als Job Story.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^J[0-9]+$" },
+          "statement": { "type": "string", "description": "Job Story: «Wenn [Situation], möchte ich [Motivation], damit [Ergebnis].»" },
+          "dimension": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["functional", "emotional", "social"] },
+            "uniqueItems": true
+          },
+          "forces": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Vier Kräfte des Wechsels (Moesta).",
+            "properties": {
+              "push": { "type": "array", "items": { "type": "string" } },
+              "pull": { "type": "array", "items": { "type": "string" } },
+              "anxiety": { "type": "array", "items": { "type": "string" } },
+              "habit": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "outcomes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "ODI-Ergebnisaussagen: «Minimiere/Maximiere [Metrik] [Kontext]»."
+          },
+          "importance": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "satisfaction": { "type": "integer", "minimum": 1, "maximum": 5, "description": "Wie gut erledigt die heutige Lösung den Job?" },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+
+    "quotes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text"],
+        "properties": {
+          "text": { "type": "string" },
+          "evidence": { "type": "string", "description": "Verweis auf evidence[].id" }
+        }
+      }
+    },
+
+    "anti_patterns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Was die Persona nicht tut oder nicht will – schärft die Grenze."
+    },
+
+    "simulation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Regeln für den Einsatz als Prompt-Voreinstellung (synthetischer Nutzer oder Zielpublikum).",
+      "properties": {
+        "voice": { "type": "string", "description": "Register, Sprache, Satzlänge, typische Formulierungen." },
+        "must": { "type": "array", "items": { "type": "string" } },
+        "must_not": { "type": "array", "items": { "type": "string" } },
+        "variance": { "type": "string", "description": "Wo reale Personen dieses Typs voneinander abweichen – gegen Varianz-Kollaps." }
+      }
+    },
+
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "source"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^E[0-9]+$" },
+          "type": {
+            "type": "string",
+            "enum": ["interview", "observation", "survey", "analytics", "support-log", "workshop", "secondary", "assumption"]
+          },
+          "source": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "n": { "type": "integer", "minimum": 1 },
+          "note": { "type": "string" },
+          "ref": { "type": "string", "description": "Link oder Pfad." }
+        }
+      }
+    },
+
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Explizite, noch nicht validierte Annahmen (Pflicht bei proto)."
+    },
+
+    "unknowns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Offene Fragen. Bleiben im Prompt als «unbekannt» markiert."
+    },
+
+    "relations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "journeys": { "type": "array", "items": { "type": "string" }, "description": "journeykit-IDs" },
+        "personas": { "type": "array", "items": { "type": "string" }, "description": "Verwandte oder abgegrenzte Personas" },
+        "links": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "changelog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["version", "date", "note"],
+        "properties": {
+          "version": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

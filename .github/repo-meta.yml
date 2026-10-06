@@ -1,0 +1,18 @@
+# .github/repo-meta.yml — von der github-repo Skill gepflegt
+repo_name: personakit
+title: personakit
+description: Evidence-based, behaviour-first personas as versioned Markdown with JTBD, lint and prompt export
+topics: [personas, jobs-to-be-done, user-research, ux, llm, prompt-engineering, markdown, python]
+project_type: python-lib
+visibility: public
+license: MIT
+author_legal_name: Hayal Özkan
+author_label: Autor
+github_user: malkreide
+default_branch: main
+language: python
+version: 0.1.0
+pypi_package: personakit
+confirmed: false          # aus Vorschlägen übernommen («mach das»), nicht einzeln bestätigt
+offen:
+  - PyPI-Publishing (publish.yml, Pending Publisher) bewusst nicht eingerichtet – erst bei Bedarf
