@@ -75,9 +75,9 @@ The example personas in [`personas/`](personas/) are **synthetic** (German, scho
 
 | Command | Description |
 |---|---|
-| `new <id>` | Create a persona file from the commented template |
+| `new <id> -a …` | Create a persona file from the commented template; the archetype is required (asked for interactively if missing) |
 | `validate <paths>` | Validate the frontmatter against the JSON Schema |
-| `lint <paths>` | Schema plus 35 method rules; exit code 1 on errors (`--strict` also on warnings) |
+| `lint <paths>` | Schema plus 35 method rules; exit code 1 on errors (`--strict` also on warnings), `--json` for CI and other tools |
 | `render <paths> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (per persona) or `matrix`, `html`, `bundle` (per set) |
 | `list <paths>` | Overview table (priority, status, evidence, version, review date) |
 | `bump <file>` | Raise the version, write a changelog entry, optionally change status, evidence level and review date |

@@ -14,6 +14,7 @@ from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 SUFFIX = ".persona.md"
+BOM = "\ufeff"
 _FRONTMATTER_RE = re.compile(r"\A---[ \t]*\r?\n(.*?)\r?\n---[ \t]*(?=\r?\n|\Z)", re.DOTALL)
 
 
@@ -38,6 +39,8 @@ class Persona:
     data: CommentedMap
     body: str = ""
     sections: dict[str, str] = field(default_factory=dict)
+    newline: str = "\n"  # line ending of the source file, restored by to_text()
+    bom: bool = False  # source file started with a UTF-8 BOM (e.g. Windows Notepad)
 
     # ------------------------------------------------------------------ access
     @property
@@ -70,6 +73,12 @@ class Persona:
     # -------------------------------------------------------------------- io
     @classmethod
     def from_text(cls, text: str, path: Path | None = None) -> Persona:
+        bom = text.startswith(BOM)
+        if bom:
+            text = text[1:]
+        first_eol = re.search(r"\r?\n", text)
+        newline = first_eol.group(0) if first_eol else "\n"
+        text = text.replace("\r\n", "\n")  # work on LF internally; mixed files end up uniform
         m = _FRONTMATTER_RE.match(text)
         if not m:
             raise PersonaError(f"{path or '<text>'}: kein YAML-Frontmatter gefunden (--- … ---)")
@@ -77,12 +86,17 @@ class Persona:
         if not isinstance(data, dict):
             raise PersonaError(f"{path or '<text>'}: Frontmatter ist kein Mapping")
         body = text[m.end() :]
-        return cls(path=path, data=data, body=body, sections=split_sections(body))
+        return cls(path=path, data=data, body=body, sections=split_sections(body), newline=newline, bom=bom)
 
     @classmethod
     def load(cls, path: str | Path) -> Persona:
         p = Path(path)
-        return cls.from_text(p.read_text(encoding="utf-8"), path=p)
+        try:
+            # decode bytes ourselves: read_text() would silently translate CRLF to LF
+            text = p.read_bytes().decode("utf-8")
+        except UnicodeDecodeError as e:
+            raise PersonaError(f"{p}: Datei ist nicht UTF-8-kodiert (Byte {e.start}); als UTF-8 speichern") from e
+        return cls.from_text(text, path=p)
 
     def to_text(self) -> str:
         buf = io.StringIO()
@@ -91,7 +105,10 @@ class Persona:
         body = self.body if self.body.startswith("\n") else "\n" + self.body
         if not body.endswith("\n"):
             body += "\n"
-        return f"---\n{fm}\n---{body}"
+        text = f"---\n{fm}\n---{body}"
+        if self.newline != "\n":
+            text = text.replace("\n", self.newline)
+        return (BOM if self.bom else "") + text
 
     def add_changelog(self, version: str, date: _dt.date, note: str) -> None:
         """Append a changelog entry using quoted scalars (consistent with hand-written files)."""
@@ -111,12 +128,17 @@ class Persona:
         target = Path(path) if path else self.path
         if target is None:
             raise PersonaError("Kein Zielpfad zum Speichern")
-        target.write_text(self.to_text(), encoding="utf-8")
+        write_text(target, self.to_text())
         self.path = target
         return target
 
 
 # ---------------------------------------------------------------- helpers
+def write_text(path: Path, text: str) -> None:
+    """Write UTF-8 exactly as given – no newline translation, also on Windows."""
+    path.write_bytes(text.encode("utf-8"))
+
+
 def to_plain(obj: Any) -> Any:
     """Recursively convert ruamel containers and dates into plain Python."""
     if isinstance(obj, (CommentedMap, dict)):

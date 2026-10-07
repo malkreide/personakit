@@ -75,9 +75,9 @@ Die Beispiel-Personas in [`personas/`](personas/) sind **synthetisch** (Kontext 
 
 | Befehl | Beschreibung |
 |---|---|
-| `new <id>` | Persona-Datei aus der kommentierten Vorlage anlegen |
+| `new <id> -a …` | Persona-Datei aus der kommentierten Vorlage anlegen; der Archetyp ist Pflicht (fehlt er, wird nachgefragt) |
 | `validate <pfade>` | Frontmatter gegen das JSON-Schema prüfen |
-| `lint <pfade>` | Schema plus 35 Methodik-Regeln; Exit-Code 1 bei Fehlern (`--strict` auch bei Warnungen) |
+| `lint <pfade>` | Schema plus 35 Methodik-Regeln; Exit-Code 1 bei Fehlern (`--strict` auch bei Warnungen), `--json` für CI und andere Werkzeuge |
 | `render <pfade> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (pro Persona) oder `matrix`, `html`, `bundle` (pro Set) |
 | `list <pfade>` | Übersichtstabelle (Priorität, Status, Evidenz, Version, Review-Datum) |
 | `bump <datei>` | Version erhöhen, Changelog-Eintrag schreiben, optional Status, Evidenzniveau und Review-Datum setzen |
