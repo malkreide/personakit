@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-07
+
 ### Added
 - `personakit.api` for tools that embed personakit (groundwork for `personakit-mcp`): `load_workspace_tolerant(paths)` returns valid personas, sets and groups and reports unreadable files (`P000`), schema violations (`SCHEMA`) and broken `set.yml` (`X000`) as `problems` with their path instead of stopping at the first one; `lint_workspace(paths)` returns a `LintReport` (findings, linted personas and sets) with exactly the checks of `personakit lint`
 - Factoid format `factoids/<study>/<source_id>.factoids.md`: frontmatter (`source_id`, `type`, `date`, `n`, `consent_note`, optional `title`, `ref`, `note`) validated against the new `schema/factoids.schema.json`, and one Markdown table row per factoid (`id`, `participant`, `observation`, `variable`, `value` 1–5, `quote`); optional `variables.yml` per study with scales and anchors (`schema/variables.schema.json`). The persona format stays at `1.0`
