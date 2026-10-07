@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import datetime as _dt
+import json
+import re
 import sys
 from importlib import resources
 from pathlib import Path
@@ -12,43 +14,94 @@ from ruamel.yaml.scalarstring import DoubleQuotedScalarString as DQ
 
 from . import __version__
 from .lint import ERROR, WARN, Finding, lint_persona, lint_set, sort_findings
-from .model import SUFFIX, Persona, PersonaError, find_persona_files, load_many, today
+from .model import SUFFIX, Persona, PersonaError, find_persona_files, load_many, today, write_text
 from .render import SET_FORMATS, SINGLE_FORMATS, render, render_list, render_set
-from .validate import validate
+from .validate import load_schema, validate
+
+
+class UsageError(Exception):
+    """Wrong or incomplete CLI arguments; reported without traceback, exit code 2."""
 
 
 def _out(text: str, target: str | None) -> None:
     if target:
-        Path(target).parent.mkdir(parents=True, exist_ok=True)
-        Path(target).write_text(text, encoding="utf-8")
+        path = Path(target)
+        if path.is_dir():
+            raise UsageError(f"--output {path} ist ein Ordner; für diesen Export einen Dateinamen angeben")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        write_text(path, text)
         print(f"→ {target}", file=sys.stderr)
     else:
         sys.stdout.write(text)
 
 
-def _print_findings(findings: list[Finding]) -> None:
+def _print_findings(findings: list[Finding], as_json: bool = False) -> None:
+    if as_json:
+        rows = [
+            {"level": f.level, "code": f.code, "persona": f.persona, "message": f.message}
+            for f in sort_findings(findings)
+        ]
+        print(json.dumps(rows, ensure_ascii=False, indent=2))
+        return
     for f in sort_findings(findings):
         print(str(f))
+
+
+def _utf8_streams() -> None:
+    """Legacy code pages (cp1252 in Windows pipes and CI logs) cannot encode ●, → or ○ – switch to UTF-8."""
+    for stream in (sys.stdout, sys.stderr):
+        enc = (getattr(stream, "encoding", None) or "").lower().replace("-", "").replace("_", "")
+        if enc != "utf8" and hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
+
+
+def _archetype(given: str) -> str:
+    """Archetype from --archetype, else asked interactively; must satisfy the schema's minLength."""
+    min_len = load_schema()["properties"]["archetype"]["minLength"]
+    archetype = given.strip()
+    if not archetype and sys.stdin is not None and sys.stdin.isatty():
+        try:
+            archetype = input("Archetyp (verhaltensbasiert, z. B. «Neu zugezogene Eltern mit wenig Deutsch»): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            archetype = ""
+    if not archetype:
+        raise UsageError(
+            "Archetyp fehlt: --archetype/-a angeben, z. B. "
+            '-a "Neu zugezogene Eltern mit wenig Deutsch" '
+            f"(verhaltensbasiert, nicht demografisch; mindestens {min_len} Zeichen)"
+        )
+    if len(archetype) < min_len:
+        raise UsageError(f"Archetyp «{archetype}» ist zu kurz: mindestens {min_len} Zeichen (--archetype/-a)")
+    return archetype
 
 
 # ------------------------------------------------------------------ commands
 def cmd_new(a: argparse.Namespace) -> int:
     pid = a.id
+    if not re.fullmatch(load_schema()["properties"]["id"]["pattern"], pid):
+        raise UsageError(
+            f"Ungültige id «{pid}»: nur Kleinbuchstaben, Ziffern und Bindestriche, z. B. eltern-neu-in-zuerich"
+        )
     target_dir = Path(a.dir)
-    target_dir.mkdir(parents=True, exist_ok=True)
     target = target_dir / f"{pid}{SUFFIX}"
     if target.exists() and not a.force:
         print(f"Existiert bereits: {target} (--force zum Überschreiben)", file=sys.stderr)
         return 1
+    archetype = _archetype(a.archetype)
     tpl = resources.files("personakit").joinpath("templates/persona.template.md").read_text(encoding="utf-8")
     t = today()
     text = (
         tpl.replace("{{id}}", pid)
-        .replace("{{archetype}}", a.archetype or "")
+        # the template puts the archetype in a YAML double-quoted scalar
+        .replace("{{archetype}}", archetype.replace("\\", "\\\\").replace('"', '\\"'))
         .replace("{{today}}", t.isoformat())
         .replace("{{review_by}}", (t + _dt.timedelta(days=a.review_days)).isoformat())
     )
-    target.write_text(text, encoding="utf-8")
+    errs = validate(Persona.from_text(text, target))
+    if errs:  # safety net: never write a file that violates the schema
+        raise UsageError("Vorlage ergäbe eine ungültige Persona: " + "; ".join(errs))
+    target_dir.mkdir(parents=True, exist_ok=True)
+    write_text(target, text)
     print(f"Angelegt: {target}", file=sys.stderr)
     return 0
 
@@ -92,7 +145,7 @@ def cmd_lint(a: argparse.Namespace) -> int:
         findings = [f for f in findings if f.level in (ERROR, WARN)]
     elif a.min_level == "error":
         findings = [f for f in findings if f.level == ERROR]
-    _print_findings(findings)
+    _print_findings(findings, as_json=a.json)
     n_err = sum(1 for f in findings if f.level == ERROR)
     n_warn = sum(1 for f in findings if f.level == WARN)
     print(f"— {len(personas)} Persona(s): {n_err} Fehler, {n_warn} Warnungen", file=sys.stderr)
@@ -116,10 +169,15 @@ def cmd_render(a: argparse.Namespace) -> int:
     ext = {"md": ".md", "card": ".card.md", "json": ".json", "yaml": ".yaml", "prompt": ".prompt.md"}[fmt]
     if a.output:
         outdir = Path(a.output)
+        if outdir.exists() and not outdir.is_dir():
+            raise UsageError(
+                f"--output {outdir} ist eine bestehende Datei; bei {len(files)} Personas erwartet "
+                f"-f {fmt} einen Ordner (je Persona eine Datei). Für eine Sammeldatei -f matrix, html oder bundle"
+            )
         outdir.mkdir(parents=True, exist_ok=True)
         for f in files:
             p = Persona.load(f)
-            (outdir / f"{p.id}{ext}").write_text(render(p, fmt, mode=a.mode), encoding="utf-8")
+            write_text(outdir / f"{p.id}{ext}", render(p, fmt, mode=a.mode))
         print(f"→ {len(files)} Dateien in {outdir}", file=sys.stderr)
     else:
         for f in files:
@@ -178,7 +236,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("new", help="Neue Persona aus Vorlage anlegen")
     s.add_argument("id", help="Slug, z. B. eltern-neu-in-zuerich")
-    s.add_argument("--archetype", "-a", default="", help="Verhaltensbasierte Bezeichnung")
+    s.add_argument(
+        "--archetype", "-a", default="", help="Verhaltensbasierte Bezeichnung (Pflicht; ohne Angabe wird nachgefragt)"
+    )
     s.add_argument("--dir", "-d", default="personas", help="Zielordner (Default: personas)")
     s.add_argument("--review-days", type=int, default=180, help="Review-Frist in Tagen (Default: 180)")
     s.add_argument("--force", action="store_true")
@@ -193,6 +253,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("paths", nargs="+")
     s.add_argument("--strict", action="store_true", help="Auch bei Warnungen mit Exit-Code 1 beenden")
     s.add_argument("--min-level", choices=["info", "warn", "error"], default="info")
+    s.add_argument("--json", action="store_true", help="Findings als JSON-Liste auf stdout (für CI und Werkzeuge)")
     s.set_defaults(func=cmd_lint)
 
     s = sub.add_parser("render", help="Exportieren: md|card|json|yaml|prompt (einzeln) oder matrix|html|bundle (Set)")
@@ -225,11 +286,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    _utf8_streams()
     ap = build_parser()
     a = ap.parse_args(argv)
     try:
         return int(a.func(a))
-    except PersonaError as e:
+    except (PersonaError, UsageError) as e:
         print(f"ERROR {e}", file=sys.stderr)
         return 2
 

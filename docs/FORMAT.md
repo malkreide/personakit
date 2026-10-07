@@ -2,6 +2,8 @@
 
 Eine Persona ist eine Markdown-Datei `<id>.persona.md` mit YAML-Frontmatter (strukturiert, gegen `schema/persona.schema.json` validiert) und einem Markdown-Body (Szenario, Narrativ). Alle anderen Formate werden daraus gerendert.
 
+Kodierung UTF-8. Dateien mit Windows-Zeilenenden (CRLF) und mit UTF-8-BOM werden gelesen; `bump` und `retire` schreiben sie mit denselben Zeilenenden und demselben BOM zurück. Massgebend ist das Zeilenende der ersten Zeile, gemischte Dateien werden beim Schreiben vereinheitlicht. Exporte (`render`, `list`, `new`) schreiben UTF-8 mit LF, auf jedem Betriebssystem gleich.
+
 ## Kopf
 
 | Feld | Pflicht | Bedeutung |
@@ -61,6 +63,8 @@ Weitere `##`-Abschnitte sind erlaubt und werden in md/json/html mit exportiert.
 
 | Code | Stufe | Regel |
 |---|---|---|
+| P000 | ERROR | Datei nicht lesbar (kein Frontmatter, kein Mapping, nicht UTF-8) |
+| SCHEMA | ERROR | Verstoss gegen das JSON-Schema; methodische Regeln laufen erst danach |
 | P001 | ERROR | Dateiname ≠ `<id>.persona.md` |
 | P002 | WARN | Archetyp klingt demografisch |
 | P003 | WARN | `scope` fehlt |
@@ -96,3 +100,13 @@ Weitere `##`-Abschnitte sind erlaubt und werden in md/json/html mit exportiert.
 | X003 | WARN | Mehr als eine primäre Persona |
 | X004 | INFO | Mehr als 5 aktive Personas |
 | X005 | WARN | `relations.personas` verweist auf unbekannte ID |
+
+### Maschinenlesbare Ausgabe
+
+`personakit lint <pfade> --json` schreibt die Findings als JSON-Liste auf stdout, sortiert wie die Textausgabe; die Zusammenfassung bleibt auf stderr. `--min-level` filtert auch hier, die Exit-Codes sind dieselben (0 sauber, 1 Fehler bzw. mit `--strict` auch Warnungen, 2 Aufruf- oder Pfadfehler).
+
+```json
+[
+  {"level": "ERROR", "code": "E001", "persona": "eltern-neu-in-zuerich", "message": "…"}
+]
+```
