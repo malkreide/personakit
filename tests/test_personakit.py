@@ -12,6 +12,7 @@ from personakit.validate import validate
 
 ROOT = Path(__file__).resolve().parents[1]
 PERSONAS = ROOT / "personas"
+ELTERN_SET = PERSONAS / "elternkommunikation-schuleintritt"
 
 
 @pytest.fixture
@@ -32,7 +33,9 @@ def test_examples_lint_clean(examples):
 
 
 def test_roundtrip_is_lossless():
-    for path in PERSONAS.glob("*.persona.md"):
+    paths = sorted(PERSONAS.rglob("*.persona.md"))
+    assert len(paths) == 4
+    for path in paths:
         src = path.read_text(encoding="utf-8")
         assert Persona.from_text(src, path).to_text() == src, path.name
 
@@ -78,7 +81,7 @@ def test_new_validate_lint_bump(tmp_path: Path):
 
 
 def test_filename_mismatch_is_error(tmp_path: Path):
-    src = PERSONAS / "verwaltungs-insider.persona.md"
+    src = ELTERN_SET / "verwaltungs-insider.persona.md"
     dst = tmp_path / "anders.persona.md"
     shutil.copy(src, dst)
     codes = {f.code for f in lint_persona(Persona.load(dst))}

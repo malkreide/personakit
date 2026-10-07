@@ -2,9 +2,11 @@
 
 ## Was das ist
 
-Evidenzbasierte Personas als versionierte Dateien `personas/<id>.persona.md` (YAML-Frontmatter + Markdown-Body). Die Datei ist die Quelle der Wahrheit; Markdown, Karte, JSON, YAML, Prompt-Block, Matrix und HTML werden daraus gerendert. Methodik und Designentscheide: `docs/METHOD.md`. Felder und Lint-Codes: `docs/FORMAT.md`. Fahrplan mit fertigen Prompts: `docs/ROADMAP.md`.
+Evidenzbasierte Personas als versionierte Dateien `personas/<set-id>/<id>.persona.md` (YAML-Frontmatter + Markdown-Body). Die Datei ist die Quelle der Wahrheit; Markdown, Karte, JSON, YAML, Prompt-Block, Matrix und HTML werden daraus gerendert. Methodik und Designentscheide: `docs/METHOD.md`. Felder und Lint-Codes: `docs/FORMAT.md`. Fahrplan mit fertigen Prompts: `docs/ROADMAP.md`.
 
-Module: `model.py` (Round-Trip, Abschnitte) → `validate.py` (JSON-Schema) → `lint.py` (Methodik-Regeln) → `render.py` (Exporte) → `cli.py`.
+Module: `model.py` (Round-Trip, Abschnitte) → `validate.py` (JSON-Schema) → `sets.py` (`set.yml`, Priorität pro Set, loses Set) → `lint.py` (Methodik-Regeln) → `render.py` (Exporte) → `cli.py`.
+
+Sets: `personas/<set-id>/set.yml` fasst die Personas einer Lösung zusammen; die Mitgliedschaft steht nur dort, eine Persona-Datei existiert einmal und kann in mehreren Sets stehen.
 
 ## Gates – vor jedem Commit alle grün
 

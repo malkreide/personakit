@@ -23,12 +23,13 @@ The format encodes method, not layout: behaviour before demographics (Cooper), g
 - Lifecycle: SemVer, status, review date, changelog – maintained by `bump` and `retire` with clean git diffs
 - `simulation` block (voice, must, must_not, variance) injected into the prompt export in `simulate` or `audience` mode
 - Exports: Markdown, card, JSON, YAML, prompt block, comparison matrix, single-file HTML gallery, JSON bundle
-- 35 lint rules for method (evidence hygiene, JTBD form, guardrails, lifecycle, one primary persona per set)
+- 41 lint rules for method (evidence hygiene, JTBD form, guardrails, lifecycle, one primary persona per set)
+- Sets per solution (`personas/<set>/set.yml`): the same persona can play a different role – with a different priority – in several solutions; lint rules for focus run per set
 - Claude skill `persona-kit` that derives personas from interviews, support logs and workshop notes
 
 ### Demo
 
-![HTML gallery of the example personas with behaviour scales and detail view](docs/demo.png)
+![HTML gallery of the example personas, grouped by set, with behaviour scales](docs/demo.png)
 
 ## Prerequisites
 
@@ -58,18 +59,22 @@ personakit list personas
 personakit render personas -f matrix
 
 # export
-personakit render personas/eltern-neu-in-zuerich.persona.md -f md
-personakit render personas/eltern-neu-in-zuerich.persona.md -f prompt -m audience   # target-audience preset
-personakit render personas/eltern-neu-in-zuerich.persona.md -f prompt -m simulate   # synthetic counter-check
+personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -f md
+personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -f prompt -m audience   # target-audience preset
+personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -f prompt -m simulate   # synthetic counter-check
 personakit render personas -f html -o personas.html
 personakit render personas -f bundle -o personas.json
 
 # maintain
-personakit bump personas/eltern-neu-in-zuerich.persona.md -p minor -m "added J3" --review-days 180
+personakit bump personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -p minor -m "added J3" --review-days 180
 personakit retire personas/old-persona.persona.md -m "replaced after new interviews"
 ```
 
 The example personas in [`personas/`](personas/) are **synthetic** (German, school-administration context) and do not document any real research.
+
+### Sets per solution
+
+A set groups the personas of one solution: `personas/<set-id>/set.yml` with `id`, `title`, `solution`, `scope`, `status` and `personas: [{id, priority}]`. Membership is declared only there, so one persona file can be listed by several sets, each with its own priority; the `priority` in the persona file is the default. Personas that no set lists form a loose set, so a repository without `set.yml` works as before. The examples show both: `elternkommunikation-schuleintritt` and `ki-leitplanken-lehrpersonen` share `schulleitung-entscheidungsorientiert` and `verwaltungs-insider`, and `lehrperson-ki-explorierend` is primary only in the second set. Details: [`docs/FORMAT.md`](docs/FORMAT.md#sets-setyml).
 
 ## Available Commands
 
@@ -77,9 +82,9 @@ The example personas in [`personas/`](personas/) are **synthetic** (German, scho
 |---|---|
 | `new <id> -a …` | Create a persona file from the commented template; the archetype is required (asked for interactively if missing) |
 | `validate <paths>` | Validate the frontmatter against the JSON Schema |
-| `lint <paths>` | Schema plus 35 method rules; exit code 1 on errors (`--strict` also on warnings), `--json` for CI and other tools |
-| `render <paths> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (per persona) or `matrix`, `html`, `bundle` (per set) |
-| `list <paths>` | Overview table (priority, status, evidence, version, review date) |
+| `lint <paths>` | Schema plus 41 method rules; exit code 1 on errors (`--strict` also on warnings), `--json` for CI and other tools |
+| `render <paths> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (per persona) or `matrix`, `html`, `bundle` (grouped by set) |
+| `list <paths>` | Overview table per set (priority in the set, status, evidence, version, review date) |
 | `bump <file>` | Raise the version, write a changelog entry, optionally change status, evidence level and review date |
 | `retire <file>` | Set status to `retired` with a changelog note |
 
@@ -98,7 +103,7 @@ The prompt export carries the persona's guardrails: one concrete individual inst
 
 ## Configuration
 
-No configuration files. The schema lives in `src/personakit/schema/persona.schema.json`, the template in `src/personakit/templates/persona.template.md`.
+No configuration files beyond the optional `set.yml` per set. The schemas live in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`), the template in `src/personakit/templates/persona.template.md`.
 
 ## Project Structure
 
@@ -108,11 +113,12 @@ personakit/
 │   ├── cli.py            # argparse CLI
 │   ├── model.py          # frontmatter round-trip (ruamel.yaml), sections
 │   ├── validate.py       # JSON-Schema validation
-│   ├── lint.py           # 35 method rules
+│   ├── sets.py           # set.yml, per-set priority, loose set
+│   ├── lint.py           # 41 method rules
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
-│   ├── schema/           # persona.schema.json
+│   ├── schema/           # persona.schema.json, set.schema.json
 │   └── templates/        # persona.template.md
-├── personas/             # four synthetic example personas
+├── personas/             # four synthetic example personas in two sets (set.yml)
 ├── skills/persona-kit/   # Claude skill + elicitation guide
 ├── docs/                 # METHOD.md, FORMAT.md, demo.png
 ├── scripts/              # validate_repo.py (repo structure check)

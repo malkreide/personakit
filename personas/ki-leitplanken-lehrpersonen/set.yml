@@ -1,0 +1,14 @@
+personakit: "1.0"
+id: ki-leitplanken-lehrpersonen
+title: "KI-Leitplanken für Lehrpersonen"
+solution: "Leitplanken, Weiterbildungsangebote und Werkzeuge zum KI-Einsatz im Unterricht"
+scope: "Gilt für Angebote, die Lehrpersonen beim Einsatz von KI unterstützen. Gilt nicht für Schülerinnen und Schüler als Nutzende."
+status: draft
+owner: "Pädagogik"
+personas:
+  # Die Persona-Dateien liegen im Set elternkommunikation-schuleintritt; Sets verweisen über die id.
+  - id: lehrperson-ki-explorierend
+    priority: primary          # Default in der Persona-Datei: supplemental
+  - id: schulleitung-entscheidungsorientiert
+    priority: secondary
+  - id: verwaltungs-insider    # ohne priority: Default aus der Persona-Datei (negative)

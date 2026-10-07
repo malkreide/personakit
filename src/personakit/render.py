@@ -1,4 +1,4 @@
-"""Renderers: one persona → md | card | json | yaml | prompt; a set → matrix | html | bundle."""
+"""Renderers: one persona → md | card | json | yaml | prompt; personas grouped by set → matrix | html | bundle."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from ruamel.yaml import YAML
 
 from . import __version__
 from .model import Persona
+from .sets import Group, Member, build_groups, group_personas
 
 SINGLE_FORMATS = ("md", "card", "json", "yaml", "prompt")
 SET_FORMATS = ("matrix", "html", "bundle")
@@ -411,15 +412,41 @@ def render_prompt(p: Persona, mode: str = "simulate") -> str:
 
 
 # ===================================================================== set
-def render_set(personas: list[Persona], fmt: str, **opts: Any) -> str:
+def _groups(personas: list[Persona], groups: list[Group] | None) -> list[Group]:
+    """Without explicit groups all personas form one loose set (behaviour before sets existed)."""
+    return groups if groups is not None else build_groups(personas, [])
+
+
+def _grouped(groups: list[Group]) -> bool:
+    return any(not g.is_loose for g in groups)
+
+
+def _group_head(g: Group, level: str) -> list[str]:
+    meta = [f"`{g.id}`" if g.id else "Personas ohne set.yml"]
+    if g.set:
+        if g.set.data.get("solution"):
+            meta.append(f"Lösung: {g.set.data['solution']}")
+        meta.append(L(g.set.status))
+    out = [f"{level} {g.title}", "", " · ".join(meta)]
+    if g.set and g.set.data.get("scope"):
+        out += ["", f"_{g.set.data['scope']}_"]
+    return out + [""]
+
+
+def render_set(personas: list[Persona], fmt: str, groups: list[Group] | None = None, **opts: Any) -> str:
+    groups = _groups(personas, groups)
     if fmt == "matrix":
-        return render_matrix(personas)
+        return render_matrix(personas, groups)
     if fmt == "html":
-        return render_html(personas, title=opts.get("title") or "Personas")
+        return render_html(personas, title=opts.get("title") or "Personas", groups=groups)
     if fmt == "bundle":
         return (
             json.dumps(
-                {"generator": f"personakit {__version__}", "personas": [_export_dict(p) for p in personas]},
+                {
+                    "generator": f"personakit {__version__}",
+                    "sets": [g.export() for g in groups],
+                    "personas": [_export_dict(p) for p in group_personas(groups)],
+                },
                 ensure_ascii=False,
                 indent=2,
             )
@@ -428,29 +455,42 @@ def render_set(personas: list[Persona], fmt: str, **opts: Any) -> str:
     raise ValueError(f"Unbekanntes Set-Format: {fmt}")
 
 
-def render_list(personas: list[Persona]) -> str:
+def _list_table(members: list[Member]) -> list[str]:
     rows = ["| ID | Archetyp | Prio | Status | Evidenz | Version | Review bis |", "|---|---|---|---|---|---|---|"]
-    for p in personas:
-        d = p.plain()
+    for m in members:
+        p, d = m.persona, m.persona.plain()
+        prio = L(m.priority) + ("\\*" if m.overridden else "")
         rows.append(
-            f"| `{p.id}` | {p.archetype} | {L(d.get('priority'))} | {L(d.get('status'))} | {L(d.get('evidence_level'))} | {d.get('version')} | {d.get('review_by') or '–'} |"
+            f"| `{p.id}` | {p.archetype} | {prio} | {L(d.get('status'))} | {L(d.get('evidence_level'))} | {d.get('version')} | {d.get('review_by') or '–'} |"
         )
-    return "\n".join(rows) + "\n"
+    if any(m.overridden for m in members):
+        rows += ["", "\\* Priorität in diesem Set, abweichend vom Default in der Persona-Datei"]
+    return rows
 
 
-def render_matrix(personas: list[Persona]) -> str:
-    """Comparison of behaviour variables and jobs across personas (choose the primary!)."""
+def render_list(personas: list[Persona], groups: list[Group] | None = None) -> str:
+    groups = _groups(personas, groups)
+    if not _grouped(groups):
+        return "\n".join(_list_table(groups[0].members if groups else [])) + "\n"
+    out: list[str] = []
+    for g in groups:
+        out += _group_head(g, "##") + _list_table(g.members) + [""]
+    return "\n".join(out).rstrip("\n") + "\n"
+
+
+def _matrix_block(members: list[Member], level: str) -> list[str]:
+    ps = [m.persona for m in members]
     names: list[str] = []
-    for p in personas:
+    for p in ps:
         for v in (p.plain().get("behaviour") or {}).get("variables") or []:
             if v.get("name") and v["name"] not in names:
                 names.append(v["name"])
-    hdr = "| Verhaltensvariable | " + " | ".join(f"{p.id}" for p in personas) + " |"
-    sep = "|---|" + "|".join([":---:"] * len(personas)) + "|"
-    rows = [hdr, sep]
+    hdr = "| Verhaltensvariable | " + " | ".join(f"{p.id}" for p in ps) + " |"
+    sep = "|---|" + "|".join([":---:"] * len(ps)) + "|"
+    rows = [hdr, sep, "| _Priorität_ | " + " | ".join(f"_{L(m.priority)}_" for m in members) + " |"]
     for n in names:
         cells = []
-        for p in personas:
+        for p in ps:
             val = next(
                 (
                     v.get("value")
@@ -461,32 +501,45 @@ def render_matrix(personas: list[Persona]) -> str:
             )
             cells.append(f"`{_bar(val)}` {val}" if val else "–")
         rows.append(f"| {n} | " + " | ".join(cells) + " |")
-    out = ["## Verhaltensmatrix", "", *rows, ""]
+    out = [f"{level} Verhaltensmatrix", "", *rows, ""]
     out += [
-        "## Jobs-to-be-Done",
+        f"{level} Jobs-to-be-Done",
         "",
         "| Persona | Job | Wichtigkeit | Zufriedenheit heute | Chance |",
         "|---|---|:---:|:---:|:---:|",
     ]
-    for p in personas:
+    for p in ps:
         for j in p.plain().get("jobs") or []:
             if not j.get("statement"):
                 continue
             imp, sat = j.get("importance"), j.get("satisfaction")
             opp = f"{imp + max(imp - sat, 0)}" if imp and sat else "–"  # ODI opportunity score (Ulwick)
             out.append(f"| `{p.id}` | {j['id']}: {j['statement']} | {imp or '–'} | {sat or '–'} | {opp} |")
-    out.append("")
+    return out + [""]
+
+
+def render_matrix(personas: list[Persona], groups: list[Group] | None = None) -> str:
+    """Comparison of behaviour variables and jobs across the personas of a set (choose the primary!)."""
+    groups = _groups(personas, groups)
+    out: list[str] = []
+    if not _grouped(groups):
+        out += _matrix_block(groups[0].members if groups else [], "##")
+    else:
+        for g in groups:
+            out += _group_head(g, "##") + _matrix_block(g.members, "###")
     out.append("_Chance = Wichtigkeit + max(Wichtigkeit − Zufriedenheit, 0) (ODI-Opportunity-Score, Skala 1–10)._")
     return "\n".join(out) + "\n"
 
 
 # ----------------------------------------------------------------- html
-def render_html(personas: list[Persona], title: str = "Personas") -> str:
-    data = [_export_dict(p) for p in personas]
-    payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+def render_html(personas: list[Persona], title: str = "Personas", groups: list[Group] | None = None) -> str:
+    groups = _groups(personas, groups)
+    data = json.dumps([_export_dict(p) for p in group_personas(groups)], ensure_ascii=False).replace("</", "<\\/")
+    sets = json.dumps([g.export() for g in groups], ensure_ascii=False).replace("</", "<\\/")
     return (
         _HTML_TEMPLATE.replace("{{TITLE}}", _html.escape(title))
-        .replace("{{DATA}}", payload)
+        .replace("{{DATA}}", data)
+        .replace("{{SETS}}", sets)
         .replace("{{VERSION}}", __version__)
     )
 
@@ -520,27 +573,34 @@ dialog::backdrop{background:rgba(0,0,0,.45)}.dlg{padding:22px 24px 28px;max-heig
 blockquote{margin:4px 0;padding-left:10px;border-left:3px solid var(--line);color:var(--muted)}
 .job{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0}.job .f{font-size:12px;color:var(--muted)}
 pre{white-space:pre-wrap;font:inherit;margin:0}
+.grp{grid-column:1/-1;margin:14px 0 0}.grp h2{margin:0;font-size:18px}.grp:first-child{margin-top:0}
+.filters.sets{padding-bottom:0}
 </style>
 </head>
 <body>
 <header><h1>{{TITLE}}</h1><div class="sub" id="sub"></div></header>
+<div class="filters sets" id="sets"></div>
 <div class="filters" id="filters"></div>
 <main id="grid"></main>
 <dialog id="dlg"><div class="dlg" id="dlgc"></div></dialog>
 <script>
 const DATA={{DATA}};
+const SETS={{SETS}};
+const BY=Object.fromEntries(DATA.map(p=>[p.id,p]));
+const NAMED=SETS.some(s=>s.id);
 const LBL={primary:"Primär",secondary:"Sekundär",supplemental:"Ergänzend",negative:"Negativ",draft:"Entwurf",active:"Aktiv",retired:"Ruhestand",proto:"Proto",qualitative:"Qualitativ",statistical:"Statistisch"};
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const dots=v=>"●".repeat(v)+"○".repeat(5-v);
 const li=a=>(a&&a.length)?"<ul>"+a.map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul>":"<div class='sub'>–</div>";
-let filter="all";
-function card(p){const b=(p.behaviour&&p.behaviour.variables||[]).filter(v=>v.name);
-return `<div class="card" data-id="${esc(p.id)}"><h2>${esc(p.name?p.name+" – ":"")}${esc(p.archetype)}</h2>
+let filter="all",setf="all";
+function card(p,prio,sid){const b=(p.behaviour&&p.behaviour.variables||[]).filter(v=>v.name);
+return `<div class="card" data-id="${esc(p.id)}" data-set="${esc(sid||"")}"><h2>${esc(p.name?p.name+" – ":"")}${esc(p.archetype)}</h2>
 ${p.tagline?`<div class="tag">«${esc(p.tagline)}»</div>`:""}
-<div class="chips"><span class="chip ${p.priority}">${LBL[p.priority]||p.priority}</span><span class="chip">${LBL[p.status]||p.status}</span><span class="chip ${p.evidence_level}">${LBL[p.evidence_level]||p.evidence_level}</span><span class="chip">v${esc(p.version)}</span></div>
+<div class="chips"><span class="chip ${esc(prio)}">${LBL[prio]||esc(prio)}</span><span class="chip">${LBL[p.status]||p.status}</span><span class="chip ${p.evidence_level}">${LBL[p.evidence_level]||p.evidence_level}</span><span class="chip">v${esc(p.version)}</span></div>
 <div class="bars">${b.map(v=>`<b>${esc(v.name)}</b><span class="dots">${dots(v.value)}</span>`).join("")}</div>
 <div class="sub">${esc((p.goals&&p.goals.end||[]).slice(0,2).join(" · "))}</div></div>`}
 function detail(p){const g=p.goals||{},c=p.context||{},b=p.behaviour||{},s=p.simulation||{},r=p.relations||{};
+const roles=SETS.filter(x=>x.id).map(x=>[x,x.personas.find(m=>m.id===p.id)]).filter(([,m])=>m);
 const jobs=(p.jobs||[]).filter(j=>j.statement).map(j=>{const f=j.forces||{};return `<div class="job"><b>${esc(j.id)}</b> ${esc(j.statement)}<div class="f">${(j.dimension||[]).join(", ")}${j.importance?` · Wichtigkeit ${j.importance}/5`:""}${j.satisfaction?` · Zufriedenheit heute ${j.satisfaction}/5`:""}</div>
 ${["push","pull","anxiety","habit"].filter(k=>f[k]&&f[k].length).map(k=>`<div class="f"><b>${{push:"Push",pull:"Pull",anxiety:"Angst",habit:"Gewohnheit"}[k]}:</b> ${esc(f[k].join("; "))}</div>`).join("")}
 ${j.outcomes&&j.outcomes.length?"<div class='f'><b>Ergebnisse:</b> "+esc(j.outcomes.join("; "))+"</div>":""}</div>`}).join("");
@@ -548,9 +608,10 @@ const vars=(b.variables||[]).filter(v=>v.name).map(v=>`<tr><td>${esc(v.name)}</t
 const ev=(p.evidence||[]).map(e=>`<tr><td>${esc(e.id)}</td><td>${esc(e.type)}</td><td>${esc(e.source)}</td><td>${esc(e.date||"")}</td><td>${esc(e.n||"")}</td><td>${esc(e.note||"")}</td></tr>`).join("");
 const body=Object.entries(p._body||{}).filter(([k])=>k!=="_intro").map(([k,v])=>`<h3>${esc(k)}</h3><pre>${esc(v)}</pre>`).join("");
 return `<button class="close" onclick="dlg.close()">Schliessen</button><h2>${esc(p.name?p.name+" – ":"")}${esc(p.archetype)}</h2>
-<div class="sub">${esc(p.id)} v${esc(p.version)} · ${LBL[p.priority]||p.priority} · ${LBL[p.status]||p.status} · Evidenz ${LBL[p.evidence_level]||p.evidence_level}${p.review_by?" · Review bis "+esc(p.review_by):""}</div>
+<div class="sub">${esc(p.id)} v${esc(p.version)} · ${NAMED?"Default ":""}${LBL[p.priority]||p.priority} · ${LBL[p.status]||p.status} · Evidenz ${LBL[p.evidence_level]||p.evidence_level}${p.review_by?" · Review bis "+esc(p.review_by):""}</div>
 ${p.tagline?`<div class="tag">«${esc(p.tagline)}»</div>`:""}
 ${p.scope?`<h3>Gilt für</h3><div>${esc(p.scope)}</div>`:""}
+${roles.length?`<h3>Rolle in Sets</h3><ul>${roles.map(([x,m])=>`<li><b>${esc(x.title)}:</b> ${LBL[m.priority]||esc(m.priority)}${m.priority!==p.priority?" <span class='sub'>(abweichend vom Default)</span>":""}</li>`).join("")}</ul>`:""}
 ${(p.profile||[]).filter(f=>f.fact).length?`<h3>Relevante Fakten</h3><ul>${p.profile.filter(f=>f.fact).map(f=>`<li><b>${esc(f.fact)}</b>${f.relevance?" — <i>"+esc(f.relevance)+"</i>":""}</li>`).join("")}</ul>`:""}
 ${Object.values(c).some(x=>x&&x.length)?`<h3>Kontext</h3><ul>${c.role?`<li><b>Rolle:</b> ${esc(c.role)}</li>`:""}${c.situation?`<li><b>Situation:</b> ${esc(c.situation)}</li>`:""}${c.environment?`<li><b>Umgebung:</b> ${esc(c.environment)}</li>`:""}${c.channels&&c.channels.length?`<li><b>Kanäle:</b> ${esc(c.channels.join(", "))}</li>`:""}${(c.constraints||[]).map(x=>`<li><b>Restriktion:</b> ${esc(x)}</li>`).join("")}</ul>`:""}
 ${vars?`<h3>Verhalten</h3><table>${vars}</table>`:""}${b.patterns&&b.patterns.length?li(b.patterns):""}
@@ -565,12 +626,22 @@ ${Object.values(s).some(x=>x&&x.length)?`<h3>Prompt-Einsatz</h3><ul>${s.voice?`<
 ${p.assumptions&&p.assumptions.length?"<h3>Annahmen</h3>"+li(p.assumptions):""}${p.unknowns&&p.unknowns.length?"<h3>Offen</h3>"+li(p.unknowns):""}
 ${(r.journeys||[]).length||(r.personas||[]).length?`<h3>Verknüpfungen</h3><ul>${(r.journeys||[]).map(x=>`<li>Journey: ${esc(x)}</li>`).join("")}${(r.personas||[]).map(x=>`<li>Persona: ${esc(x)}</li>`).join("")}</ul>`:""}
 ${p.changelog&&p.changelog.length?"<h3>Änderungen</h3><ul>"+[...p.changelog].reverse().map(c=>`<li>v${esc(c.version)} (${esc(c.date)}): ${esc(c.note)}</li>`).join("")+"</ul>":""}`}
-function draw(){const g=document.getElementById("grid");const rows=DATA.filter(p=>filter==="all"||p.priority===filter||p.status===filter);g.innerHTML=rows.map(card).join("");
-document.querySelectorAll(".card").forEach(el=>el.onclick=()=>{const p=DATA.find(x=>x.id===el.dataset.id);document.getElementById("dlgc").innerHTML=detail(p);dlg.showModal()});
-document.getElementById("sub").textContent=`${rows.length} von ${DATA.length} Personas · personakit {{VERSION}}`}
+function draw(){const g=document.getElementById("grid");let html="";const shown=new Set();
+for(const x of SETS){if(setf!=="all"&&(x.id||"")!==setf)continue;
+const rows=x.personas.map(m=>({p:BY[m.id],prio:m.priority})).filter(r=>r.p&&(filter==="all"||r.prio===filter||r.p.status===filter));
+if(NAMED)html+=`<div class="grp"><h2>${esc(x.title)}</h2><div class="sub">${[x.solution,x.id?LBL[x.status]||x.status:"Personas ohne set.yml"].filter(Boolean).map(esc).join(" · ")}</div></div>`;
+if(NAMED&&!rows.length)html+=`<div class="grp sub">Keine Persona für diesen Filter</div>`;
+html+=rows.map(r=>card(r.p,r.prio,x.id)).join("");rows.forEach(r=>shown.add(r.p.id))}
+g.innerHTML=html;
+document.querySelectorAll(".card").forEach(el=>el.onclick=()=>{const p=BY[el.dataset.id];document.getElementById("dlgc").innerHTML=detail(p);dlg.showModal()});
+const nSets=SETS.filter(x=>x.id).length;
+document.getElementById("sub").textContent=`${shown.size} von ${DATA.length} Personas${nSets?` · ${nSets} Set${nSets>1?"s":""}`:""} · personakit {{VERSION}}`}
 function filters(){const f=document.getElementById("filters");const keys=["all","primary","secondary","supplemental","negative","draft","active","retired"];
 f.innerHTML=keys.map(k=>`<button data-k="${k}" class="${k===filter?"on":""}">${k==="all"?"Alle":LBL[k]}</button>`).join("");
-f.querySelectorAll("button").forEach(b=>b.onclick=()=>{filter=b.dataset.k;filters();draw()})}
+f.querySelectorAll("button").forEach(b=>b.onclick=()=>{filter=b.dataset.k;filters();draw()});
+const st=document.getElementById("sets");if(!NAMED){st.style.display="none";return}
+st.innerHTML=[["all","Alle Sets"],...SETS.map(x=>[x.id||"",x.title])].map(([k,t])=>`<button data-k="${esc(k)}" class="${k===setf?"on":""}">${esc(t)}</button>`).join("");
+st.querySelectorAll("button").forEach(b=>b.onclick=()=>{setf=b.dataset.k;filters();draw()})}
 const dlg=document.getElementById("dlg");filters();draw();
 </script>
 </body>

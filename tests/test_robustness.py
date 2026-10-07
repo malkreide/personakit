@@ -15,7 +15,7 @@ from personakit.validate import validate
 
 ROOT = Path(__file__).resolve().parents[1]
 PERSONAS = ROOT / "personas"
-EXAMPLE = PERSONAS / "verwaltungs-insider.persona.md"
+EXAMPLE = PERSONAS / "elternkommunikation-schuleintritt" / "verwaltungs-insider.persona.md"
 
 
 def _lf_text() -> str:
@@ -125,7 +125,7 @@ def test_lint_json_output(tmp_path: Path, capsys):
     findings = json.loads(out)
     assert isinstance(findings, list) and findings
     for f in findings:
-        assert set(f) == {"level", "code", "persona", "message"}
+        assert set(f) == {"level", "code", "set", "persona", "message"}
     assert any(f["level"] == "ERROR" and f["persona"] == "json-typ" for f in findings)
 
 
