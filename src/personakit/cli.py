@@ -13,6 +13,8 @@ from pathlib import Path
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as DQ
 
 from . import __version__
+from .factoids import analyse_study, build_skeleton, load_study, render_report, report_json
+from .factoids import sort_findings as sort_factoid_findings
 from .lint import ERROR, WARN, Finding, lint_persona, lint_sets, sort_findings
 from .model import SUFFIX, Persona, PersonaError, find_persona_files, today, write_text
 from .render import SET_FORMATS, SINGLE_FORMATS, render, render_list, render_set
@@ -87,33 +89,94 @@ def _archetype(given: str) -> str:
 
 
 # ------------------------------------------------------------------ commands
-def cmd_new(a: argparse.Namespace) -> int:
-    pid = a.id
+def _check_id(pid: str) -> None:
     if not re.fullmatch(load_schema()["properties"]["id"]["pattern"], pid):
         raise UsageError(
             f"Ungültige id «{pid}»: nur Kleinbuchstaben, Ziffern und Bindestriche, z. B. eltern-neu-in-zuerich"
         )
-    target_dir = Path(a.dir)
-    target = target_dir / f"{pid}{SUFFIX}"
-    if target.exists() and not a.force:
-        print(f"Existiert bereits: {target} (--force zum Überschreiben)", file=sys.stderr)
-        return 1
-    archetype = _archetype(a.archetype)
+
+
+def _template_text(pid: str, archetype: str, review_days: int) -> str:
     tpl = resources.files("personakit").joinpath("templates/persona.template.md").read_text(encoding="utf-8")
     t = today()
-    text = (
+    return (
         tpl.replace("{{id}}", pid)
         # the template puts the archetype in a YAML double-quoted scalar
         .replace("{{archetype}}", archetype.replace("\\", "\\\\").replace('"', '\\"'))
         .replace("{{today}}", t.isoformat())
-        .replace("{{review_by}}", (t + _dt.timedelta(days=a.review_days)).isoformat())
+        .replace("{{review_by}}", (t + _dt.timedelta(days=review_days)).isoformat())
     )
+
+
+def _write_persona(target: Path, text: str) -> None:
     errs = validate(Persona.from_text(text, target))
     if errs:  # safety net: never write a file that violates the schema
         raise UsageError("Vorlage ergäbe eine ungültige Persona: " + "; ".join(errs))
-    target_dir.mkdir(parents=True, exist_ok=True)
+    target.parent.mkdir(parents=True, exist_ok=True)
     write_text(target, text)
+
+
+def cmd_new(a: argparse.Namespace) -> int:
+    pid = a.id
+    _check_id(pid)
+    target = Path(a.dir) / f"{pid}{SUFFIX}"
+    if target.exists() and not a.force:
+        print(f"Existiert bereits: {target} (--force zum Überschreiben)", file=sys.stderr)
+        return 1
+    archetype = _archetype(a.archetype)
+    _write_persona(target, _template_text(pid, archetype, a.review_days))
     print(f"Angelegt: {target}", file=sys.stderr)
+    return 0
+
+
+def cmd_factoids(a: argparse.Namespace) -> int:
+    study = load_study(a.folder)
+    findings = sort_factoid_findings(study.findings + analyse_study(study))
+    if a.json:
+        print(json.dumps(report_json(study, findings), ensure_ascii=False, indent=2))
+    else:
+        sys.stdout.write(render_report(study, findings))
+    n_err = sum(1 for f in findings if f.level == ERROR)
+    n_warn = sum(1 for f in findings if f.level == WARN)
+    print(
+        f"— {len(study.sources)} Quelle(n), {len(study.participants())} Teilnehmende, "
+        f"{len(study.factoids())} Factoids: {n_err} Fehler, {n_warn} Warnungen",
+        file=sys.stderr,
+    )
+    if n_err or (a.strict and n_warn):
+        return 1
+    return 0
+
+
+def cmd_skeleton(a: argparse.Namespace) -> int:
+    pid = a.id
+    _check_id(pid)
+    target = Path(a.dir) / f"{pid}{SUFFIX}"
+    if target.exists() and not a.force:
+        print(f"Existiert bereits: {target} (--force zum Überschreiben)", file=sys.stderr)
+        return 1
+    participants = [x.strip() for x in a.participants.split(",") if x.strip()]
+    if not participants:
+        raise UsageError("--participants leer: Teilnehmer-Codes kommagetrennt angeben, z. B. p1,p3,p7")
+    study = load_study(a.folder)
+    errors = [f for f in study.findings if f.level == ERROR]
+    if errors:
+        for f in sort_factoid_findings(errors):
+            print(str(f), file=sys.stderr)
+        print(f"Factoids fehlerhaft – zuerst «personakit factoids {a.folder}» bereinigen", file=sys.stderr)
+        return 1
+    archetype = _archetype(a.archetype)
+    template = Persona.from_text(_template_text(pid, archetype, a.review_days), target)
+    label = Path(a.folder).as_posix()
+    sk = build_skeleton(study, participants, template, label)
+    _write_persona(target, sk.persona.to_text())
+    for hint in sk.hints:
+        print(f"Hinweis: {hint}", file=sys.stderr)
+    print(
+        f"Angelegt: {target} (evidence_level {sk.evidence_level}, {sk.first_hand} Interviews/Beobachtungen)"
+        " – Archetyp, Ziele, Jobs und Simulationsregeln mit Factoid-IDs ergänzen, dann personakit lint",
+        file=sys.stderr,
+    )
     return 0
 
 
@@ -259,6 +322,26 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--review-days", type=int, default=180, help="Review-Frist in Tagen (Default: 180)")
     s.add_argument("--force", action="store_true")
     s.set_defaults(func=cmd_new)
+
+    s = sub.add_parser(
+        "factoids", help="Factoid-Ordner prüfen: Verortung der Teilnehmenden, dünne Variablen, Ausreisser"
+    )
+    s.add_argument("folder", help="Studienordner mit *.factoids.md (und optional variables.yml)")
+    s.add_argument("--strict", action="store_true", help="Auch bei Warnungen mit Exit-Code 1 beenden")
+    s.add_argument("--json", action="store_true", help="Bericht als JSON auf stdout")
+    s.set_defaults(func=cmd_factoids)
+
+    s = sub.add_parser("skeleton", help="Persona-Skelett aus gewählten Teilnehmenden eines Factoid-Ordners")
+    s.add_argument("folder", help="Studienordner mit *.factoids.md")
+    s.add_argument("--participants", "-p", required=True, help="Teilnehmer-Codes, kommagetrennt, z. B. p1,p3,p7")
+    s.add_argument("--id", required=True, help="Slug der neuen Persona")
+    s.add_argument(
+        "--archetype", "-a", default="", help="Verhaltensbasierte Bezeichnung (Pflicht; ohne Angabe wird nachgefragt)"
+    )
+    s.add_argument("--dir", "-d", default="personas", help="Zielordner (Default: personas)")
+    s.add_argument("--review-days", type=int, default=180, help="Review-Frist in Tagen (Default: 180)")
+    s.add_argument("--force", action="store_true")
+    s.set_defaults(func=cmd_skeleton)
 
     s = sub.add_parser("validate", help="Gegen JSON-Schema prüfen")
     s.add_argument("paths", nargs="+")

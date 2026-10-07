@@ -39,7 +39,7 @@ Verhalten und Situationen erfragen, nicht Meinungen über die Lösung. 30–45 M
 - Was hätte die ganze Sache in fünf Minuten erledigt?
 - Wen kennen Sie, der das ganz anders angeht als Sie? (Hinweis auf Varianz)
 
-Nach jedem Interview: Factoids (eine Beobachtung pro Zeile, mit Interview-ID) extrahieren, Person auf den Skalen verorten, wörtliche Zitate sichern.
+Nach jedem Interview: Factoids (eine Beobachtung pro Zeile, mit Teilnehmer-Code statt Namen) in `factoids/<studie>/<quelle>.factoids.md` extrahieren, Person auf den Skalen verorten (`variable`, `value`), wörtliche Zitate mit `quote: ja` sichern. `personakit factoids factoids/<studie>` zeigt danach, wo sich Häufungen bilden (Format: `docs/FORMAT.md` → Factoids).
 
 ## C. Sekundärquellen nutzen
 

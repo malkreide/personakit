@@ -1,6 +1,6 @@
 ---
 name: persona-kit
-description: Erstellt, prüft, aktualisiert und exportiert evidenzbasierte Personas im personakit-Format (*.persona.md mit YAML-Frontmatter, JTBD-Block, Evidenz, Simulationsregeln). Verwenden, wenn der User (1) eine Persona aus Interviews, Support-Logs, Umfragen, Workshops oder Annahmen ableiten will, (2) bestehende Personas anpassen, versionieren, reviewen oder in den Ruhestand versetzen will, (3) Personas als Markdown, JSON, YAML, Prompt-Block, Karte, Matrix oder HTML-Galerie exportieren will, (4) eine Persona als Voreinstellung für Content, Chat-Assistenten, User Journeys (journeykit) oder synthetische Gegenproben braucht, oder (5) Begriffe wie «Persona», «Archetyp», «Zielgruppe», «Jobs-to-be-Done», «Job Story», «synthetischer Nutzer» im Kontext einer Lösung verwendet.
+description: Erstellt, prüft, aktualisiert und exportiert evidenzbasierte Personas im personakit-Format (*.persona.md mit YAML-Frontmatter, JTBD-Block, Evidenz, Simulationsregeln). Verwenden, wenn der User (1) eine Persona aus Interviews, Support-Logs, Umfragen, Workshops oder Annahmen ableiten will – auch Factoids extrahieren, Teilnehmende auf Verhaltensvariablen verorten oder ein Persona-Skelett aus Factoids erzeugen –, (2) bestehende Personas anpassen, versionieren, reviewen oder in den Ruhestand versetzen will, (3) Personas als Markdown, JSON, YAML, Prompt-Block, Karte, Matrix oder HTML-Galerie exportieren will, (4) eine Persona als Voreinstellung für Content, Chat-Assistenten, User Journeys (journeykit) oder synthetische Gegenproben braucht, oder (5) Begriffe wie «Persona», «Archetyp», «Zielgruppe», «Jobs-to-be-Done», «Job Story», «Factoid», «Verhaltensvariable», «synthetischer Nutzer» im Kontext einer Lösung verwendet.
 ---
 
 # persona-kit
@@ -18,22 +18,32 @@ personakit render personas -f matrix|html|bundle   # nach Set gruppiert
 personakit list personas                            # Übersicht pro Set
 personakit bump <datei> -p minor -m "…" [--status active --evidence-level qualitative --review-days 180]
 personakit retire <datei> -m "…"
+personakit factoids factoids/<studie> [--json]      # Verortung, dünne Variablen, Ausreisser
+personakit skeleton factoids/<studie> -p p1,p3,p7 --id <id> -a "<Archetyp>" [-d personas/<set>]
 ```
 
 Ohne installiertes Paket: `python -m personakit.cli …` mit `PYTHONPATH=src`.
 
 ## Ablauf: Persona aus Material ableiten
 
-1. **Material sichten, Factoids extrahieren.** Aus Interviews, Support-Logs, Umfragen, Analytics oder Workshop-Notizen einzelne beobachtbare Aussagen ziehen («bricht Formular ab, wenn Feld unklar»). Jedes Factoid bekommt eine Quelle. Keine Interpretation in diesem Schritt.
-2. **Verhaltensvariablen bilden.** 3–7 Skalen, auf denen sich die Befragten unterscheiden (z. B. digitale Routine, Fehlervermeidung vs. Ausprobieren, Vertrautheit mit dem System). Befragte auf den Skalen verorten. Wo sich Häufungen bilden, entsteht eine Persona – nicht wo Demografie sich ähnelt.
-3. **Skelett füllen.** `personakit new` ausführen, dann Frontmatter füllen: `archetype` verhaltensbasiert, `context`, `behaviour.variables` mit Ankern, `goals` (experience/end), `pains`, `jobs` als Job Stories mit Kräften, `quotes` mit Evidenz-ID, `anti_patterns`. Jedes `profile[].fact` braucht `relevance`.
-4. **Evidenz und Lücken dokumentieren.** `evidence[]` mit Typ, Datum, n. `evidence_level` ehrlich setzen: Ohne Primärforschung ist es `proto`, dann sind `assumptions` Pflicht. `unknowns` immer füllen.
-5. **Simulationsregeln schreiben.** `simulation.voice`, `must`, `must_not`, `variance`. `must_not` beschreibt, was ein LLM typischerweise falsch macht (zu kompetent, zu freundlich, Innensicht der Organisation, Fachbegriffe). `variance` benennt, worin reale Personen dieses Typs streuen.
-6. **Szenario schreiben** (`## Szenario` im Body): eine konkrete Situation mit Zeit, Ort, Gerät, Auslöser und dem Satz «Die Lösung ist gut, wenn …».
-7. **Set zuordnen.** Jede Lösung hat ein Set `personas/<set-id>/set.yml`; die neue Persona dort mit ihrer Priorität für diese Lösung eintragen. Gilt sie für eine weitere Lösung, nicht kopieren, sondern im anderen Set über die `id` aufführen – mit der Priorität, die sie dort hat.
-8. **Lint laufen lassen** und alle ERROR beheben; WARN begründet stehen lassen oder beheben. Dann `list` bzw. `matrix` prüfen: genau eine primäre Persona pro Set.
+Arbeitsteilung: **Zählen macht das Werkzeug, Deuten macht die Skill.** `factoids` und `skeleton` sind deterministisch – sie verorten, rechnen Mediane und übernehmen Zitate. Welche Teilnehmenden eine Persona bilden, wie sie heisst, was sie will und wie sie spricht, entscheidet die Skill, und zwar nur mit Verweis auf Factoid-IDs. Format: `docs/FORMAT.md` → Factoids; Beispiel: `factoids/beispiel/`.
 
-Beim Ableiten aus Material: Zitate wörtlich übernehmen, nicht glätten. Werte auf Skalen nur setzen, wenn das Material sie trägt; sonst mittig lassen und in `unknowns` notieren.
+1. **Factoids extrahieren.** Pro Quelle eine Datei `factoids/<studie>/<source_id>.factoids.md`: Frontmatter (`source_id`, `type`, `date`, `n`, `consent_note`, optional `title`) und eine Tabelle `id | participant | observation | variable | value | quote`. Eine beobachtbare Aussage pro Zeile, wörtliche Aussagen mit `quote: ja`, nichts glätten, nichts deuten. Teilnehmende **nur als Codes** (`p1`, `p2` …), nie Namen; identifizierende Details (Beruf, Strasse, seltene Umstände) weglassen. `value` nur setzen, wenn das Factoid die Stufe trägt.
+2. **Variablen festlegen.** 3–7 Skalen in `factoids/<studie>/variables.yml` mit Ankern für 1 und 5 – Dimensionen, auf denen sich die Teilnehmenden unterscheiden, nicht Demografie. Neue Variablen, die beim Extrahieren auftauchen, dort ergänzen.
+3. **Prüfen und lesen:** `personakit factoids factoids/<studie>`. Alle ERROR beheben (F006 heisst: ein Name statt eines Codes – sofort ersetzen). Dann deuten:
+   - **Verteilung** lesen: Teilnehmende, die auf mehreren Variablen gemeinsam liegen, sind ein Persona-Kandidat. Eine Persona entsteht aus einer Häufung im Verhalten, nicht aus ähnlicher Demografie.
+   - **F010** (dünne Variable): nachkodieren, Material ergänzen oder die Variable streichen – nicht auf ihr clustern.
+   - **F011** (Ausreisser): eigene Persona, wenn Jobs oder Ziele ebenfalls abweichen; sonst als Ausprägung in `simulation.variance` der nächstgelegenen Persona. Die Entscheidung mit Factoid-IDs begründen.
+   - Dem User die vorgeschlagenen Häufungen mit Teilnehmer-Codes und den tragenden Factoid-IDs zeigen, bevor Dateien entstehen.
+4. **Skelett erzeugen:** `personakit skeleton factoids/<studie> -p <codes> --id <id> -a "<Archetyp>" -d personas/<set>`. Der Archetyp ist die erste Deutung: verhaltensbasiert, aus den Factoids der Häufung. Hinweise auf stderr ernst nehmen – «Frankenstein-Gefahr» heisst, die Auswahl mischt zwei Personas. Das Skelett enthält Variablen (Median), Evidenz, Zitate, `evidence_level` und den Abschnitt `## Herleitung`; Werte und Zitate nicht nachträglich «verbessern».
+5. **Deuten und belegen.** Im Skelett füllen: `context`, `behaviour.patterns`, `goals` (experience/end), `pains`, `jobs` als Job Stories mit Kräften, `anti_patterns`, `profile[]` nur mit `relevance`. Jede Aussage stützt sich auf Factoids der gewählten Teilnehmenden; die IDs gehören in `## Herleitung` als Zeilen wie `- Archetyp ← I02, I05`, `- J1 ← I09, B01`, `- pains[0] ← I03, I22`. Was kein Factoid trägt, gehört nach `assumptions` oder `unknowns`, nicht in die Persona.
+6. **Evidenz und Lücken prüfen.** `evidence_level` aus dem Skelett nicht hochstufen: Bei `proto` (weniger als 5 Interviews/Beobachtungen) `assumptions` füllen. `unknowns` immer füllen; vom Skelett gesetzte Einträge (unbelegte Variablen) stehen lassen.
+7. **Simulationsregeln schreiben.** `simulation.voice` aus den Zitaten ableiten, `must`, `must_not`, `variance`. `must_not` beschreibt, was ein LLM typischerweise falsch macht (zu kompetent, zu freundlich, Innensicht der Organisation, Fachbegriffe). `variance` aus der Spanne in `## Herleitung` und aus F011-Fällen: worin streuen reale Personen dieses Typs?
+8. **Szenario schreiben** (`## Szenario` im Body): eine konkrete Situation mit Zeit, Ort, Gerät, Auslöser und dem Satz «Die Lösung ist gut, wenn …» – gebaut aus Factoids, nicht erfunden.
+9. **Set zuordnen.** Jede Lösung hat ein Set `personas/<set-id>/set.yml`; die neue Persona dort mit ihrer Priorität für diese Lösung eintragen. Gilt sie für eine weitere Lösung, nicht kopieren, sondern im anderen Set über die `id` aufführen – mit der Priorität, die sie dort hat.
+10. **Lint laufen lassen** und alle ERROR beheben; WARN begründet stehen lassen oder beheben. Dann `list` bzw. `matrix` prüfen: genau eine primäre Persona pro Set.
+
+Ohne Material (nur Annahmen) entfallen Schritte 1–4: `personakit new` anlegen, `evidence_level: proto`, `assumptions` füllen, dann weiter bei 5. Zitate immer wörtlich übernehmen, nicht glätten. Werte auf Skalen nur setzen, wenn das Material sie trägt; sonst mittig lassen und in `unknowns` notieren.
 
 ## Ablauf: Persona anpassen
 
@@ -61,9 +71,12 @@ Wenn mehrere Personas als Voreinstellung gleichzeitig nötig sind, immer die pri
 - Keine demografischen Fakten ohne `relevance`; keine Fotos; Namen nur, wenn der User sie will.
 - Synthetische Antworten (simulate-Modus) werden als solche gekennzeichnet und nicht als Befund in `evidence` eingetragen – ausser als `type: assumption` mit entsprechender Note.
 - Beispiel-Personas im Repo sind synthetisch; sie beschreiben keine realen Erhebungen.
+- Factoid-Dateien enthalten nur Teilnehmer-Codes, nie Namen oder Kontaktdaten; `consent_note` ist gefüllt. Reale Studienordner bleiben ausserhalb von Git (`.gitignore`: `factoids/*` ausser `factoids/beispiel/`); Rohmaterial (Transkripte, Audio) wird nie ins Repo kopiert.
+- Keine Aussage in einer aus Factoids abgeleiteten Persona ohne Factoid-ID in `## Herleitung` – sonst ist sie eine Annahme und gehört nach `assumptions`.
 
 ## Referenzen
 
 - `references/elicitation.md` – Interviewleitfaden und Workshop-Ablauf für Proto-Personas
+- `factoids/beispiel/` – synthetische Studie: zwei Quellen, `variables.yml`, eine Häufung, ein Ausreisser
 - `docs/FORMAT.md` – Felder, Enums, Lint-Codes
 - `docs/METHOD.md` – Befunde und Designentscheide (Cooper, NN/g, JTBD, synthetische Nutzer)

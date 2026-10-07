@@ -25,7 +25,8 @@ The format encodes method, not layout: behaviour before demographics (Cooper), g
 - Exports: Markdown, card, JSON, YAML, prompt block, comparison matrix, single-file HTML gallery, JSON bundle
 - 41 lint rules for method (evidence hygiene, JTBD form, guardrails, lifecycle, one primary persona per set)
 - Sets per solution (`personas/<set>/set.yml`): the same persona can play a different role – with a different priority – in several solutions; lint rules for focus run per set
-- Claude skill `persona-kit` that derives personas from interviews, support logs and workshop notes
+- Factoid pipeline: research material as `factoids/<study>/*.factoids.md` (participant codes only, never names); `factoids` places participants on the behaviour variables and flags thin variables and outliers, `skeleton` pre-fills a persona from chosen participants (medians, evidence, quotes, evidence level)
+- Claude skill `persona-kit` that derives personas from interviews, support logs and workshop notes – counting via `factoids`/`skeleton`, interpretation backed by factoid IDs
 
 ### Demo
 
@@ -68,6 +69,10 @@ personakit render personas -f bundle -o personas.json
 # maintain
 personakit bump personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -p minor -m "added J3" --review-days 180
 personakit retire personas/old-persona.persona.md -m "replaced after new interviews"
+
+# from research material to a skeleton
+personakit factoids factoids/beispiel
+personakit skeleton factoids/beispiel -p p1,p3,p4,p6,p8 --id parents-draft -a "Newly arrived parents learning the school system from scratch"
 ```
 
 The example personas in [`personas/`](personas/) are **synthetic** (German, school-administration context) and do not document any real research.
@@ -75,6 +80,10 @@ The example personas in [`personas/`](personas/) are **synthetic** (German, scho
 ### Sets per solution
 
 A set groups the personas of one solution: `personas/<set-id>/set.yml` with `id`, `title`, `solution`, `scope`, `status` and `personas: [{id, priority}]`. Membership is declared only there, so one persona file can be listed by several sets, each with its own priority; the `priority` in the persona file is the default. Personas that no set lists form a loose set, so a repository without `set.yml` works as before. The examples show both: `elternkommunikation-schuleintritt` and `ki-leitplanken-lehrpersonen` share `schulleitung-entscheidungsorientiert` and `verwaltungs-insider`, and `lehrperson-ki-explorierend` is primary only in the second set. Details: [`docs/FORMAT.md`](docs/FORMAT.md#sets-setyml).
+
+### From research material to a persona
+
+The counting is a tool, the interpretation is not. A study folder `factoids/<study>/` holds one `<source_id>.factoids.md` per source – frontmatter (`source_id`, `type`, `date`, `n`, `consent_note`) and one table row per factoid (`id`, `participant`, `observation`, `variable`, `value`, `quote`) – plus an optional `variables.yml` with the scales and their anchors. `personakit factoids` places every participant on every variable and flags thin variables and participants that sit ≥ 2 points apart from everyone else on at least two variables. `personakit skeleton` turns the participants you choose into a draft persona; which participants form a persona, and its archetype, goals, jobs and simulation rules, stay with the person or the `persona-kit` skill, backed by factoid IDs. Participants appear as codes only; real study folders are excluded by `.gitignore`, only the synthetic [`factoids/beispiel/`](factoids/beispiel/) is versioned. Details: [`docs/FORMAT.md`](docs/FORMAT.md#factoids-factoidsmd).
 
 ## Available Commands
 
@@ -87,6 +96,8 @@ A set groups the personas of one solution: `personas/<set-id>/set.yml` with `id`
 | `list <paths>` | Overview table per set (priority in the set, status, evidence, version, review date) |
 | `bump <file>` | Raise the version, write a changelog entry, optionally change status, evidence level and review date |
 | `retire <file>` | Set status to `retired` with a changelog note |
+| `factoids <folder>` | Check a study folder of `*.factoids.md`: participant × variable matrix, distribution, thin variables (F010), outliers (F011); `--json` |
+| `skeleton <folder> -p … --id … -a …` | Persona skeleton from chosen participants: behaviour variables (medians), evidence, quotes, evidence level and a `## Herleitung` section with factoid IDs |
 
 ## Persona as input for other solutions
 
@@ -103,7 +114,7 @@ The prompt export carries the persona's guardrails: one concrete individual inst
 
 ## Configuration
 
-No configuration files beyond the optional `set.yml` per set. The schemas live in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`), the template in `src/personakit/templates/persona.template.md`.
+No configuration files beyond the optional `set.yml` per set and `variables.yml` per factoid study. The schemas live in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`, `factoids.schema.json`, `variables.schema.json`), the template in `src/personakit/templates/persona.template.md`.
 
 ## Project Structure
 
@@ -114,11 +125,13 @@ personakit/
 │   ├── model.py          # frontmatter round-trip (ruamel.yaml), sections
 │   ├── validate.py       # JSON-Schema validation
 │   ├── sets.py           # set.yml, per-set priority, loose set
+│   ├── factoids.py       # *.factoids.md, participant matrix, persona skeleton
 │   ├── lint.py           # 41 method rules
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
-│   ├── schema/           # persona.schema.json, set.schema.json
+│   ├── schema/           # persona, set, factoids, variables (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # four synthetic example personas in two sets (set.yml)
+├── factoids/beispiel/    # synthetic example study (real study folders are git-ignored)
 ├── skills/persona-kit/   # Claude skill + elicitation guide
 ├── docs/                 # METHOD.md, FORMAT.md, demo.png
 ├── scripts/              # validate_repo.py (repo structure check)
