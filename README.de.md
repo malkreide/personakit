@@ -25,7 +25,8 @@ Das Format kodiert Methodik, nicht Layout: Verhalten vor Demografie (Cooper), Zi
 - Exporte: Markdown, Karte, JSON, YAML, Prompt-Block, Vergleichsmatrix, HTML-Galerie als Single-File, JSON-Bundle
 - 41 Lint-Regeln für Methodik (Evidenz-Hygiene, JTBD-Form, Guardrails, Lebenszyklus, genau eine primäre Persona pro Set)
 - Sets pro Lösung (`personas/<set>/set.yml`): Dieselbe Persona kann in mehreren Lösungen eine andere Rolle – mit anderer Priorität – spielen; die Fokus-Regeln des Linters laufen pro Set
-- Claude-Skill `persona-kit`, der Personas aus Interviews, Support-Logs und Workshop-Notizen ableitet
+- Factoid-Pipeline: Erhebungsmaterial als `factoids/<studie>/*.factoids.md` (nur Teilnehmer-Codes, nie Namen); `factoids` verortet die Teilnehmenden auf den Verhaltensvariablen und meldet dünne Variablen und Ausreisser, `skeleton` füllt aus gewählten Teilnehmenden ein Persona-Skelett vor (Mediane, Evidenz, Zitate, Evidenzniveau)
+- Claude-Skill `persona-kit`, der Personas aus Interviews, Support-Logs und Workshop-Notizen ableitet – zählen über `factoids`/`skeleton`, deuten mit Verweis auf Factoid-IDs
 
 ### Demo
 
@@ -68,6 +69,10 @@ personakit render personas -f bundle -o personas.json
 # Pflegen
 personakit bump personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -p minor -m "J3 ergänzt" --review-days 180
 personakit retire personas/alte-persona.persona.md -m "Durch neue Interviews ersetzt"
+
+# Vom Erhebungsmaterial zum Skelett
+personakit factoids factoids/beispiel
+personakit skeleton factoids/beispiel -p p1,p3,p4,p6,p8 --id eltern-entwurf -a "Neu zugezogene Eltern, die das Schulsystem von null kennenlernen"
 ```
 
 Die Beispiel-Personas in [`personas/`](personas/) sind **synthetisch** (Kontext Schulverwaltung) und dokumentieren keine reale Erhebung.
@@ -75,6 +80,10 @@ Die Beispiel-Personas in [`personas/`](personas/) sind **synthetisch** (Kontext 
 ### Sets pro Lösung
 
 Ein Set fasst die Personas einer Lösung zusammen: `personas/<set-id>/set.yml` mit `id`, `title`, `solution`, `scope`, `status` und `personas: [{id, priority}]`. Die Mitgliedschaft steht nur dort; eine Persona-Datei kann deshalb in mehreren Sets vorkommen, jeweils mit eigener Priorität. `priority` in der Persona-Datei ist der Default. Personas, die kein Set nennt, bilden ein loses Set – ein Repo ohne `set.yml` funktioniert wie bisher. Die Beispiele zeigen beides: `elternkommunikation-schuleintritt` und `ki-leitplanken-lehrpersonen` teilen sich `schulleitung-entscheidungsorientiert` und `verwaltungs-insider`, und `lehrperson-ki-explorierend` ist nur im zweiten Set primär. Details: [`docs/FORMAT.md`](docs/FORMAT.md#sets-setyml).
+
+### Vom Erhebungsmaterial zur Persona
+
+Zählen ist Werkzeug, Deuten nicht. Ein Studienordner `factoids/<studie>/` enthält pro Quelle eine `<source_id>.factoids.md` – Frontmatter (`source_id`, `type`, `date`, `n`, `consent_note`) und eine Tabellenzeile pro Factoid (`id`, `participant`, `observation`, `variable`, `value`, `quote`) – sowie optional `variables.yml` mit den Skalen und ihren Ankern. `personakit factoids` verortet alle Teilnehmenden auf allen Variablen und meldet dünn belegte Variablen und Teilnehmende, die auf mindestens zwei Variablen ≥ 2 Punkte von allen anderen entfernt liegen. `personakit skeleton` macht aus den gewählten Teilnehmenden einen Persona-Entwurf; welche Teilnehmenden eine Persona bilden und was Archetyp, Ziele, Jobs und Simulationsregeln sind, entscheidet der Mensch oder die Skill `persona-kit` – belegt mit Factoid-IDs. Teilnehmende erscheinen nur als Codes; reale Studienordner schliesst `.gitignore` aus, versioniert ist nur das synthetische [`factoids/beispiel/`](factoids/beispiel/). Details: [`docs/FORMAT.md`](docs/FORMAT.md#factoids-factoidsmd).
 
 ## Verfügbare Befehle
 
@@ -87,6 +96,8 @@ Ein Set fasst die Personas einer Lösung zusammen: `personas/<set-id>/set.yml` m
 | `list <pfade>` | Übersichtstabelle pro Set (Priorität im Set, Status, Evidenz, Version, Review-Datum) |
 | `bump <datei>` | Version erhöhen, Changelog-Eintrag schreiben, optional Status, Evidenzniveau und Review-Datum setzen |
 | `retire <datei>` | Status auf `retired` setzen, mit Changelog-Notiz |
+| `factoids <ordner>` | Studienordner mit `*.factoids.md` prüfen: Matrix Teilnehmer × Variable, Verteilung, dünne Variablen (F010), Ausreisser (F011); `--json` |
+| `skeleton <ordner> -p … --id … -a …` | Persona-Skelett aus gewählten Teilnehmenden: Verhaltensvariablen (Median), Evidenz, Zitate, Evidenzniveau und Abschnitt `## Herleitung` mit Factoid-IDs |
 
 ## Persona als Input für andere Lösungen
 
@@ -103,7 +114,7 @@ Der Prompt-Export trägt die Guardrails der Persona mit: eine konkrete Einzelper
 
 ## Konfiguration
 
-Keine Konfigurationsdateien ausser der optionalen `set.yml` pro Set. Die Schemas liegen in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`), die Vorlage in `src/personakit/templates/persona.template.md`.
+Keine Konfigurationsdateien ausser der optionalen `set.yml` pro Set und `variables.yml` pro Factoid-Studie. Die Schemas liegen in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`, `factoids.schema.json`, `variables.schema.json`), die Vorlage in `src/personakit/templates/persona.template.md`.
 
 ## Projektstruktur
 
@@ -114,11 +125,13 @@ personakit/
 │   ├── model.py          # Frontmatter-Round-Trip (ruamel.yaml), Abschnitte
 │   ├── validate.py       # JSON-Schema-Validierung
 │   ├── sets.py           # set.yml, Priorität pro Set, loses Set
+│   ├── factoids.py       # *.factoids.md, Teilnehmer-Matrix, Persona-Skelett
 │   ├── lint.py           # 41 Methodik-Regeln
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
-│   ├── schema/           # persona.schema.json, set.schema.json
+│   ├── schema/           # Persona, Set, Factoids, Variablen (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # vier synthetische Beispiel-Personas in zwei Sets (set.yml)
+├── factoids/beispiel/    # synthetische Beispielstudie (reale Studienordner ignoriert Git)
 ├── skills/persona-kit/   # Claude-Skill + Erhebungsleitfaden
 ├── docs/                 # METHOD.md, FORMAT.md, demo.png
 ├── scripts/              # validate_repo.py (Repo-Strukturprüfung)

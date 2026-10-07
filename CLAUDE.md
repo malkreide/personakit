@@ -6,6 +6,8 @@ Evidenzbasierte Personas als versionierte Dateien `personas/<set-id>/<id>.person
 
 Module: `model.py` (Round-Trip, Abschnitte) → `validate.py` (JSON-Schema) → `sets.py` (`set.yml`, Priorität pro Set, loses Set) → `lint.py` (Methodik-Regeln) → `render.py` (Exporte) → `cli.py`.
 
+Factoids: `factoids.py` liest `factoids/<studie>/*.factoids.md` (+ `variables.yml`), prüft (F-Codes), verortet Teilnehmende und baut das Persona-Skelett. Werkzeug zählt, Deutung bleibt bei der Skill. Reale Studienordner sind per `.gitignore` ausgeschlossen; nur `factoids/beispiel/` (synthetisch) ist versioniert. Factoid-Dateien nur mit Teilnehmer-Codes, nie Namen.
+
 Sets: `personas/<set-id>/set.yml` fasst die Personas einer Lösung zusammen; die Mitgliedschaft steht nur dort, eine Persona-Datei existiert einmal und kann in mehreren Sets stehen.
 
 ## Gates – vor jedem Commit alle grün

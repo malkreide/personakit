@@ -50,6 +50,14 @@ Stockfotos und demografische Marker lösen Stereotype aus und führen zu exkludi
 
 → **Entscheid:** Kein Foto-Feld. `name` optional. `archetype` beschreibt Verhalten. Das Beispiel `eltern-neu-in-zuerich` kommt ohne Namen und ohne Herkunftsangabe aus – `variance` hält explizit fest, dass Herkunftsland und Beruf für die Gestaltung irrelevant sind.
 
+### 1.8 Vom Material zur Persona: zählen ist Werkzeug, deuten nicht
+
+Cooper leitet Personas in Schritten ab: Factoids aus dem Material ziehen, Verhaltensvariablen bilden, jede befragte Person auf jeder Variable verorten und dort, wo Teilnehmende auf mehreren Variablen gemeinsam liegen, eine Persona ansetzen. Die ersten Schritte sind Buchhaltung – wer sagt was, wo liegt wer, welche Variable ist kaum belegt. Hier passieren die stillen Fehler: Werte werden geschätzt statt gezählt, Ausreisser verschwinden im Mittel, und eine Persona wird aus Teilnehmenden zusammengesetzt, die sich widersprechen (Frankenstein-Persona, 1.3). Erst der letzte Schritt – welche Häufung eine Persona trägt, was sie will, welche Jobs sie hat, wie sie spricht – ist Deutung.
+
+Factoids sind zugleich der Teil der Pipeline, der Personendaten berührt. Rohmaterial gehört nicht ins Repo; Pseudonymisierung muss überprüfbar sein, nicht nur vereinbart.
+
+→ **Entscheid:** Factoids haben ein eigenes Format (`factoids/<studie>/<quelle>.factoids.md`, eine Tabellenzeile pro Factoid, `variables.yml` für die Skalen). `personakit factoids` verortet die Teilnehmenden (Median ihrer Factoids), meldet dünn belegte Variablen (F010) und Teilnehmende, die auf mindestens zwei Variablen ≥ 2 Punkte von allen anderen abliegen (F011) – dieselbe Schwelle wie die Abgrenzungsregel für Personas im Erhebungsleitfaden. `personakit skeleton` füllt nur Verhaltenswerte, Evidenz, Zitate und `evidence_level` (ab 5 Interviews/Beobachtungen `qualitative`) und warnt bei Frankenstein-Auswahlen; Archetyp, Ziele, Jobs und Simulationsregeln bleiben leer und werden im Abschnitt `## Herleitung` mit Factoid-IDs belegt. Teilnehmende erscheinen nur als Codes (F006), `consent_note` ist Pflicht, reale Studienordner sind per `.gitignore` ausgeschlossen.
+
 ## 2. Was das Format bewusst nicht enthält
 
 | Weggelassen | Grund |
@@ -73,7 +81,7 @@ Stockfotos und demografische Marker lösen Stereotype aus und führen zu exkludi
 ## 4. Arbeitsrhythmus
 
 1. **Anlegen** als `proto` mit expliziten `assumptions` – 2–4 h Workshop reichen.
-2. **Erden** durch 5–8 Interviews oder Support-Logs; `evidence` nachtragen, Variablen mit Evidenz-IDs versehen, `bump --evidence-level qualitative --status active`.
+2. **Erden** durch 5–8 Interviews oder Support-Logs: Factoids extrahieren, `personakit factoids` lesen, Häufungen bestimmen; `skeleton` für eine neue Persona oder `evidence` und Variablen einer bestehenden mit Evidenz-IDs nachführen, dann `bump --evidence-level qualitative --status active`.
 3. **Einsetzen** über Exporte; jede Entscheidung, die eine Persona referenziert, bleibt nachvollziehbar (ID + Version).
 4. **Review** vor `review_by`: Was hat sich bestätigt, was nicht? `bump` mit Changelog; bei Verhaltensänderung major, bei Ergänzung minor.
 5. **Ruhestand**, wenn Markt, Technologie oder Verhalten sich geändert haben – nie stillschweigend löschen.

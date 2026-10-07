@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/malkreide/personakit/schema/factoids.schema.json",
+  "title": "personakit Factoid-Quelle",
+  "description": "Frontmatter einer factoids/<studie>/<source_id>.factoids.md-Datei: eine Quelle (Interviewserie, Beobachtung, Log …), deren Factoids als Tabelle im Body stehen. Teilnehmende erscheinen nur als Codes, nie mit Namen.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["personakit", "source_id", "type", "date", "n", "consent_note"],
+  "properties": {
+    "personakit": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Schema-Version des Factoid-Formats."
+    },
+    "source_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stabiler Slug der Quelle. Muss dem Dateinamen entsprechen (<source_id>.factoids.md)."
+    },
+    "title": {
+      "type": "string",
+      "description": "Lesbarer Name der Quelle; wird im Skelett zu evidence[].source."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["interview", "observation", "survey", "analytics", "support-log", "workshop", "secondary", "assumption"],
+      "description": "Evidenz-Typ, wie in persona.schema.json."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum der Erhebung (bei Serien: Abschluss)."
+    },
+    "n": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Anzahl Teilnehmende bzw. Fälle der Quelle."
+    },
+    "consent_note": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Wie die Einwilligung eingeholt wurde und wie pseudonymisiert ist (wo liegt der Schlüssel Code → Person, wer hat Zugriff)."
+    },
+    "ref": {
+      "type": "string",
+      "description": "Verweis auf das Rohmaterial (Ablageort, nicht das Material selbst)."
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

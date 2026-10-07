@@ -18,3 +18,8 @@ venv/
 .ruff_cache/
 out/
 /*.html
+
+# Reale Factoid-Ordner (Erhebungsdaten mit Teilnehmer-Codes) nie einchecken.
+# Nur das synthetische Beispiel ist versioniert; reale Studien liegen lokal unter factoids/<studie>/.
+factoids/*
+!factoids/beispiel/

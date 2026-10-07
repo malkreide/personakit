@@ -1,0 +1,19 @@
+# BEISPIEL – synthetische Studie zur Demonstration des Factoid-Formats.
+# Skalen der Studie: Factoids verorten Teilnehmende auf diesen Variablen (1 = low, 5 = high).
+personakit: "1.0"
+variables:
+  - name: "Vertrautheit mit dem Schulsystem"
+    low: "kennt weder Stufen noch Zuständigkeiten"
+    high: "kennt Abläufe und Ansprechpersonen"
+  - name: "Digitale Routine"
+    low: "nutzt nur Messenger"
+    high: "erledigt Behördliches selbstverständlich online"
+  - name: "Deutsch (Behördensprache)"
+    low: "übersetzt jeden Satz"
+    high: "liest Amtsbriefe flüssig"
+  - name: "Fehlervermeidung vs. Ausprobieren"
+    low: "fragt lieber dreimal nach"
+    high: "probiert aus, korrigiert später"
+  - name: "Vertrauen in offizielle Kanäle"
+    low: "glaubt der Community mehr als der Behörde"
+    high: "Behördeninfo gilt als verbindlich"

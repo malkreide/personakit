@@ -158,3 +158,117 @@ X002–X004 laufen pro Set und für das lose Set; ein Set mit `status: retired` 
   {"level": "WARN", "code": "X003", "set": "elternkommunikation-schuleintritt", "persona": "", "message": "…"}
 ]
 ```
+
+## Factoids (`*.factoids.md`)
+
+Factoids sind die Brücke vom Material zur Persona: je eine beobachtbare Aussage aus einem Interview, einer Beobachtung, einem Log oder einer Umfrage, mit Quelle und Teilnehmer-Code, ohne Interpretation. Eine Studie ist ein Ordner `factoids/<studie>/` mit einer Datei pro Quelle und optional `variables.yml`. `personakit factoids` prüft den Ordner und verortet die Teilnehmenden auf den Verhaltensvariablen; `personakit skeleton` legt aus gewählten Teilnehmenden ein Persona-Skelett an. Was eine Persona *bedeutet* – Archetyp, Ziele, Jobs, Simulationsregeln –, bleibt Interpretation (Mensch oder Modell, siehe Skill `persona-kit`).
+
+```
+factoids/<studie>/
+├── variables.yml                      # optional: Skalen mit Ankern
+├── interviews-schuleintritt.factoids.md
+└── beobachtung-website.factoids.md
+```
+
+Synthetisches Beispiel: [`factoids/beispiel/`](../factoids/beispiel/).
+
+### Datei `<source_id>.factoids.md`
+
+Frontmatter, validiert gegen `schema/factoids.schema.json`:
+
+| Feld | Pflicht | Bedeutung |
+|---|:---:|---|
+| `personakit` | ✔ | Format-Version, aktuell `"1.0"` |
+| `source_id` | ✔ | Slug, muss dem Dateinamen entsprechen |
+| `title` | | Lesbarer Name; wird im Skelett zu `evidence[].source` (sonst `source_id`) |
+| `type` | ✔ | Evidenz-Typ wie in der Persona (`interview` · `observation` · `survey` · …) |
+| `date` | ✔ | Datum der Erhebung (bei Serien: Abschluss) |
+| `n` | ✔ | Anzahl Teilnehmende bzw. Fälle der Quelle |
+| `consent_note` | ✔ | Wie die Einwilligung eingeholt wurde und wo der Schlüssel Code → Person liegt (nicht im Repo) |
+| `ref` | | Ablageort des Rohmaterials – ein Verweis, nicht das Material |
+| `note` | | Freitext |
+
+Im Body steht **eine** Markdown-Tabelle (die erste Tabelle zählt), eine Zeile pro Factoid:
+
+| Spalte | Pflicht | Inhalt |
+|---|:---:|---|
+| `id` | ✔ | Eindeutig im ganzen Studienordner, z. B. `I01` (Interviews), `B01` (Beobachtung) |
+| `participant` | ✔ | Teilnehmer-Code: bis drei Buchstaben, optional `-`/`_`, eine Nummer (`p1`, `P07`, `ip-3`, `tn_12`). **Nie Namen.** Derselbe Code meint in allen Dateien des Ordners dieselbe Person |
+| `observation` | ✔ | Wörtlich (dann `quote: ja`) oder als Beobachtung ohne Deutung. `\|` im Text als `\\|` schreiben |
+| `variable` | | Name der Verhaltensvariable, auf die das Factoid einzahlt |
+| `value` | | 1–5 auf dieser Variable; nur zusammen mit `variable` |
+| `quote` | | `ja`/`nein` (auch `yes`/`no`, `true`/`false`, `x`, leer = nein) |
+
+```markdown
+| id | participant | observation | variable | value | quote |
+|---|---|---|---|---|---|
+| I09 | p3 | «Ich habe den Brief dreimal übersetzt …» | Deutsch (Behördensprache) | 2 | ja |
+| I16 | p4 | Betreuung ist die dringendste Frage. | | | nein |
+```
+
+Dateien mit CRLF und UTF-8-BOM werden gelesen.
+
+### `variables.yml` (optional)
+
+```yaml
+personakit: "1.0"
+variables:
+  - name: "Digitale Routine"
+    low: "nutzt nur Messenger"                          # Anker für 1
+    high: "erledigt Behördliches selbstverständlich online"  # Anker für 5
+```
+
+Validiert gegen `schema/variables.schema.json`. Ist die Datei vorhanden, sind nur diese Variablen erlaubt (Tippfehler werden zu F008), die Reihenfolge gilt für Matrix und Skelett, und die Anker gehen nach `behaviour.variables[].low/high`. Ohne Datei gilt jede Variable, die in einer Tabelle vorkommt, und die Anker bleiben leer (Lint B003).
+
+### `personakit factoids <ordner>`
+
+Liest alle `*.factoids.md` direkt im Ordner (nicht rekursiv: ein Ordner = eine Studie, Codes sind nur innerhalb einer Studie eindeutig) und schreibt einen Markdown-Bericht auf stdout:
+
+- **Quellen** – Typ, Datum, n, Teilnehmer-Codes, Anzahl Factoids und Zitate.
+- **Verortung** – Matrix Variable × Teilnehmer. Ein Teilnehmer mit mehreren Factoids auf derselben Variable steht beim Median seiner Werte (z. B. `2.5`).
+- **Verteilung** – je Variable, welche Teilnehmenden auf welcher Stufe liegen. Hier werden Häufungen sichtbar.
+- **Befunde** – siehe Codes unten.
+
+`--json` liefert dasselbe maschinenlesbar (`sources`, `participants`, `variables`, `positions`, `findings`). Exit-Code 0 ohne Fehler, 1 bei Fehlern (mit `--strict` auch bei Warnungen), 2 bei Pfadfehlern.
+
+### `personakit skeleton <ordner> --participants p1,p3,p7 --id <persona-id> -a "<Archetyp>"`
+
+Legt `personas/<persona-id>.persona.md` (`--dir` ändert den Ordner) aus der Vorlage an und füllt nur, was sich aus den Factoids der gewählten Teilnehmenden ableiten lässt:
+
+| Feld | Herkunft |
+|---|---|
+| `behaviour.variables` | Je Variable der Median über die Gewählten (je Teilnehmer zuerst der Median seiner Factoids); liegt er genau zwischen zwei Stufen, gilt die Stufe näher bei 3. Anker aus `variables.yml`; `evidence` = Quelle mit den meisten Factoids auf dieser Variable |
+| `evidence[]` | Eine Quelle pro Datei, die Factoids der Gewählten enthält (Interviews und Beobachtungen zuerst). `n` = Anzahl gewählter Teilnehmender in dieser Quelle, `note` nennt Codes und das `n` der Quelle, `ref` den Pfad der Factoid-Datei |
+| `quotes[]` | Alle Factoids der Gewählten mit `quote: ja`, äussere Anführungszeichen entfernt, mit Evidenz-ID |
+| `evidence_level` | `qualitative` ab 5 Gewählten mit Interview oder Beobachtung, sonst `proto` (dann verlangt Lint E001 `assumptions`) |
+| `unknowns` | Variablen, auf denen keiner der Gewählten verortet ist |
+| `## Herleitung` | Tabelle Variable · Wert · Median · Spanne · Teilnehmende · Factoid-IDs, die Zitat-IDs und Hinweise. Hier belegt die Interpretation später jede Aussage mit Factoid-IDs |
+
+Alles andere – Archetyp-Formulierung, `context`, `goals`, `pains`, `jobs`, `anti_patterns`, `simulation`, Szenario – bleibt leer bzw. Vorlage. Das Skelett hat `status: draft` und `version: 0.1.0`. Der Archetyp ist wie bei `new` Pflicht (fehlt er, wird im Terminal nachgefragt).
+
+`skeleton` bricht ab, wenn der Ordner Fehler hat (Exit 1) oder ein Code unbekannt ist (Exit 2). Hinweise auf stderr (und im Abschnitt `## Herleitung`): weniger als 5 Interviews, Variablen, die bei weniger als der Hälfte der Gewählten belegt sind, und **Frankenstein-Gefahr** – zwei Gewählte, die auf mindestens zwei Variablen ≥ 2 Punkte auseinanderliegen (nach der Abgrenzungsregel in `skills/persona-kit/references/elicitation.md` eher zwei Personas).
+
+### Datenschutz
+
+- Factoid-Dateien enthalten nur Teilnehmer-Codes. Der Schlüssel Code → Person liegt ausserhalb des Repos; `consent_note` sagt wo. F006 weist alles zurück, was nicht wie ein Code aussieht, und gibt den Zelleninhalt dabei nicht aus.
+- Reale Studienordner werden nicht eingecheckt: `.gitignore` schliesst `factoids/*` aus und lässt nur `factoids/beispiel/` zu. Wer reale Factoids teilen muss, tut das über die Ablage der Erhebung, nicht über Git.
+- Auch `observation` kann identifizieren (Beruf, Ort, seltene Umstände). Beim Extrahieren so formulieren, dass die Aussage ohne diese Details trägt.
+
+### Factoid-Befunde
+
+| Code | Stufe | Regel |
+|---|---|---|
+| F000 | ERROR | Datei nicht lesbar (kein Frontmatter, kein Mapping, nicht UTF-8; auch `variables.yml`) |
+| F001 | ERROR | Verstoss gegen `factoids.schema.json` bzw. `variables.schema.json` (oder Variable doppelt definiert) |
+| F002 | ERROR | Dateiname ≠ `<source_id>.factoids.md` |
+| F003 | ERROR | `source_id` mehrfach im Ordner |
+| F004 | ERROR | Keine Factoid-Tabelle, Pflichtspalte fehlt, unbekannte Spalte oder Tabelle ohne Zeilen |
+| F005 | ERROR | Zeile ungültig: Zellenzahl, leere Pflichtzelle, ungültige `id`, `value` nicht 1–5 oder ohne `variable`, `quote` kein Wahrheitswert |
+| F006 | ERROR | `participant` ist kein Teilnehmer-Code (Datenschutz: nie Namen) |
+| F007 | ERROR | Factoid-`id` mehrfach im Studienordner |
+| F008 | ERROR | Variable steht nicht in `variables.yml` (nur wenn die Datei existiert) |
+| F009 | WARN | Mehr Teilnehmer-Codes in einer Quelle als ihr `n` |
+| F010 | WARN | Variable bei weniger als 3 oder weniger als der Hälfte der Teilnehmenden verortet – zu dünn für Häufungen |
+| F011 | INFO | Teilnehmer liegt auf mindestens zwei Variablen ≥ 2 Punkte von **allen** anderen entfernt – Kandidat für eine eigene Persona oder für `simulation.variance` |
+
+F011 prüft wörtlich «von allen anderen»: Zwei Teilnehmende, die gemeinsam abseits liegen, bilden eine Häufung, keinen Ausreisser – sie zeigt die Verteilung, nicht dieser Befund. Die Schwellen (≥ 2 Punkte auf ≥ 2 Variablen) sind dieselben wie die Abgrenzungsregel für Personas im Erhebungsleitfaden; die 5 für `qualitative` folgt NN/g (`docs/METHOD.md`, 1.3).

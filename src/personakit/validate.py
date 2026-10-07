@@ -1,4 +1,4 @@
-"""JSON-Schema validation of persona frontmatter and set files."""
+"""JSON-Schema validation of persona frontmatter, set files and factoid files."""
 
 from __future__ import annotations
 
@@ -27,6 +27,11 @@ def load_set_schema() -> dict[str, Any]:
     return _read_schema("set.schema.json")
 
 
+@lru_cache(maxsize=4)
+def _named_validator(name: str) -> Draft202012Validator:
+    return Draft202012Validator(_read_schema(name), format_checker=FormatChecker())
+
+
 @lru_cache(maxsize=1)
 def _validator() -> Draft202012Validator:
     return Draft202012Validator(load_schema(), format_checker=FormatChecker())
@@ -53,3 +58,13 @@ def validate(persona: Persona) -> list[str]:
 def validate_set(data: dict[str, Any]) -> list[str]:
     """Schema violations of a plain ``set.yml`` mapping (empty = valid)."""
     return _messages(_set_validator(), data)
+
+
+def validate_factoids(data: dict[str, Any]) -> list[str]:
+    """Schema violations of the frontmatter of a ``*.factoids.md`` file (empty = valid)."""
+    return _messages(_named_validator("factoids.schema.json"), data)
+
+
+def validate_variables(data: dict[str, Any]) -> list[str]:
+    """Schema violations of a plain ``variables.yml`` mapping (empty = valid)."""
+    return _messages(_named_validator("variables.schema.json"), data)
