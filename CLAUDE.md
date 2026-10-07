@@ -33,4 +33,4 @@ python scripts/validate_repo.py .
 
 ## Offen
 
-Siehe `.github/repo-meta.yml` → `offen` (Topics, Secret Scanning, PyPI).
+Siehe `.github/repo-meta.yml` → `offen` (PyPI).
