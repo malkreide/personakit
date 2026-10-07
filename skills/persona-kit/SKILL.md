@@ -14,7 +14,8 @@ pip install -e .                      # einmalig im Repo
 personakit new <id> -a "<Archetyp>"   # Vorlage mit Kommentaren anlegen
 personakit lint personas              # Schema + Methodik-Regeln (Exit 1 bei Fehlern)
 personakit render <datei> -f md|card|json|yaml|prompt [-m simulate|audience]
-personakit render personas -f matrix|html|bundle
+personakit render personas -f matrix|html|bundle   # nach Set gruppiert
+personakit list personas                            # Übersicht pro Set
 personakit bump <datei> -p minor -m "…" [--status active --evidence-level qualitative --review-days 180]
 personakit retire <datei> -m "…"
 ```
@@ -29,7 +30,8 @@ Ohne installiertes Paket: `python -m personakit.cli …` mit `PYTHONPATH=src`.
 4. **Evidenz und Lücken dokumentieren.** `evidence[]` mit Typ, Datum, n. `evidence_level` ehrlich setzen: Ohne Primärforschung ist es `proto`, dann sind `assumptions` Pflicht. `unknowns` immer füllen.
 5. **Simulationsregeln schreiben.** `simulation.voice`, `must`, `must_not`, `variance`. `must_not` beschreibt, was ein LLM typischerweise falsch macht (zu kompetent, zu freundlich, Innensicht der Organisation, Fachbegriffe). `variance` benennt, worin reale Personen dieses Typs streuen.
 6. **Szenario schreiben** (`## Szenario` im Body): eine konkrete Situation mit Zeit, Ort, Gerät, Auslöser und dem Satz «Die Lösung ist gut, wenn …».
-7. **Lint laufen lassen** und alle ERROR beheben; WARN begründet stehen lassen oder beheben. Dann `list` bzw. `matrix` prüfen: genau eine primäre Persona pro Lösung.
+7. **Set zuordnen.** Jede Lösung hat ein Set `personas/<set-id>/set.yml`; die neue Persona dort mit ihrer Priorität für diese Lösung eintragen. Gilt sie für eine weitere Lösung, nicht kopieren, sondern im anderen Set über die `id` aufführen – mit der Priorität, die sie dort hat.
+8. **Lint laufen lassen** und alle ERROR beheben; WARN begründet stehen lassen oder beheben. Dann `list` bzw. `matrix` prüfen: genau eine primäre Persona pro Set.
 
 Beim Ableiten aus Material: Zitate wörtlich übernehmen, nicht glätten. Werte auf Skalen nur setzen, wenn das Material sie trägt; sonst mittig lassen und in `unknowns` notieren.
 

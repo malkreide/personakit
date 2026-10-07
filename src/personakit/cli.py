@@ -13,9 +13,10 @@ from pathlib import Path
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as DQ
 
 from . import __version__
-from .lint import ERROR, WARN, Finding, lint_persona, lint_set, sort_findings
-from .model import SUFFIX, Persona, PersonaError, find_persona_files, load_many, today, write_text
+from .lint import ERROR, WARN, Finding, lint_persona, lint_sets, sort_findings
+from .model import SUFFIX, Persona, PersonaError, find_persona_files, today, write_text
 from .render import SET_FORMATS, SINGLE_FORMATS, render, render_list, render_set
+from .sets import Group, load_sets, load_workspace
 from .validate import load_schema, validate
 
 
@@ -38,13 +39,23 @@ def _out(text: str, target: str | None) -> None:
 def _print_findings(findings: list[Finding], as_json: bool = False) -> None:
     if as_json:
         rows = [
-            {"level": f.level, "code": f.code, "persona": f.persona, "message": f.message}
+            {"level": f.level, "code": f.code, "set": f.set_id, "persona": f.persona, "message": f.message}
             for f in sort_findings(findings)
         ]
         print(json.dumps(rows, ensure_ascii=False, indent=2))
         return
     for f in sort_findings(findings):
         print(str(f))
+
+
+def _warn_unresolved(groups: list[Group]) -> None:
+    """Exports skip set members that cannot be resolved – say so instead of dropping them silently."""
+    for g in groups:
+        for pid in g.unknown:
+            print(
+                f"Hinweis: Set «{g.id}» nennt unbekannte oder ungültige Persona «{pid}» (Details: personakit lint)",
+                file=sys.stderr,
+            )
 
 
 def _utf8_streams() -> None:
@@ -139,8 +150,10 @@ def cmd_lint(a: argparse.Namespace) -> int:
         if not schema_errs:
             findings.extend(lint_persona(p))
             personas.append(p)
-    if len(personas) > 1 or any(Path(x).is_dir() for x in a.paths):
-        findings.extend(lint_set(personas))
+    sets, set_errors = load_sets(a.paths)
+    findings.extend(Finding(ERROR, "X000", msg, set_id=path.parent.name) for path, msg in set_errors)
+    if sets or len(personas) > 1 or any(Path(x).is_dir() for x in a.paths):
+        findings.extend(lint_sets(personas, sets))
     if a.min_level == "warn":
         findings = [f for f in findings if f.level in (ERROR, WARN)]
     elif a.min_level == "error":
@@ -148,7 +161,8 @@ def cmd_lint(a: argparse.Namespace) -> int:
     _print_findings(findings, as_json=a.json)
     n_err = sum(1 for f in findings if f.level == ERROR)
     n_warn = sum(1 for f in findings if f.level == WARN)
-    print(f"— {len(personas)} Persona(s): {n_err} Fehler, {n_warn} Warnungen", file=sys.stderr)
+    in_sets = f" in {len(sets)} Set(s)" if sets else ""
+    print(f"— {len(personas)} Persona(s){in_sets}: {n_err} Fehler, {n_warn} Warnungen", file=sys.stderr)
     if n_err or (a.strict and n_warn):
         return 1
     return 0
@@ -157,8 +171,9 @@ def cmd_lint(a: argparse.Namespace) -> int:
 def cmd_render(a: argparse.Namespace) -> int:
     fmt = a.format
     if fmt in SET_FORMATS:
-        personas = load_many(a.paths)
-        _out(render_set(personas, fmt, title=a.title), a.output)
+        personas, groups = load_workspace(a.paths)
+        _warn_unresolved(groups)
+        _out(render_set(personas, fmt, groups=groups, title=a.title), a.output)
         return 0
     files = find_persona_files(a.paths)
     if len(files) == 1:
@@ -186,8 +201,9 @@ def cmd_render(a: argparse.Namespace) -> int:
 
 
 def cmd_list(a: argparse.Namespace) -> int:
-    personas = load_many(a.paths)
-    _out(render_list(personas), a.output)
+    personas, groups = load_workspace(a.paths)
+    _warn_unresolved(groups)
+    _out(render_list(personas, groups), a.output)
     return 0
 
 
@@ -256,7 +272,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--json", action="store_true", help="Findings als JSON-Liste auf stdout (für CI und Werkzeuge)")
     s.set_defaults(func=cmd_lint)
 
-    s = sub.add_parser("render", help="Exportieren: md|card|json|yaml|prompt (einzeln) oder matrix|html|bundle (Set)")
+    s = sub.add_parser(
+        "render", help="Exportieren: md|card|json|yaml|prompt (einzeln) oder matrix|html|bundle (nach Set gruppiert)"
+    )
     s.add_argument("paths", nargs="+")
     s.add_argument("--format", "-f", choices=SINGLE_FORMATS + SET_FORMATS, default="md")
     s.add_argument("--mode", "-m", choices=["simulate", "audience"], default="simulate", help="Nur für prompt")
@@ -264,7 +282,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--output", "-o", default=None, help="Datei (einzeln/Set) oder Ordner (mehrere Einzel-Exporte)")
     s.set_defaults(func=cmd_render)
 
-    s = sub.add_parser("list", help="Übersichtstabelle")
+    s = sub.add_parser("list", help="Übersichtstabelle, nach Set gruppiert")
     s.add_argument("paths", nargs="+")
     s.add_argument("--output", "-o", default=None)
     s.set_defaults(func=cmd_list)

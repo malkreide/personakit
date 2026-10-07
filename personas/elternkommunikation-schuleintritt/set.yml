@@ -1,0 +1,14 @@
+personakit: "1.0"
+id: elternkommunikation-schuleintritt
+title: "Elternkommunikation Schuleintritt"
+solution: "Information und Anmeldung rund um Kindergarten- und Schuleintritt (Website, Briefe, Chat-Assistent)"
+scope: "Gilt für die ersten Kontakte des Schulamts mit Eltern vor und beim Eintritt. Gilt nicht für die laufende Kommunikation zwischen Schule und Eltern."
+status: active
+owner: "Marketing und Kommunikation"
+personas:
+  - id: eltern-neu-in-zuerich
+    priority: primary
+  - id: schulleitung-entscheidungsorientiert
+    priority: secondary
+  - id: verwaltungs-insider
+    priority: negative

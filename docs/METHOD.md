@@ -34,7 +34,9 @@ Pruitt/Adlin beschreiben den Persona Lifecycle von der «Familienplanung» bis z
 
 Cooper: Ein Produkt, das für alle funktionieren will, funktioniert für niemanden. Genau eine primäre Persona muss zwingend zufrieden sein; sekundäre dürfen nicht frustriert werden. Negative Personas sparen Ressourcen, indem sie sagen, für wen nicht gebaut wird – und sie schützen vor selbstreferenziellem Design.
 
-→ **Entscheid:** `priority` (primary/secondary/supplemental/negative), `scope` (wofür die Persona gilt und wofür nicht). Set-Lint prüft genau eine primäre Persona (X002/X003) und warnt ab sechs aktiven (X004). Die Beispiel-Persona `verwaltungs-insider` zeigt die negative Persona als Gegenprobe.
+Die Priorität ist keine Eigenschaft der Person, sondern ihrer Beziehung zu einer Lösung: Dieselbe Lehrperson ist für KI-Leitplanken primär, für die Elternkommunikation höchstens ergänzend. Wer die Priorität global festschreibt, muss für jede weitere Lösung eine Kopie der Persona anlegen – und Kopien laufen auseinander.
+
+→ **Entscheid:** `priority` (primary/secondary/supplemental/negative), `scope` (wofür die Persona gilt und wofür nicht). Ein **Set** (`personas/<set-id>/set.yml`) fasst die Personas einer Lösung zusammen und vergibt die Priorität pro Lösung; `priority` in der Persona-Datei ist der Default. Set-Lint prüft pro Set genau eine primäre Persona (X002/X003) und warnt ab sechs aktiven (X004). IDs und Relationen werden repo-weit geprüft (X001/X005), weil sie zur Persona gehören, nicht zur Lösung. Die Beispiel-Persona `verwaltungs-insider` zeigt die negative Persona als Gegenprobe – in zwei Sets, ohne Kopie.
 
 ### 1.6 Synthetische Nutzer: nützlich, aber systematisch verzerrt
 
@@ -66,7 +68,7 @@ Stockfotos und demografische Marker lösen Stereotype aus und führen zu exkludi
 | User Journeys (journeykit) | `render -f json` oder `bundle` | Persona-ID als Akteur; Jobs als Journey-Treiber |
 | Priorisierung von Features/Massnahmen | `render -f matrix` | Opportunity-Score pro Job; primäre Persona entscheidet bei Konflikt |
 | Dokumentation (Notion, Confluence, Wiki) | `render -f md` / `card` | Card für Übersichten, md für Detailseiten |
-| Team-Kommunikation | `render -f html` | Galerie als Single-File, offline, Filter nach Priorität/Status |
+| Team-Kommunikation | `render -f html` | Galerie als Single-File, offline, gruppiert nach Set, Filter nach Set/Priorität/Status |
 
 ## 4. Arbeitsrhythmus
 

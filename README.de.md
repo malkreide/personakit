@@ -23,12 +23,13 @@ Das Format kodiert Methodik, nicht Layout: Verhalten vor Demografie (Cooper), Zi
 - Lebenszyklus: SemVer, Status, Review-Datum, Changelog – `bump` und `retire` pflegen das mit sauberen Git-Diffs
 - `simulation`-Block (Stimme, Muss, Darf nicht, Varianz), den der Prompt-Export im Modus `simulate` oder `audience` injiziert
 - Exporte: Markdown, Karte, JSON, YAML, Prompt-Block, Vergleichsmatrix, HTML-Galerie als Single-File, JSON-Bundle
-- 35 Lint-Regeln für Methodik (Evidenz-Hygiene, JTBD-Form, Guardrails, Lebenszyklus, genau eine primäre Persona pro Set)
+- 41 Lint-Regeln für Methodik (Evidenz-Hygiene, JTBD-Form, Guardrails, Lebenszyklus, genau eine primäre Persona pro Set)
+- Sets pro Lösung (`personas/<set>/set.yml`): Dieselbe Persona kann in mehreren Lösungen eine andere Rolle – mit anderer Priorität – spielen; die Fokus-Regeln des Linters laufen pro Set
 - Claude-Skill `persona-kit`, der Personas aus Interviews, Support-Logs und Workshop-Notizen ableitet
 
 ### Demo
 
-![HTML-Galerie der Beispiel-Personas mit Verhaltensskalen und Detailansicht](docs/demo.png)
+![HTML-Galerie der Beispiel-Personas, nach Set gruppiert, mit Verhaltensskalen](docs/demo.png)
 
 ## Voraussetzungen
 
@@ -58,18 +59,22 @@ personakit list personas
 personakit render personas -f matrix
 
 # Exportieren
-personakit render personas/eltern-neu-in-zuerich.persona.md -f md
-personakit render personas/eltern-neu-in-zuerich.persona.md -f prompt -m audience   # Zielpublikum-Voreinstellung
-personakit render personas/eltern-neu-in-zuerich.persona.md -f prompt -m simulate   # synthetische Gegenprobe
+personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -f md
+personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -f prompt -m audience   # Zielpublikum-Voreinstellung
+personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -f prompt -m simulate   # synthetische Gegenprobe
 personakit render personas -f html -o personas.html
 personakit render personas -f bundle -o personas.json
 
 # Pflegen
-personakit bump personas/eltern-neu-in-zuerich.persona.md -p minor -m "J3 ergänzt" --review-days 180
+personakit bump personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -p minor -m "J3 ergänzt" --review-days 180
 personakit retire personas/alte-persona.persona.md -m "Durch neue Interviews ersetzt"
 ```
 
 Die Beispiel-Personas in [`personas/`](personas/) sind **synthetisch** (Kontext Schulverwaltung) und dokumentieren keine reale Erhebung.
+
+### Sets pro Lösung
+
+Ein Set fasst die Personas einer Lösung zusammen: `personas/<set-id>/set.yml` mit `id`, `title`, `solution`, `scope`, `status` und `personas: [{id, priority}]`. Die Mitgliedschaft steht nur dort; eine Persona-Datei kann deshalb in mehreren Sets vorkommen, jeweils mit eigener Priorität. `priority` in der Persona-Datei ist der Default. Personas, die kein Set nennt, bilden ein loses Set – ein Repo ohne `set.yml` funktioniert wie bisher. Die Beispiele zeigen beides: `elternkommunikation-schuleintritt` und `ki-leitplanken-lehrpersonen` teilen sich `schulleitung-entscheidungsorientiert` und `verwaltungs-insider`, und `lehrperson-ki-explorierend` ist nur im zweiten Set primär. Details: [`docs/FORMAT.md`](docs/FORMAT.md#sets-setyml).
 
 ## Verfügbare Befehle
 
@@ -77,9 +82,9 @@ Die Beispiel-Personas in [`personas/`](personas/) sind **synthetisch** (Kontext 
 |---|---|
 | `new <id> -a …` | Persona-Datei aus der kommentierten Vorlage anlegen; der Archetyp ist Pflicht (fehlt er, wird nachgefragt) |
 | `validate <pfade>` | Frontmatter gegen das JSON-Schema prüfen |
-| `lint <pfade>` | Schema plus 35 Methodik-Regeln; Exit-Code 1 bei Fehlern (`--strict` auch bei Warnungen), `--json` für CI und andere Werkzeuge |
-| `render <pfade> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (pro Persona) oder `matrix`, `html`, `bundle` (pro Set) |
-| `list <pfade>` | Übersichtstabelle (Priorität, Status, Evidenz, Version, Review-Datum) |
+| `lint <pfade>` | Schema plus 41 Methodik-Regeln; Exit-Code 1 bei Fehlern (`--strict` auch bei Warnungen), `--json` für CI und andere Werkzeuge |
+| `render <pfade> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (pro Persona) oder `matrix`, `html`, `bundle` (nach Set gruppiert) |
+| `list <pfade>` | Übersichtstabelle pro Set (Priorität im Set, Status, Evidenz, Version, Review-Datum) |
 | `bump <datei>` | Version erhöhen, Changelog-Eintrag schreiben, optional Status, Evidenzniveau und Review-Datum setzen |
 | `retire <datei>` | Status auf `retired` setzen, mit Changelog-Notiz |
 
@@ -98,7 +103,7 @@ Der Prompt-Export trägt die Guardrails der Persona mit: eine konkrete Einzelper
 
 ## Konfiguration
 
-Keine Konfigurationsdateien. Das Schema liegt in `src/personakit/schema/persona.schema.json`, die Vorlage in `src/personakit/templates/persona.template.md`.
+Keine Konfigurationsdateien ausser der optionalen `set.yml` pro Set. Die Schemas liegen in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`), die Vorlage in `src/personakit/templates/persona.template.md`.
 
 ## Projektstruktur
 
@@ -108,11 +113,12 @@ personakit/
 │   ├── cli.py            # argparse-CLI
 │   ├── model.py          # Frontmatter-Round-Trip (ruamel.yaml), Abschnitte
 │   ├── validate.py       # JSON-Schema-Validierung
-│   ├── lint.py           # 35 Methodik-Regeln
+│   ├── sets.py           # set.yml, Priorität pro Set, loses Set
+│   ├── lint.py           # 41 Methodik-Regeln
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
-│   ├── schema/           # persona.schema.json
+│   ├── schema/           # persona.schema.json, set.schema.json
 │   └── templates/        # persona.template.md
-├── personas/             # vier synthetische Beispiel-Personas
+├── personas/             # vier synthetische Beispiel-Personas in zwei Sets (set.yml)
 ├── skills/persona-kit/   # Claude-Skill + Erhebungsleitfaden
 ├── docs/                 # METHOD.md, FORMAT.md, demo.png
 ├── scripts/              # validate_repo.py (Repo-Strukturprüfung)

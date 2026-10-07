@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/malkreide/personakit/schema/set.schema.json",
+  "title": "personakit Set",
+  "description": "Personas einer Lösung: personas/<set-id>/set.yml. Die Mitgliedschaft steht nur hier; die Priorität gilt pro Set und überschreibt den Default aus der Persona-Datei.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["personakit", "id", "title", "status", "personas"],
+  "properties": {
+    "personakit": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Schema-Version des Set-Formats."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stabiler Slug. Muss dem Ordnernamen entsprechen (personas/<id>/set.yml)."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Lesbarer Name des Sets."
+    },
+    "solution": {
+      "type": "string",
+      "description": "Die Lösung, für die das Set gilt (Produkt, Kanal, Vorhaben)."
+    },
+    "scope": {
+      "type": "string",
+      "description": "Wofür das Set gilt – und wofür nicht."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "retired"],
+      "description": "Lebenszyklus des Sets; ein Set im Ruhestand wird von den Set-Regeln übersprungen."
+    },
+    "owner": {
+      "type": "string",
+      "description": "Verantwortlich für die Pflege des Sets."
+    },
+    "personas": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Mitglieder des Sets mit ihrer Priorität in dieser Lösung.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "description": "id einer Persona; die Datei darf in einem beliebigen Ordner unter dem Personas-Stamm liegen."
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["primary", "secondary", "supplemental", "negative"],
+            "description": "Priorität in diesem Set. Fehlt sie, gilt priority aus der Persona-Datei."
+          }
+        }
+      }
+    }
+  }
+}

@@ -14,6 +14,7 @@ from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 SUFFIX = ".persona.md"
+SET_FILE = "set.yml"  # marks a set folder, see sets.py
 BOM = "\ufeff"
 _FRONTMATTER_RE = re.compile(r"\A---[ \t]*\r?\n(.*?)\r?\n---[ \t]*(?=\r?\n|\Z)", re.DOTALL)
 
@@ -188,7 +189,8 @@ def find_persona_files(paths: Iterable[str | Path]) -> list[Path]:
         if p.is_dir():
             out.extend(sorted(p.rglob(f"*{SUFFIX}")))
         elif p.is_file():
-            out.append(p)
+            if p.name != SET_FILE:  # set files are passed along with persona paths, loaded by sets.py
+                out.append(p)
         else:
             raise PersonaError(f"Pfad nicht gefunden: {p}")
     # de-duplicate, keep order
