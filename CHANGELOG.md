@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-07
+
 ### Added
+- `personakit.api` for tools that embed personakit (groundwork for `personakit-mcp`): `load_workspace_tolerant(paths)` returns valid personas, sets and groups and reports unreadable files (`P000`), schema violations (`SCHEMA`) and broken `set.yml` (`X000`) as `problems` with their path instead of stopping at the first one; `lint_workspace(paths)` returns a `LintReport` (findings, linted personas and sets) with exactly the checks of `personakit lint`
 - Factoid format `factoids/<study>/<source_id>.factoids.md`: frontmatter (`source_id`, `type`, `date`, `n`, `consent_note`, optional `title`, `ref`, `note`) validated against the new `schema/factoids.schema.json`, and one Markdown table row per factoid (`id`, `participant`, `observation`, `variable`, `value` 1–5, `quote`); optional `variables.yml` per study with scales and anchors (`schema/variables.schema.json`). The persona format stays at `1.0`
 - `personakit factoids <folder>`: checks a study folder (F000–F009) and reports sources, a participant × variable matrix (median per participant), the distribution per scale step, thin variables (F010) and participants ≥ 2 points apart from all others on at least two variables (F011); `--json`, `--strict`
 - `personakit skeleton <folder> --participants … --id … -a …`: persona skeleton from chosen participants with `behaviour.variables` (medians, anchors), `evidence` per source, `quotes` from factoids marked as quote, `evidence_level` by number of interviews/observations (≥ 5 → `qualitative`, else `proto`), unplaced variables as `unknowns` and a `## Herleitung` section with factoid IDs; hints for thin variables and Frankenstein selections
@@ -24,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lint codes `P000` and `SCHEMA` documented in `docs/FORMAT.md`
 
 ### Changed
+- `personakit lint` runs through `personakit.api.lint_workspace`; output and exit codes unchanged
 - The four example personas moved to `personas/elternkommunikation-schuleintritt/`; a second set `ki-leitplanken-lehrpersonen` shares two of them and makes `lehrperson-ki-explorierend` primary
 - X001 and X005 are checked across all linted personas (sets reference personas by id; relations belong to the persona, not to a set)
 

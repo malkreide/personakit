@@ -1,6 +1,6 @@
 # personakit
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Version](https://img.shields.io/badge/version-0.2.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Python](https://img.shields.io/badge/python-3.10+-blue)
 
@@ -112,6 +112,19 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 
 The prompt export carries the persona's guardrails: one concrete individual instead of an average, no invented facts, open questions stay open, proto status is marked as a hypothesis.
 
+### As a library
+
+Tools that embed personakit (such as an MCP server) use `personakit.api` instead of the CLI:
+
+```python
+from personakit.api import load_workspace_tolerant, lint_workspace
+
+ws = load_workspace_tolerant(["personas"])   # valid personas, sets, groups; broken files in ws.problems
+report = lint_workspace(["personas"])        # exactly what `personakit lint personas` checks
+```
+
+`load_workspace_tolerant` keeps going when a file is unreadable, violates the schema or a `set.yml` is broken, and reports it with the lint codes `P000`, `SCHEMA` or `X000`. The CLI commands stay strict.
+
 ## Configuration
 
 No configuration files beyond the optional `set.yml` per set and `variables.yml` per factoid study. The schemas live in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`, `factoids.schema.json`, `variables.schema.json`), the template in `src/personakit/templates/persona.template.md`.
@@ -122,6 +135,7 @@ No configuration files beyond the optional `set.yml` per set and `variables.yml`
 personakit/
 ├── src/personakit/
 │   ├── cli.py            # argparse CLI
+│   ├── api.py            # library entry points: tolerant loading, lint_workspace
 │   ├── model.py          # frontmatter round-trip (ruamel.yaml), sections
 │   ├── validate.py       # JSON-Schema validation
 │   ├── sets.py           # set.yml, per-set priority, loose set

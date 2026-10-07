@@ -13,12 +13,13 @@ from pathlib import Path
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as DQ
 
 from . import __version__
+from .api import lint_workspace
 from .factoids import analyse_study, build_skeleton, load_study, render_report, report_json
 from .factoids import sort_findings as sort_factoid_findings
-from .lint import ERROR, WARN, Finding, lint_persona, lint_sets, sort_findings
+from .lint import ERROR, WARN, Finding, sort_findings
 from .model import SUFFIX, Persona, PersonaError, find_persona_files, today, write_text
 from .render import SET_FORMATS, SINGLE_FORMATS, render, render_list, render_set
-from .sets import Group, load_sets, load_workspace
+from .sets import Group, load_workspace
 from .validate import load_schema, validate
 
 
@@ -200,23 +201,9 @@ def cmd_validate(a: argparse.Namespace) -> int:
 
 
 def cmd_lint(a: argparse.Namespace) -> int:
-    personas: list[Persona] = []
-    findings: list[Finding] = []
-    for path in find_persona_files(a.paths):
-        try:
-            p = Persona.load(path)
-        except PersonaError as e:
-            findings.append(Finding(ERROR, "P000", str(e), path.name))
-            continue
-        schema_errs = validate(p)
-        findings.extend(Finding(ERROR, "SCHEMA", e, p.id or path.name) for e in schema_errs)
-        if not schema_errs:
-            findings.extend(lint_persona(p))
-            personas.append(p)
-    sets, set_errors = load_sets(a.paths)
-    findings.extend(Finding(ERROR, "X000", msg, set_id=path.parent.name) for path, msg in set_errors)
-    if sets or len(personas) > 1 or any(Path(x).is_dir() for x in a.paths):
-        findings.extend(lint_sets(personas, sets))
+    report = lint_workspace(a.paths)
+    findings = report.findings
+    personas, sets = report.personas, report.sets
     if a.min_level == "warn":
         findings = [f for f in findings if f.level in (ERROR, WARN)]
     elif a.min_level == "error":
