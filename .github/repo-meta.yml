@@ -15,6 +15,4 @@ version: 0.1.0
 pypi_package: personakit
 confirmed: true           # Titel, Description und Topics am 2026-10-07 bestätigt
 offen:
-  - topics (Session-Proxy erlaubt keine Schreibzugriffe auf /topics – Settings-UI oder lokal mit gh repo edit --add-topic)
-  - Secret Scanning + Push Protection (Settings-Writes über den Session-Proxy gesperrt – Settings → Code security, oder lokal gh api -X PATCH)
   - PyPI-Publishing (publish.yml, Pending Publisher) bewusst nicht eingerichtet – erst bei Bedarf
