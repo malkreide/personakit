@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Notion export (P7): `personakit render <paths> -f notion [--target api|mcp]` writes JSON for a database «Personas» without network calls – one page per persona `id` (the upsert key) with the properties Name, ID, Archetyp, Set, Priorität, Status, Evidenz, Version, Review bis and Tags, plus the database definition. `api` (default) gives page bodies for `POST /v1/pages` (headings, bulleted lists, quotes, a table for the behaviour variables, toggles for evidence and assumptions); `mcp` gives the same pages as flat property values and Notion-flavored Markdown for the Notion MCP tools. API limits are kept: text split at 2000 UTF-16 units, at most 100 blocks per children array (overflow in `append` batches), two nesting levels; `mcp` escapes Notion Markdown. `Priorität` is the persona's default priority, the priority per set is listed on the page. New module `personakit.notion`; the persona format is unchanged
 - Skill `persona-kit`: step «Nach Notion publizieren» – export, check the database, look up existing pages by `ID` and update them instead of creating duplicates; `docs/FORMAT.md` documents the database and both targets
 
+### Fixed
+- Notion export, checked against a real Notion database through the Notion MCP tools: the source file name in the page footer is now inline code, because Notion turned `….persona.md` into a link (`.md` is a top-level domain); `` `code` `` in body sections becomes code instead of escaped backticks; `--target mcp` lists the select and multi-select options in `database.options`, because the MCP tools reject a page whose value is not yet an option (the skill step «Nach Notion publizieren» now adds missing options first, and `docs/FORMAT.md` no longer claims Notion creates them)
+
 ## [0.2.0] - 2026-10-07
 
 ### Added

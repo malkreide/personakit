@@ -55,7 +55,7 @@ _DDL_TYPE = {
     "multi_select": "MULTI_SELECT",
 }
 
-Spans = list[tuple[str, str]]  # (text, style) with style "" | "b" | "i"
+Spans = list[tuple[str, str]]  # (text, style) with style "" | "b" (bold) | "i" (italic) | "c" (code)
 
 
 # ------------------------------------------------------------ rich text
@@ -93,7 +93,7 @@ def rich(spans: Spans | str) -> list[dict[str, Any]]:
         for piece in _chunks(_clean(text)):
             obj: dict[str, Any] = {"type": "text", "text": {"content": piece}}
             if style:
-                obj["annotations"] = {"bold": style == "b", "italic": style == "i"}
+                obj["annotations"] = {"bold": style == "b", "italic": style == "i", "code": style == "c"}
             out.append(obj)
     return out
 
@@ -166,17 +166,17 @@ def tables(header: list[str], rows: list[list[Spans | str]]) -> list[dict[str, A
 # ------------------------------------------------------- markdown body
 _TABLE_SEP = re.compile(r"^:?-{1,}:?$")
 _NUMBERED = re.compile(r"^\d+[.)]\s+")
-_BOLD = re.compile(r"\*\*(.+?)\*\*")
+_INLINE = re.compile(r"\*\*(.+?)\*\*|`([^`\n]+)`")
 
 
 def _inline(text: str) -> Spans:
-    """``**bold**`` becomes bold, everything else stays literal."""
+    """``**bold**`` becomes bold and ```code``` code, everything else stays literal."""
     out: Spans = []
     pos = 0
-    for m in _BOLD.finditer(text):
+    for m in _INLINE.finditer(text):
         if m.start() > pos:
             out.append((text[pos : m.start()], ""))
-        out.append((m.group(1), "b"))
+        out.append((m.group(1), "b") if m.group(1) is not None else (m.group(2), "c"))
         pos = m.end()
     if pos < len(text):
         out.append((text[pos:], ""))
@@ -415,11 +415,12 @@ def page_blocks(p: Persona, roles: list[tuple[Group, Member]]) -> list[dict[str,
     o.append(
         para(
             [
+                (f"Erzeugt mit personakit {__version__} aus ", "i"),
+                (source, "c"),  # as code: Notion would turn «….persona.md» into a link (.md is a domain)
                 (
-                    f"Erzeugt mit personakit {__version__} aus {source}. Änderungen in der Persona-Datei vornehmen – "
-                    "diese Seite wird beim nächsten Export überschrieben.",
+                    ". Änderungen in der Persona-Datei vornehmen – diese Seite wird beim nächsten Export überschrieben.",
                     "i",
-                )
+                ),
             ]
         )
     )
@@ -523,7 +524,12 @@ def mcp_database(opts: dict[str, list[tuple[str, str]]]) -> dict[str, Any]:
         if kind in ("select", "multi_select") and opts[name]:
             ddl += "(" + ", ".join(f"{_sql(n)}:{c}" for n, c in opts[name]) + ")"
         cols.append(f'"{name}" {ddl}')
-    return {"title": DATABASE_TITLE, "schema": "CREATE TABLE (" + ", ".join(cols) + ")"}
+    return {
+        "title": DATABASE_TITLE,
+        "schema": "CREATE TABLE (" + ", ".join(cols) + ")",
+        # The MCP tools reject select values the data source does not know yet: add missing ones first
+        "options": {name: [n for n, _ in opts[name]] for name, kind in PROPERTIES.items() if "select" in kind},
+    }
 
 
 # ------------------------------------------------- Notion-flavored Markdown
@@ -545,7 +551,7 @@ def md_rich(rt: list[dict[str, Any]]) -> str:
     runs: list[tuple[str, str]] = []  # merge pieces that were split at the length limit
     for r in rt:
         ann = r.get("annotations") or {}
-        mark = "**" if ann.get("bold") else "*" if ann.get("italic") else ""
+        mark = "`" if ann.get("code") else "**" if ann.get("bold") else "*" if ann.get("italic") else ""
         if runs and runs[-1][0] == mark:
             runs[-1] = (mark, runs[-1][1] + r["text"]["content"])
         else:
@@ -553,6 +559,11 @@ def md_rich(rt: list[dict[str, Any]]) -> str:
     out: list[str] = []
     for i, (mark, text) in enumerate(runs):
         core = text.strip(" ")
+        if mark == "`" and ("`" in text or "\n" in text):
+            mark = ""  # cannot be a code span; plain escaped text instead
+        if mark == "`" and core:
+            out.append(f"`{text}`")  # code spans are literal, no escaping
+            continue
         if not mark or not core:
             out.append(md_text(text, line_start=i == 0))
             continue
