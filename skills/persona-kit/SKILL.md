@@ -1,6 +1,6 @@
 ---
 name: persona-kit
-description: Erstellt, prüft, aktualisiert und exportiert evidenzbasierte Personas im personakit-Format (*.persona.md mit YAML-Frontmatter, JTBD-Block, Evidenz, Simulationsregeln). Verwenden, wenn der User (1) eine Persona aus Interviews, Support-Logs, Umfragen, Workshops oder Annahmen ableiten will – auch Factoids extrahieren, Teilnehmende auf Verhaltensvariablen verorten oder ein Persona-Skelett aus Factoids erzeugen –, (2) bestehende Personas anpassen, versionieren, reviewen oder in den Ruhestand versetzen will, (3) Personas als Markdown, JSON, YAML, Prompt-Block, Karte, Matrix oder HTML-Galerie exportieren will, (4) eine Persona als Voreinstellung für Content, Chat-Assistenten, User Journeys (journeykit) oder synthetische Gegenproben braucht, oder (5) Begriffe wie «Persona», «Archetyp», «Zielgruppe», «Jobs-to-be-Done», «Job Story», «Factoid», «Verhaltensvariable», «synthetischer Nutzer» im Kontext einer Lösung verwendet.
+description: Erstellt, prüft, aktualisiert und exportiert evidenzbasierte Personas im personakit-Format (*.persona.md mit YAML-Frontmatter, JTBD-Block, Evidenz, Simulationsregeln). Verwenden, wenn der User (1) eine Persona aus Interviews, Support-Logs, Umfragen, Workshops oder Annahmen ableiten will – auch Factoids extrahieren, Teilnehmende auf Verhaltensvariablen verorten oder ein Persona-Skelett aus Factoids erzeugen –, (2) bestehende Personas anpassen, versionieren, reviewen oder in den Ruhestand versetzen will, (3) Personas als Markdown, JSON, YAML, Prompt-Block, Karte, Matrix oder HTML-Galerie exportieren oder in eine Notion-Datenbank publizieren will, (4) eine Persona als Voreinstellung für Content, Chat-Assistenten, User Journeys (journeykit) oder synthetische Gegenproben braucht, oder (5) Begriffe wie «Persona», «Archetyp», «Zielgruppe», «Jobs-to-be-Done», «Job Story», «Factoid», «Verhaltensvariable», «synthetischer Nutzer» im Kontext einer Lösung verwendet.
 ---
 
 # persona-kit
@@ -15,6 +15,7 @@ personakit new <id> -a "<Archetyp>"   # Vorlage mit Kommentaren anlegen
 personakit lint personas              # Schema + Methodik-Regeln (Exit 1 bei Fehlern)
 personakit render <datei> -f md|card|json|yaml|prompt [-m simulate|audience]
 personakit render personas -f matrix|html|bundle   # nach Set gruppiert
+personakit render personas -f notion --target mcp  # Seiten für die Notion-Datenbank «Personas»
 personakit list personas                            # Übersicht pro Set
 personakit bump <datei> -p minor -m "…" [--status active --evidence-level qualitative --review-days 180]
 personakit retire <datei> -m "…"
@@ -60,10 +61,31 @@ Ohne Material (nur Annahmen) entfallen Schritte 1–4: `personakit new` anlegen,
 | Entwurf gegen eine Persona testen, Interview üben | `render -f prompt -m simulate` | Ergebnis ist Hypothese, nie Nutzerforschung; Persona-ID und Version im Output nennen |
 | journeykit-Journey schreiben | `render -f json` | Persona-ID als Journey-`persona.id`; Jobs als Journey-Treiber; `relations.journeys` nachtragen, dann `lint personas --journeys <ordner>` |
 | Massnahmen priorisieren | `render -f matrix` | Opportunity-Score pro Job; bei Konflikt entscheidet die primäre Persona |
-| Notion/Wiki-Seite | `render -f md` oder `-f card` | Karte für Übersichten, md für Detailseiten |
+| Notion-Datenbank «Personas» | `render -f notion --target mcp` | Ablauf «Nach Notion publizieren» unten |
+| Wiki-Seite | `render -f md` oder `-f card` | Karte für Übersichten, md für Detailseiten |
 | Team-Galerie | `render personas -f html -o personas.html` | Single-File, offline |
 
 Wenn mehrere Personas als Voreinstellung gleichzeitig nötig sind, immer die primäre zuerst und die negative als Gegenprobe («Würde der Verwaltungs-Insider das durchwinken? Dann nochmals gegen die primäre Persona prüfen»).
+
+## Ablauf: Nach Notion publizieren
+
+Notion ist eine Lesekopie: Die `.persona.md` bleibt die Quelle, jede Seite wird beim nächsten Export überschrieben. Datenbank, Property-Typen und Exportformat: `docs/FORMAT.md` → Notion-Export. Geschrieben wird über die Notion-MCP-Tools; der Export selbst macht keine Netzwerkaufrufe.
+
+1. **Prüfen und exportieren.** `personakit lint <pfade>` muss ohne ERROR durchlaufen, sonst nicht publizieren. Dann `personakit render <pfade> -f notion --target mcp -o notion-personas.json` – `<pfade>` ist ein Set-Ordner oder `personas`. Jede Persona ergibt genau einen Eintrag in `pages[]` mit `properties` und `content`.
+2. **Datenschutz klären.** Zitate, Evidenz-Quellen und Notizen gehen mit nach Notion. Vor der ersten Publikation aus realem Material klären, ob die Einwilligung (`consent_note` der Factoid-Quellen) und die Vorgaben der Organisation das abdecken; sonst nicht publizieren.
+3. **Datenbank finden.** Die Datenbank nennt der User; sonst `notion-search` nach «Personas» und den Treffer bestätigen lassen. Mit `notion-fetch` die Datenbank und danach ihre Datenquelle (`collection://…`) laden und die Properties mit der Tabelle in `docs/FORMAT.md` vergleichen. Fehlen Properties oder haben sie einen anderen Typ: dem User zeigen und erst nach Zustimmung ändern. Gibt es keine Datenbank: nach Zustimmung und mit der Elternseite, die der User nennt, `notion-create-database` mit `database.schema` aus dem Export aufrufen.
+4. **Bestehende Seiten suchen (Schlüssel `ID`).** Für jede Persona `notion-query-data-sources` im Modus `rows` auf die Datenquelle, Filter `{"type": "property", "property": "ID", "propertyType": "text", "operator": "string_is", "value": {"type": "exact", "value": "<id>"}}`. Die `id` steht in `properties["userDefined:ID"]`.
+   - kein Treffer → neu anlegen
+   - ein Treffer → aktualisieren
+   - mehrere Treffer → nichts schreiben, die Seiten-URLs dem User zeigen und fragen, welche bleibt. Nie raten.
+5. **Plan bestätigen lassen.** Dem User die Liste zeigen: anlegen (ID, Name), aktualisieren (ID, Seiten-URL), übersprungen (mit Grund). Erst nach Zustimmung schreiben.
+6. **Schreiben.**
+   - Neu: `notion-create-pages` mit `parent: {"data_source_id": "<collection-id>"}` und den betroffenen Einträgen aus `pages[]` unverändert (`properties`, `content`; höchstens 100 pro Aufruf).
+   - Bestehend: `notion-update-page` mit `command: "update_properties"` und `properties` aus dem Export, danach `command: "replace_content"` mit `new_str` = `content`. Meldet das Tool, dass Unterseiten oder Datenbanken gelöscht würden, die Liste zeigen und nachfragen; `allow_deleting_content` nie ohne Zustimmung setzen.
+   - `properties` und `content` nicht von Hand umformulieren, kürzen oder «verbessern»: Das Escaping im Export ist Absicht.
+7. **Abgleich melden.** Angelegte und aktualisierte Seiten mit URL nennen. Seiten in der Datenbank, deren `ID` im Export fehlt (Persona umbenannt oder entfernt), nur melden – nicht löschen oder archivieren, ausser der User verlangt es.
+
+Für Skripte ohne MCP gibt `--target api` (Default) dieselben Seiten als Bodies für `POST /v1/pages` aus; Details in `docs/FORMAT.md`.
 
 ## Grenzen, die der Skill einhält
 

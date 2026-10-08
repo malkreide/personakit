@@ -2,9 +2,9 @@
 
 ## Was das ist
 
-Evidenzbasierte Personas als versionierte Dateien `personas/<set-id>/<id>.persona.md` (YAML-Frontmatter + Markdown-Body). Die Datei ist die Quelle der Wahrheit; Markdown, Karte, JSON, YAML, Prompt-Block, Matrix und HTML werden daraus gerendert. Methodik und Designentscheide: `docs/METHOD.md`. Felder und Lint-Codes: `docs/FORMAT.md`. Fahrplan mit fertigen Prompts: `docs/ROADMAP.md`.
+Evidenzbasierte Personas als versionierte Dateien `personas/<set-id>/<id>.persona.md` (YAML-Frontmatter + Markdown-Body). Die Datei ist die Quelle der Wahrheit; Markdown, Karte, JSON, YAML, Prompt-Block, Matrix, HTML und Notion-Seiten werden daraus gerendert. Methodik und Designentscheide: `docs/METHOD.md`. Felder und Lint-Codes: `docs/FORMAT.md`. Fahrplan mit fertigen Prompts: `docs/ROADMAP.md`.
 
-Module: `model.py` (Round-Trip, Abschnitte) → `validate.py` (JSON-Schema) → `sets.py` (`set.yml`, Priorität pro Set, loses Set) → `lint.py` (Methodik-Regeln) → `render.py` (Exporte) → `cli.py`. `api.py` ist der Einstieg für einbettende Werkzeuge (`load_workspace_tolerant`, `lint_workspace`); `cmd_lint` nutzt ihn, damit CLI und Bibliothek dasselbe prüfen.
+Module: `model.py` (Round-Trip, Abschnitte) → `validate.py` (JSON-Schema) → `sets.py` (`set.yml`, Priorität pro Set, loses Set) → `lint.py` (Methodik-Regeln) → `render.py` (Exporte; `notion.py` für `-f notion`, ohne Netzwerkaufrufe) → `cli.py`. `api.py` ist der Einstieg für einbettende Werkzeuge (`load_workspace_tolerant`, `lint_workspace`); `cmd_lint` nutzt ihn, damit CLI und Bibliothek dasselbe prüfen.
 
 Factoids: `factoids.py` liest `factoids/<studie>/*.factoids.md` (+ `variables.yml`), prüft (F-Codes), verortet Teilnehmende und baut das Persona-Skelett. Werkzeug zählt, Deutung bleibt bei der Skill. Reale Studienordner sind per `.gitignore` ausgeschlossen; nur `factoids/beispiel/` (synthetisch) ist versioniert. Factoid-Dateien nur mit Teilnehmer-Codes, nie Namen.
 

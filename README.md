@@ -10,7 +10,7 @@
 
 ## Overview
 
-Many solutions – content generators, chat assistants, user-journey tools, prioritisation – need a persona as input. Usually it exists as a slide or a poster: not machine-readable, not versioned, not verifiable. personakit turns a persona into a **source file**: `<id>.persona.md` with a schema-validated YAML frontmatter and a Markdown body (scenario, narrative). Everything else – Markdown, card, JSON, YAML, prompt block, comparison matrix, HTML gallery – is rendered from it.
+Many solutions – content generators, chat assistants, user-journey tools, prioritisation – need a persona as input. Usually it exists as a slide or a poster: not machine-readable, not versioned, not verifiable. personakit turns a persona into a **source file**: `<id>.persona.md` with a schema-validated YAML frontmatter and a Markdown body (scenario, narrative). Everything else – Markdown, card, JSON, YAML, prompt block, comparison matrix, HTML gallery, Notion pages – is rendered from it.
 
 The format encodes method, not layout: behaviour before demographics (Cooper), goals as experience/end/life goals, jobs as job stories with forces of progress, an explicit evidence level, a lifecycle with review dates, and guardrails against the variance collapse of synthetic users. Background and design decisions: [`docs/METHOD.md`](docs/METHOD.md) (German). Field reference and lint codes: [`docs/FORMAT.md`](docs/FORMAT.md) (German).
 
@@ -22,7 +22,7 @@ The format encodes method, not layout: behaviour before demographics (Cooper), g
 - Visible evidence level (`proto` · `qualitative` · `statistical`) with sources, assumptions and open questions
 - Lifecycle: SemVer, status, review date, changelog – maintained by `bump` and `retire` with clean git diffs
 - `simulation` block (voice, must, must_not, variance) injected into the prompt export in `simulate` or `audience` mode
-- Exports: Markdown, card, JSON, YAML, prompt block, comparison matrix, single-file HTML gallery, JSON bundle
+- Exports: Markdown, card, JSON, YAML, prompt block, comparison matrix, single-file HTML gallery, JSON bundle, Notion pages (API or MCP)
 - 45 lint rules for method (evidence hygiene, JTBD form, guardrails, lifecycle, one primary persona per set, references to [journeykit](https://github.com/malkreide/journeykit) journeys)
 - Sets per solution (`personas/<set>/set.yml`): the same persona can play a different role – with a different priority – in several solutions; lint rules for focus run per set
 - Factoid pipeline: research material as `factoids/<study>/*.factoids.md` (participant codes only, never names); `factoids` places participants on the behaviour variables and flags thin variables and outliers, `skeleton` pre-fills a persona from chosen participants (medians, evidence, quotes, evidence level)
@@ -65,6 +65,7 @@ personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zueri
 personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -f prompt -m simulate   # synthetic counter-check
 personakit render personas -f html -o personas.html
 personakit render personas -f bundle -o personas.json
+personakit render personas -f notion -o notion.json   # pages for a Notion database «Personas»
 
 # maintain
 personakit bump personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -p minor -m "added J3" --review-days 180
@@ -92,7 +93,7 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 | `new <id> -a …` | Create a persona file from the commented template; the archetype is required (asked for interactively if missing) |
 | `validate <paths>` | Validate the frontmatter against the JSON Schema |
 | `lint <paths>` | Schema plus 45 method rules; exit code 1 on errors (`--strict` also on warnings), `--json` for CI and other tools, `--journeys <path>` checks references to journeykit journeys in both directions |
-| `render <paths> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (per persona) or `matrix`, `html`, `bundle` (grouped by set) |
+| `render <paths> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (per persona) or `matrix`, `html`, `bundle`, `notion` (grouped by set; `notion --target api\|mcp`) |
 | `list <paths>` | Overview table per set (priority in the set, status, evidence, version, review date) |
 | `bump <file>` | Raise the version, write a changelog entry, optionally change status, evidence level and review date |
 | `retire <file>` | Set status to `retired` with a changelog note |
@@ -107,7 +108,8 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 | Test a draft against a persona, rehearse an interview | `render -f prompt -m simulate` |
 | User journeys ([journeykit](https://github.com/malkreide/journeykit)) | `render -f json` / `-f bundle`; the journey's `persona.id` is the persona `id`, `lint --journeys` checks both directions ([`docs/JOURNEYKIT.md`](docs/JOURNEYKIT.md), German) |
 | Prioritisation | `render -f matrix` (ODI opportunity score) |
-| Notion, wiki | `render -f md` / `-f card` |
+| Notion database «Personas» | `render -f notion`: one page per persona, `ID` as the key for updates; `--target api` for the Notion API, `--target mcp` for the Notion MCP tools ([`docs/FORMAT.md`](docs/FORMAT.md#notion-export-render--f-notion), German) |
+| Wiki | `render -f md` / `-f card` |
 | Team gallery, offline | `render -f html` |
 
 The prompt export carries the persona's guardrails: one concrete individual instead of an average, no invented facts, open questions stay open, proto status is marked as a hypothesis.
@@ -143,6 +145,7 @@ personakit/
 │   ├── lint.py           # method rules
 │   ├── journeys.py       # cross-lint against journeykit journeys (K000–K004)
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
+│   ├── notion.py         # Notion export: API blocks and Notion Markdown (no network calls)
 │   ├── schema/           # persona, set, factoids, variables (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # four synthetic example personas in two sets (set.yml)
