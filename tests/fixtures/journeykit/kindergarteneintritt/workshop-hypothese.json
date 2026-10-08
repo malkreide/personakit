@@ -1,0 +1,724 @@
+{
+  "schema_version": "1.0",
+  "meta": {
+    "id": "kindergarteneintritt-eltern",
+    "title": "Kindergarteneintritt aus Elternsicht",
+    "version": "0.1",
+    "status": "hypothesis",
+    "map_type": "user_journey",
+    "diagnosis": {
+      "rationale": "Workshop-Hypothese: Erleben der Eltern über den ganzen Ablauf, deshalb User Journey. Interner Ablauf bleibt im Prozessbeschrieb."
+    },
+    "language": "de",
+    "created": "2025-11-18",
+    "updated": "2025-11-18",
+    "owner": {
+      "role": "Leitung Kommunikation",
+      "unit": "Schulamt, Marketing und Kommunikation",
+      "contact": "Funktionsadresse"
+    },
+    "review_cycle_days": 90,
+    "next_review": "2026-02-28",
+    "context": {
+      "organisation": "Schulamt der Stadt Zürich (fiktives Beispiel)",
+      "domain": "public_administration",
+      "service": "Kindergarteneintritt",
+      "notes": "Synthetisches Beispiel. Stand nach dem Hypothesen-Workshop: alle Aussagen sind Annahmen des Teams."
+    },
+    "synthetic": true
+  },
+  "persona": {
+    "id": "eltern-zugezogen",
+    "name": "Neu zugezogene Eltern (Hypothese)",
+    "role": "Elternteil",
+    "description": "Vermutlich die kritischste Gruppe, weil sie das System nicht kennt. Ohne Interview gebildet.",
+    "goals": [
+      "Wissen, in welchen Kindergarten das Kind kommt"
+    ],
+    "frustrations": [
+      "Schulweg (Annahme)"
+    ],
+    "context": {
+      "prior_experience": "Keine Erfahrung mit der Volksschule Zürich (Annahme)."
+    },
+    "evidence_refs": [
+      "ws-11"
+    ],
+    "is_hypothesis": true
+  },
+  "scenario": {
+    "title": "Vom ersten Brief bis zum Elterngespräch",
+    "goal": "Ich will wissen, in welchen Kindergarten mein Kind kommt.",
+    "trigger": "Informationsbrief im Dezember.",
+    "end_state": "Das Kind ist im Kindergarten angekommen.",
+    "timeframe": "Dezember bis Oktober",
+    "scope_exclusions": [
+      "Sonderpädagogische Abklärungen und Rückstellungen",
+      "Privatschulen"
+    ],
+    "evidence_refs": [
+      "ws-01"
+    ]
+  },
+  "phases": [
+    {
+      "id": "information",
+      "name": "Brief und Orientierung",
+      "user_intent": "Erfahren, dass das Kind in den Kindergarten kommt.",
+      "duration": "Dezember",
+      "steps": [
+        {
+          "id": "brief-erhalten",
+          "name": "Informationsbrief erhalten",
+          "action": "Die Eltern erhalten im Dezember den Informationsbrief und lesen ihn.",
+          "channel": "letter",
+          "touchpoint": "Informationsbrief der Kreisschulbehörde",
+          "counterpart": "Kreisschulbehörde",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Jetzt wird es ernst – unser Kind kommt in den Kindergarten.",
+              "evidence_refs": [
+                "ws-02"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "freuen sich auf den Brief (Annahme)",
+            "evidence_refs": [
+              "ws-02"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-brief-nicht-erhalten",
+              "text": "Bei Zugezogenen könnte der Brief fehlen, weil der Adressabgleich dem Umzug hinterherhinkt.",
+              "type": "breakdown",
+              "severity": 3,
+              "frequency": "unknown",
+              "workaround": "Anruf bei der Kreisschulbehörde (Annahme).",
+              "owner": "Kreisschulbehörde (Erfassung und Adressabgleich)",
+              "status": "open",
+              "evidence_refs": [
+                "ws-10",
+                "doc-01"
+              ]
+            }
+          ],
+          "edge_cases": [],
+          "recovery_paths": [
+            {
+              "trigger": "Brief nicht erhalten",
+              "path": "Anruf bei der Kreisschulbehörde; Brief wird erneut zugestellt.",
+              "exists": true,
+              "evidence_refs": [
+                "ws-10"
+              ]
+            }
+          ],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "website-suchen",
+          "name": "Details auf der Website nachlesen",
+          "action": "Die Eltern lesen auf der Website nach, was im Brief steht.",
+          "channel": "web",
+          "touchpoint": "Website Stadt Zürich, Bereich Kindergarten",
+          "counterpart": "Zentrale Stelle Informationsmaterial",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Alles steht auf der Website.",
+              "evidence_refs": [
+                "ws-08",
+                "doc-05"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 0,
+            "label": "neutral – finden, was sie suchen (Annahme)",
+            "evidence_refs": [
+              "ws-08"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "zuteilung",
+      "name": "Zuteilungsentscheid",
+      "user_intent": "Erfahren, welcher Kindergarten es wird.",
+      "duration": "April",
+      "steps": [
+        {
+          "id": "entscheid-erhalten",
+          "name": "Zuteilungsentscheid erhalten",
+          "action": "Die Eltern erhalten den Entscheid mit dem zugeteilten Kindergarten.",
+          "channel": "letter",
+          "touchpoint": "Zuteilungsentscheid (Brief)",
+          "counterpart": "Kreisschulbehörde",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Der Kindergarten um die Ecke – wie erwartet.",
+              "evidence_refs": [
+                "ws-03"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 2,
+            "label": "emotionaler Höhepunkt, meist positiv (Annahme)",
+            "evidence_refs": [
+              "ws-03",
+              "doc-03"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "schulweg-pruefen",
+          "name": "Schulweg prüfen",
+          "action": "Die Eltern prüfen den Weg zum Kindergarten.",
+          "channel": "in_person",
+          "touchpoint": "Weg zwischen Wohnung und Kindergarten",
+          "counterpart": "Schulleitung (Schulwegsicherheit)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Ist der Weg sicher genug?",
+              "evidence_refs": [
+                "ws-04"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "besorgt wegen des Schulwegs (Annahme)",
+            "evidence_refs": [
+              "ws-04"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-schulweg-sicherheit",
+              "text": "Der Schulweg ist die Hauptreibung: Eltern sorgen sich um Strassen und Distanz.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "frequent",
+              "workaround": "Nachfrage bei der Kreisschulbehörde.",
+              "owner": "Schulleitung",
+              "status": "open",
+              "evidence_refs": [
+                "ws-04"
+              ]
+            }
+          ],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "vorbereitung",
+      "name": "Vorbereitung",
+      "user_intent": "Betreuung regeln, den Kindergarten kennenlernen.",
+      "duration": "Februar bis Juni",
+      "steps": [
+        {
+          "id": "betreuung-anmelden",
+          "name": "Betreuung anmelden (bei Bedarf)",
+          "action": "Eltern mit Betreuungsbedarf füllen das Formular aus und schicken es bis Ende Februar ein.",
+          "channel": "paper_form",
+          "touchpoint": "PDF-Formular «Anmeldung Betreuung»",
+          "counterpart": "Betreuung (Hort)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Routine – das kennen wir von der Kita.",
+              "evidence_refs": [
+                "ws-05"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 0,
+            "label": "Routine (Annahme)",
+            "evidence_refs": [
+              "ws-05",
+              "doc-02"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-pdf-formular",
+              "text": "Das PDF-Formular ist nicht schön, funktioniert aber.",
+              "type": "friction",
+              "severity": 2,
+              "frequency": "occasional",
+              "workaround": "–",
+              "owner": "Betreuung (Hort)",
+              "evidence_refs": [
+                "ws-09"
+              ]
+            }
+          ],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "infoanlass",
+          "name": "Informationsanlass besuchen",
+          "action": "Die Eltern besuchen den Informationsanlass im Mai.",
+          "channel": "event",
+          "touchpoint": "Informationsanlass im Schulhaus",
+          "counterpart": "Schulleitung, Kindergarten-Lehrperson",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Gut, die Lehrpersonen einmal zu sehen.",
+              "evidence_refs": []
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "positiv (Annahme)",
+            "evidence_refs": []
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "schnupperbesuch",
+          "name": "Schnupperbesuch",
+          "action": "Kind und Eltern besuchen den Kindergarten für eine Lektion.",
+          "channel": "in_person",
+          "touchpoint": "Kindergarten (Schnupperlektion)",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Das Kind freut sich.",
+              "evidence_refs": []
+            }
+          ],
+          "feeling": {
+            "valence": 2,
+            "label": "Vorfreude (Annahme)",
+            "evidence_refs": []
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "start",
+      "name": "Start",
+      "user_intent": "Den ersten Tag gut erleben.",
+      "duration": "August",
+      "steps": [
+        {
+          "id": "erster-tag",
+          "name": "Erster Kindergartentag",
+          "action": "Die Eltern bringen ihr Kind am ersten Tag in den Kindergarten.",
+          "channel": "in_person",
+          "touchpoint": "Kindergarten",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Ein grosser Tag.",
+              "evidence_refs": [
+                "ws-07"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 2,
+            "label": "durchwegs positiv (Annahme)",
+            "evidence_refs": [
+              "ws-07"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "eingewoehnung",
+          "name": "Eingewöhnung",
+          "action": "Zwei Wochen reduzierter Stundenplan; die Betreuung wird angepasst.",
+          "channel": "in_person",
+          "touchpoint": "Stundenplan-Blatt für die ersten zwei Wochen",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Für das Kind anstrengend, für uns unkompliziert.",
+              "evidence_refs": [
+                "ws-13",
+                "doc-07"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "unkompliziert (Annahme)",
+            "evidence_refs": [
+              "ws-13"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "ankommen",
+      "name": "Ankommen",
+      "user_intent": "In den Alltag finden.",
+      "duration": "September bis Oktober",
+      "steps": [
+        {
+          "id": "elterngespraech",
+          "name": "Elterngespräch",
+          "action": "Erstes Gespräch mit der Lehrperson.",
+          "channel": "in_person",
+          "touchpoint": "Elterngespräch im Kindergarten",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Wie geht es unserem Kind im Kindergarten?",
+              "evidence_refs": []
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "zufrieden (Annahme)",
+            "evidence_refs": []
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "opp-schulweg",
+      "hmw": "Wie können wir Eltern mit dem Zuteilungsentscheid gleich den Schulweg und seine Sicherheit erklären?",
+      "linked_pain_points": [
+        "pp-schulweg-sicherheit"
+      ],
+      "phase_ref": "zuteilung",
+      "user_impact": 4,
+      "public_value": 3,
+      "effort": 2,
+      "owner": "Schulleitung",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Elternteil möchte ich mit dem Entscheid eine Schulwegbeilage erhalten.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "ws-04"
+      ]
+    },
+    {
+      "id": "opp-online-formular",
+      "hmw": "Wie können wir die Betreuungsanmeldung ohne Drucker und Post ermöglichen?",
+      "linked_pain_points": [
+        "pp-pdf-formular"
+      ],
+      "phase_ref": "vorbereitung",
+      "user_impact": 2,
+      "public_value": 2,
+      "effort": 3,
+      "owner": "Betreuung (Hort)",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Elternteil möchte ich die Betreuung online anmelden.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "ws-09"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "workshop",
+      "title": "Hypothesen-Workshop Team Kommunikation",
+      "kind": "workshop",
+      "default_class": "assumed",
+      "date": "2025-11-18",
+      "n": 6,
+      "participants": "Mitarbeitende Kommunikation, Kreisschulbehörde, Betreuung – ohne Eltern",
+      "pii_status": "none",
+      "location": "input/workshop-notizen.md",
+      "notes": "Team-Annahmen vor jeder Nutzerevidenz."
+    },
+    {
+      "id": "prozessdok",
+      "title": "Prozessbeschrieb Einschulung (intern, Soll-Prozess)",
+      "kind": "internal_document",
+      "default_class": "assumed",
+      "date": "2024-09",
+      "pii_status": "none",
+      "location": "input/prozess-einschulung-intern.md",
+      "notes": "Innensicht: beschreibt den Soll-Ablauf, nicht das Erleben. Wird als Annahme behandelt."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "doc-01",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Alle Eltern erhalten den Informationsbrief bis Mitte Dezember.",
+      "locator": "Abschnitt 4.2, Zeile 38",
+      "signal": "neutral",
+      "phase_hint": "information"
+    },
+    {
+      "id": "doc-02",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Eltern mit Betreuungsbedarf melden diesen bis Ende Februar mit dem Formular «Anmeldung Betreuung» an.",
+      "locator": "Abschnitt 4.3, Zeile 42",
+      "signal": "neutral",
+      "phase_hint": "vorbereitung"
+    },
+    {
+      "id": "doc-03",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Der Zuteilungsentscheid enthält eine für die Eltern nachvollziehbare Begründung.",
+      "locator": "Abschnitt 4.4, Zeile 46",
+      "signal": "neutral",
+      "phase_hint": "zuteilung"
+    },
+    {
+      "id": "doc-05",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die Informationen stehen auf der Website in deutscher Sprache sowie als mehrsprachiges Merkblatt zur Verfügung.",
+      "locator": "Abschnitt 4.2, Zeile 38",
+      "signal": "neutral",
+      "phase_hint": "information"
+    },
+    {
+      "id": "doc-07",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die ersten zwei Schulwochen gelten als Eingewöhnung mit reduziertem Stundenplan; die Betreuung wird entsprechend angepasst.",
+      "locator": "Abschnitt 4.8, Zeile 58",
+      "signal": "neutral",
+      "phase_hint": "start"
+    },
+    {
+      "id": "ws-01",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Phasen aus Sicht des Teams: Information – Zuteilung – Vorbereitung – Start – Ankommen.",
+      "locator": "Zeile 11",
+      "signal": "neutral"
+    },
+    {
+      "id": "ws-02",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Eltern freuen sich auf den Brief, er ist der erste offizielle Schritt ins Schulsystem.",
+      "locator": "Zeile 17",
+      "signal": "positive",
+      "phase_hint": "information",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "freuen sich",
+        "explicit": false
+      }
+    },
+    {
+      "id": "ws-03",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Der Zuteilungsentscheid ist der emotionale Höhepunkt, meist positiv, weil der Kindergarten in der Nähe liegt.",
+      "locator": "Zeile 18",
+      "signal": "positive",
+      "phase_hint": "zuteilung",
+      "emotion_hint": {
+        "valence": 2,
+        "label": "Höhepunkt, meist positiv",
+        "explicit": false
+      }
+    },
+    {
+      "id": "ws-04",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Hauptreibung ist der Schulweg, nicht die Zuteilung selbst.",
+      "locator": "Zeile 24",
+      "signal": "friction",
+      "phase_hint": "zuteilung"
+    },
+    {
+      "id": "ws-05",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Betreuungsanmeldung ist für die meisten Eltern Routine, weil sie das Hortsystem von der Kita kennen.",
+      "locator": "Zeile 25",
+      "signal": "neutral",
+      "phase_hint": "vorbereitung"
+    },
+    {
+      "id": "ws-07",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Der erste Kindergartentag ist für Eltern durchwegs positiv besetzt.",
+      "locator": "Zeile 19",
+      "signal": "positive",
+      "phase_hint": "start",
+      "emotion_hint": {
+        "valence": 2,
+        "label": "durchwegs positiv",
+        "explicit": false
+      }
+    },
+    {
+      "id": "ws-08",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Rückfragen per Telefon sind selten, weil die Website alles erklärt.",
+      "locator": "Zeile 26",
+      "signal": "neutral"
+    },
+    {
+      "id": "ws-09",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Das PDF-Formular ist nicht schön, funktioniert aber.",
+      "locator": "Zeile 27",
+      "signal": "friction",
+      "phase_hint": "vorbereitung"
+    },
+    {
+      "id": "ws-10",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Vermutung: Bei Zugezogenen könnte der Brief fehlen, weil der Adressabgleich dem Umzug hinterherhinkt.",
+      "locator": "Zeile 28",
+      "signal": "breakdown",
+      "phase_hint": "information"
+    },
+    {
+      "id": "ws-11",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Zugezogene Eltern sind die kritischste Gruppe, weil sie das System nicht kennen.",
+      "locator": "Zeile 32",
+      "signal": "neutral",
+      "persona_hint": "zugezogen"
+    },
+    {
+      "id": "ws-13",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Die Eingewöhnung ist für die Kinder anstrengend, für die Eltern aber unkompliziert.",
+      "locator": "Zeile 20",
+      "signal": "neutral",
+      "phase_hint": "start",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "unkompliziert",
+        "explicit": false
+      }
+    }
+  ],
+  "open_questions": [
+    {
+      "text": "Wie erleben fremdsprachige Eltern den Brief? Niemand im Team hat damit Kontakt.",
+      "phase_ref": "information",
+      "step_ref": "brief-erhalten",
+      "proposed_method": "interview"
+    },
+    {
+      "text": "Wie viele Eltern rufen an, statt die Website zu nutzen – und weshalb?",
+      "phase_ref": "information",
+      "proposed_method": "ticket_analysis"
+    },
+    {
+      "text": "Wie erleben Eltern die Zeit zwischen Brief und Zuteilung? Drei Interviews mit unterschiedlichen Ausgangslagen (zugezogen, berufstätig, fremdsprachig).",
+      "proposed_method": "interview"
+    },
+    {
+      "text": "Welche Fragen bleiben nach dem Brief offen? Elternbefragung im Herbst nutzen.",
+      "phase_ref": "information",
+      "proposed_method": "survey"
+    },
+    {
+      "text": "Ist die Betreuungsanmeldung wirklich Routine, oder nehmen wir das nur an?",
+      "phase_ref": "vorbereitung",
+      "step_ref": "betreuung-anmelden",
+      "proposed_method": "interview"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1",
+      "date": "2025-11-18",
+      "summary": "Hypothesen-Workshop: Phasen, Gefühlskurve und Pain Points aus Innensicht, ohne Nutzerevidenz.",
+      "author": "Team Kommunikation"
+    }
+  ]
+}

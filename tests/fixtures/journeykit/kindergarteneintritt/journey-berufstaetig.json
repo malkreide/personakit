@@ -1,0 +1,1171 @@
+{
+  "schema_version": "1.0",
+  "meta": {
+    "id": "kindergarteneintritt-eltern-berufstaetig",
+    "title": "Kindergarteneintritt aus Elternsicht – berufstätige Eltern",
+    "version": "0.3",
+    "status": "draft",
+    "map_type": "user_journey",
+    "diagnosis": {
+      "rationale": "Zweite Persona zur Journey «Kindergarteneintritt aus Elternsicht»: gleiche Phasen, eigener Verlauf. Für berufstätige Eltern ist die Betreuung der rote Faden, nicht der Brief. Die Datei dient dem Persona-Vergleich im Viewer; Back-Stage bleibt im Service Blueprint «Einschulungsprozess».",
+      "backstage_documented_in": "Service Blueprint «Einschulungsprozess» (separates Dokument, in Arbeit)"
+    },
+    "language": "de",
+    "created": "2026-02-27",
+    "updated": "2026-09-30",
+    "owner": {
+      "role": "Leitung Kommunikation",
+      "unit": "Schulamt, Marketing und Kommunikation",
+      "contact": "Funktionsadresse"
+    },
+    "review_cycle_days": 180,
+    "next_review": "2027-03-31",
+    "context": {
+      "organisation": "Schulamt der Stadt Zürich (fiktives Beispiel)",
+      "domain": "public_administration",
+      "service": "Kindergarteneintritt",
+      "notes": "Synthetisches Beispiel; Entwurf, stützt sich im Wesentlichen auf ein Interview, die Betreuungsanfragen und die Befragung."
+    },
+    "synthetic": true
+  },
+  "persona": {
+    "id": "eltern-berufstaetig",
+    "name": "Berufstätige Eltern mit Betreuungsbedarf",
+    "role": "Elternteil",
+    "description": "Elternpaar, beide berufstätig, braucht Hortbetreuung ab dem ersten Kindergartentag. Kennt das Schulsystem vom älteren Kind, aber nicht die aktuelle Betreuungsorganisation. Plant Pensen und Alltag Monate im Voraus.",
+    "goals": [
+      "Betreuung ab Tag eins, verbindlich bestätigt",
+      "Eine Frist, eine Antwort, ein Ansprechpartner",
+      "Planungssicherheit, bevor der Arbeitgeber die Pensen festlegt"
+    ],
+    "frustrations": [
+      "Betreuung muss angemeldet werden, bevor der Kindergarten bekannt ist",
+      "Fristen widersprechen sich zwischen Brief, Formular und Website",
+      "Bestätigung erst im Juni"
+    ],
+    "context": {
+      "language_situation": "Deutsch als Erstsprache; Verwaltungsbegriffe bekannt.",
+      "digital_access": "Hoch; erwartet Online-Formulare; kein Drucker zu Hause.",
+      "time_budget": "Knapp; Termine tagsüber bedeuten freie Tage.",
+      "prior_experience": "Erstes Kind bereits in der Schule; Erfahrung teilweise veraltet."
+    },
+    "evidence_refs": [
+      "e2-01",
+      "e2-12",
+      "anf-02",
+      "bef-03"
+    ],
+    "is_hypothesis": false
+  },
+  "scenario": {
+    "title": "Betreuung ab dem ersten Tag – vom Brief bis zur Chatgruppe",
+    "goal": "Ich will wissen, dass unser Kind ab dem ersten Kindergartentag betreut ist – rechtzeitig, bevor ich meine Pensen planen muss.",
+    "trigger": "Der Informationsbrief im Dezember mit dem Absatz zur Betreuung.",
+    "end_state": "Hortplatz bestätigt, Eingewöhnung abgedeckt, Informationsfluss über den Hort etabliert.",
+    "timeframe": "Dezember bis Oktober",
+    "scope_exclusions": [
+      "Tagesschul-Pilotstandorte",
+      "Private Kitas und Tagesfamilien als Dauerlösung",
+      "Umzug während des Schuljahrs"
+    ],
+    "evidence_refs": [
+      "e2-24"
+    ]
+  },
+  "phases": [
+    {
+      "id": "information",
+      "name": "Brief und Orientierung",
+      "user_intent": "Den einen Absatz finden, der für uns zählt: Betreuung – und wissen, bis wann.",
+      "duration": "Dezember bis Januar",
+      "kpis": [
+        {
+          "name": "Anteil Eltern mit Betreuungsbedarf, die die Anmeldefrist kannten",
+          "category": "perception",
+          "indicator_type": "leading",
+          "definition": "Zustimmung zur Befragungsfrage «Ich wusste, bis wann ich die Betreuung anmelden muss».",
+          "unit": "% Zustimmung",
+          "current_value": 46,
+          "target": 90,
+          "source_ref": "bef-03"
+        }
+      ],
+      "steps": [
+        {
+          "id": "brief-erhalten-b",
+          "name": "Informationsbrief erhalten",
+          "action": "Die Eltern erhalten den Brief Anfang Dezember und suchen direkt den Absatz zur Betreuung.",
+          "channel": "letter",
+          "touchpoint": "Informationsbrief der Kreisschulbehörde",
+          "counterpart": "Kreisschulbehörde",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Wir wissen ja, wie es läuft – oder?",
+              "evidence_refs": [
+                "e2-01"
+              ]
+            },
+            {
+              "text": "Bis wann müssen wir die Betreuung anmelden?",
+              "evidence_refs": [
+                "e2-03",
+                "bef-03"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "nach dreimaligem Lesen immer noch nicht sicher, bis wann",
+            "evidence_refs": [
+              "e2-04"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-frist-nicht-hervorgehoben-b",
+              "text": "Die Betreuungsfrist steht nicht oder nicht sichtbar im Brief; weniger als die Hälfte der Eltern mit Betreuungsbedarf kennt sie.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "frequent",
+              "workaround": "Website; dann Anruf.",
+              "owner": "Kreisschulbehörde (Briefredaktion) gemeinsam mit Betreuung",
+              "status": "open",
+              "evidence_refs": [
+                "e2-03",
+                "e2-04",
+                "bef-03"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Zweites Kind: Die Erfahrung vom ersten Kind ist veraltet, weil die Betreuung inzwischen anders organisiert ist.",
+              "evidence_refs": [
+                "e2-01"
+              ]
+            }
+          ],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "website-formular-b",
+          "name": "Seite «Betreuung anmelden» und PDF",
+          "action": "Die Eltern öffnen die Seite «Betreuung anmelden», laden das PDF, drucken es im Büro aus und schicken es per Post.",
+          "channel": "web",
+          "touchpoint": "Seite «Betreuung anmelden», PDF-Formular",
+          "counterpart": "Betreuung (Hort)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Welches Datum gilt – das auf dem Formular oder das auf der Website?",
+              "evidence_refs": [
+                "e2-07",
+                "anf-03"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "beruhigt, aber auch irritiert – welches Datum gilt denn jetzt?",
+            "evidence_refs": [
+              "e2-08"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-fristen-widerspruch-b",
+              "text": "Formular und Website nennen unterschiedliche Fristen; die Eltern rufen an, um sicherzugehen, oder verpassen die Frist.",
+              "type": "breakdown",
+              "severity": 5,
+              "frequency": "frequent",
+              "workaround": "Anruf bei der Betreuung; verspätete Anmeldung.",
+              "owner": "Betreuung (Hort) und Webredaktion",
+              "status": "open",
+              "evidence_refs": [
+                "e2-07",
+                "e2-08",
+                "anf-03"
+              ]
+            },
+            {
+              "id": "pp-pdf-b",
+              "text": "Das Formular existiert nur als PDF zum Ausdrucken, Unterschreiben und Einsenden; kein Drucker zu Hause.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "systematic",
+              "workaround": "Ausdrucken am Arbeitsplatz.",
+              "owner": "Betreuung (Hort)",
+              "status": "in_progress",
+              "evidence_refs": [
+                "e2-05",
+                "web-02"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Anmeldung für einen Hort, bevor der Kindergarten bekannt ist – «als würde man einen Parkplatz mieten, bevor man weiss, wo man wohnt».",
+              "evidence_refs": [
+                "e2-10"
+              ]
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Fristen widersprechen sich",
+              "path": "Anruf bei der Betreuung; mündliche Auskunft, dass Anmeldungen bis zum Zuteilungsentscheid berücksichtigt werden.",
+              "exists": true,
+              "evidence_refs": [
+                "e2-08"
+              ]
+            },
+            {
+              "trigger": "Frist verpasst",
+              "path": "Soll: eine Frist, an allen Stellen gleich, mit Online-Formular und Eingangsbestätigung.",
+              "exists": false,
+              "evidence_refs": [
+                "e2-24"
+              ]
+            }
+          ],
+          "backstage_notes": [
+            "Frist auf dem Formular und auf der Website werden von verschiedenen Stellen gepflegt."
+          ],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "zuteilung",
+      "name": "Zuteilungsentscheid",
+      "user_intent": "Wissen, welcher Kindergarten – und ob der Hortplatz steht.",
+      "duration": "April bis Juni",
+      "kpis": [
+        {
+          "name": "Anteil Betreuungsanfragen an allen Anfragen",
+          "category": "outcome",
+          "indicator_type": "leading",
+          "definition": "Anteil der Anfragen zu Betreuungsfrist und Hortbestätigung am Jahrestotal der Anfragen.",
+          "unit": "% der Anfragen",
+          "current_value": 23,
+          "target": 10,
+          "source_ref": "anf-02",
+          "commercial_equivalent": "Support-Ticket-Rate"
+        }
+      ],
+      "steps": [
+        {
+          "id": "entscheid-erhalten-b",
+          "name": "Zuteilungsentscheid erhalten",
+          "action": "Der Entscheid nennt den Kindergarten – zur Betreuung steht kein Wort darin.",
+          "channel": "letter",
+          "touchpoint": "Zuteilungsentscheid (Brief)",
+          "counterpart": "Kreisschulbehörde",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Und die Betreuung?",
+              "evidence_refs": [
+                "e2-11"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "kein Wort zur Betreuung – also wieder anrufen",
+            "evidence_refs": [
+              "e2-11"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-keine-betreuungsinfo-b",
+              "text": "Der Zuteilungsentscheid enthält keine Information zum Betreuungsplatz, obwohl beides zusammengehört.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "frequent",
+              "workaround": "Anruf bei der Betreuung.",
+              "owner": "Kreisschulbehörde und Betreuung (Prozessverantwortung)",
+              "status": "open",
+              "evidence_refs": [
+                "e2-11",
+                "anf-02"
+              ]
+            }
+          ],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [
+            "Zuteilung und Betreuungsbestätigung laufen in zwei Systemen mit zwei Versanddaten."
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "bestaetigung-warten-b",
+          "name": "Auf die Hortbestätigung warten",
+          "action": "Die Eltern rufen bei der Betreuung an, erfahren «voraussichtlich Juni» und organisieren parallel einen Plan B.",
+          "channel": "phone",
+          "touchpoint": "Telefon Betreuung (Hort)",
+          "counterpart": "Betreuung (Hort)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Mein Arbeitgeber will im Mai meine Pensen wissen – und ich weiss bis Juni nicht, ob mein Kind betreut ist.",
+              "evidence_refs": [
+                "e2-12",
+                "anf-12"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -2,
+            "label": "wütend – nicht auf die Person am Telefon, auf das System",
+            "evidence_refs": [
+              "e2-13"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-bestaetigung-juni-b",
+              "text": "Die Bestätigung des Hortplatzes kommt erst im Juni; berufstätige Eltern haben bis dahin keine Planungssicherheit und organisieren kostenpflichtige Alternativen.",
+              "type": "breakdown",
+              "severity": 5,
+              "frequency": "frequent",
+              "workaround": "Private Tagesfamilie als Plan B anfragen (kostenpflichtig); wiederholt anrufen.",
+              "owner": "Betreuung (Hort)",
+              "status": "open",
+              "evidence_refs": [
+                "e2-12",
+                "e2-13",
+                "anf-12"
+              ]
+            }
+          ],
+          "edge_cases": [],
+          "recovery_paths": [
+            {
+              "trigger": "Keine Planungssicherheit bis Juni",
+              "path": "Private Tagesfamilie als Plan B anfragen und nach der Bestätigung wieder absagen.",
+              "exists": true,
+              "evidence_refs": [
+                "e2-15"
+              ]
+            },
+            {
+              "trigger": "Keine Planungssicherheit bis Juni",
+              "path": "Soll: Betreuungsbestätigung gemeinsam mit dem Zuteilungsentscheid im April.",
+              "exists": false,
+              "evidence_refs": [
+                "e2-24"
+              ]
+            }
+          ],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "vorbereitung",
+      "name": "Vorbereitung",
+      "user_intent": "Die Bestätigung in der Hand haben und die praktischen Fragen (Mittagessen, Weg zum Hort) klären.",
+      "duration": "Mai bis Juni",
+      "kpis": [
+        {
+          "name": "Anteil Eltern, deren offene Fragen am Informationsanlass beantwortet wurden",
+          "category": "perception",
+          "indicator_type": "lagging",
+          "definition": "Zustimmung zur Befragungsfrage «Der Informationsanlass hat meine offenen Fragen beantwortet».",
+          "unit": "% Zustimmung",
+          "current_value": 89,
+          "target": 90,
+          "source_ref": "bef-06"
+        }
+      ],
+      "steps": [
+        {
+          "id": "bestaetigung-erhalten-b",
+          "name": "Hortbestätigung erhalten",
+          "action": "Mitte Juni kommt die Bestätigung per Brief: Platz im Hort beim Kindergarten, Betreuungszeiten, Tarif.",
+          "channel": "letter",
+          "touchpoint": "Bestätigung Betreuungsplatz (Brief)",
+          "counterpart": "Betreuung (Hort)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Alles gut – die Tagesfamilie können wir absagen.",
+              "evidence_refs": [
+                "e2-15"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "alles gut",
+            "evidence_refs": [
+              "e2-15"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [
+            {
+              "text": "Plan B wieder abzusagen kostet Zeit und Goodwill bei der Tagesfamilie.",
+              "evidence_refs": [
+                "e2-15"
+              ]
+            }
+          ],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "infoanlass-b",
+          "name": "Informationsanlass besuchen",
+          "action": "Ein Elternteil geht um 18 Uhr an den Anlass und klärt mit der Hortleitung Mittagessen und Weg zwischen Kindergarten und Hort.",
+          "channel": "event",
+          "touchpoint": "Informationsanlass im Schulhaus",
+          "counterpart": "Schulleitung, Kindergarten-Lehrperson, Hortleitung",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Wie funktioniert der Weg zwischen Kindergarten und Hort, und wer isst wo zu Mittag?",
+              "evidence_refs": [
+                "e2-17"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "hilfreich, weil die Hortleitung da war",
+            "evidence_refs": [
+              "e2-17"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": [
+            "bef-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "start",
+      "name": "Start",
+      "user_intent": "Wissen, wer das Kind in den zwei Eingewöhnungswochen am Nachmittag betreut.",
+      "duration": "August, erste zwei Wochen",
+      "kpis": [
+        {
+          "name": "Anteil Eltern, die vor dem ersten Tag wussten, wie die Eingewöhnung abläuft",
+          "category": "perception",
+          "indicator_type": "leading",
+          "definition": "Zustimmung zur Befragungsfrage «Ich wusste vor dem ersten Kindergartentag, wie die Eingewöhnung abläuft».",
+          "unit": "% Zustimmung",
+          "current_value": 67,
+          "target": 85,
+          "source_ref": "bef-08"
+        }
+      ],
+      "steps": [
+        {
+          "id": "erster-tag-b",
+          "name": "Erster Tag und reduzierter Stundenplan",
+          "action": "Der Start ist gut organisiert; die Eltern kennen den reduzierten Stundenplan vom ersten Kind und fragen beim Hort nach der Abdeckung.",
+          "channel": "in_person",
+          "touchpoint": "Kindergarten; Stundenplan-Blatt für die ersten zwei Wochen",
+          "counterpart": "Kindergarten-Lehrperson, Betreuung (Hort)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Deckt der Hort die halben Tage ab? Wir fragen lieber nach.",
+              "evidence_refs": [
+                "e2-20",
+                "e2-21"
+              ]
+            }
+          ],
+          "feeling": null,
+          "pain_points": [
+            {
+              "id": "pp-eingewoehnung-luecke-b",
+              "text": "Die Betreuung deckt die reduzierten Eingewöhnungstage nicht automatisch ab; wer es nicht weiss, improvisiert zwei Wochen.",
+              "type": "breakdown",
+              "severity": 4,
+              "frequency": "occasional",
+              "workaround": "Zwei Wochen privat improvisieren; nachfragen beim Hort.",
+              "owner": "Betreuung (Hort) gemeinsam mit Schulleitung",
+              "status": "open",
+              "evidence_refs": [
+                "e2-20",
+                "e2-21",
+                "bef-08",
+                "doc-07"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Eltern ohne älteres Kind erleben den reduzierten Stundenplan als Schock.",
+              "evidence_refs": [
+                "e2-20"
+              ]
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Betreuungslücke in den ersten zwei Wochen",
+              "path": "Nachfragen beim Hort; die Abdeckung wird auf Anfrage eingerichtet.",
+              "exists": true,
+              "evidence_refs": [
+                "e2-21"
+              ]
+            },
+            {
+              "trigger": "Betreuungslücke in den ersten zwei Wochen",
+              "path": "Soll: Eingewöhnungsplan und Abdeckung werden mit der Hortbestätigung kommuniziert.",
+              "exists": false,
+              "evidence_refs": [
+                "e2-24",
+                "doc-07"
+              ]
+            }
+          ],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "ankommen",
+      "name": "Ankommen",
+      "user_intent": "Entspannt in den Alltag kommen und über den Hort informiert bleiben.",
+      "duration": "September bis Oktober",
+      "kpis": [
+        {
+          "name": "Anteil Eltern, die das Elterngespräch als hilfreich erlebten",
+          "category": "outcome",
+          "indicator_type": "lagging",
+          "definition": "Zustimmung zur Befragungsfrage «Das Elterngespräch in den ersten Wochen war hilfreich».",
+          "unit": "% Zustimmung",
+          "current_value": 86,
+          "target": 90,
+          "source_ref": "bef-09"
+        }
+      ],
+      "steps": [
+        {
+          "id": "alltag-b",
+          "name": "Alltag mit Hort und Chatgruppe",
+          "action": "Der Hort informiert über eine Chatgruppe; die Eltern erfahren alles, was sie im Frühling vermisst haben.",
+          "channel": "chat",
+          "touchpoint": "Chat-Gruppe des Horts",
+          "counterpart": "Betreuung (Hort)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Jetzt erfährt man alles – im Frühling war es das Gegenteil.",
+              "evidence_refs": [
+                "e2-22"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "entspannt, verglichen mit dem Frühling",
+            "evidence_refs": [
+              "e2-22"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "elterngespraech-b",
+          "name": "Elterngespräch",
+          "action": "Kurzes Gespräch mit der Lehrperson im September.",
+          "channel": "in_person",
+          "touchpoint": "Elterngespräch im Kindergarten",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Hat sich unser Kind eingelebt?",
+              "evidence_refs": [
+                "bef-09"
+              ]
+            }
+          ],
+          "feeling": null,
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": [
+            "bef-09"
+          ]
+        }
+      ]
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "opp-eine-frist-b",
+      "hmw": "Wie können wir die Betreuungsfrist so kommunizieren, dass sie im Brief auffällt und überall gleich lautet?",
+      "linked_pain_points": [
+        "pp-frist-nicht-hervorgehoben-b",
+        "pp-fristen-widerspruch-b"
+      ],
+      "phase_ref": "information",
+      "user_impact": 5,
+      "public_value": 4,
+      "effort": 2,
+      "owner": "Kreisschulbehörde gemeinsam mit Betreuung",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als berufstätiges Elternteil möchte ich die Betreuungsfrist im Brief hervorgehoben sehen, damit ich sie beim ersten Lesen finde.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich auf Formular, Website und Brief dieselbe Frist lesen, damit ich nicht anrufen muss, um sie zu klären.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "e2-03",
+        "e2-07",
+        "anf-03",
+        "bef-03"
+      ]
+    },
+    {
+      "id": "opp-betreuung-im-entscheid-b",
+      "hmw": "Wie können wir Eltern mit dem Zuteilungsentscheid gleichzeitig Planungssicherheit für die Betreuung geben?",
+      "linked_pain_points": [
+        "pp-keine-betreuungsinfo-b",
+        "pp-bestaetigung-juni-b"
+      ],
+      "phase_ref": "zuteilung",
+      "user_impact": 5,
+      "public_value": 5,
+      "effort": 4,
+      "owner": "Kreisschulbehörde und Betreuung (Leitung)",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als berufstätiges Elternteil möchte ich mit dem Zuteilungsentscheid wissen, ob mein Hortplatz bestätigt ist, damit ich meine Pensen im Mai planen kann.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich eine Zwischenmeldung erhalten, wenn die Bestätigung später kommt, damit ich nicht wiederholt anrufen muss.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e2-11",
+        "e2-12",
+        "e2-24",
+        "anf-12"
+      ]
+    },
+    {
+      "id": "opp-online-anmeldung-b",
+      "hmw": "Wie können wir die Betreuungsanmeldung ohne Drucker und Post ermöglichen?",
+      "linked_pain_points": [
+        "pp-pdf-b"
+      ],
+      "phase_ref": "information",
+      "user_impact": 4,
+      "public_value": 3,
+      "effort": 3,
+      "owner": "Betreuung (Hort)",
+      "status": "in_progress",
+      "stories": [
+        {
+          "text": "Als Elternteil möchte ich die Betreuung online anmelden und eine Eingangsbestätigung erhalten.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "e2-05",
+        "web-02"
+      ]
+    },
+    {
+      "id": "opp-eingewoehnung-abdeckung-b",
+      "hmw": "Wie können wir die Betreuung in den Eingewöhnungswochen automatisch mitplanen?",
+      "linked_pain_points": [
+        "pp-eingewoehnung-luecke-b"
+      ],
+      "phase_ref": "start",
+      "user_impact": 4,
+      "public_value": 3,
+      "effort": 2,
+      "owner": "Betreuung (Hort)",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Elternteil mit Hortplatz möchte ich, dass die halben Eingewöhnungstage automatisch abgedeckt sind, damit ich nicht improvisieren muss.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich den Eingewöhnungsplan mit der Hortbestätigung erhalten, nicht erst am ersten Tag.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e2-20",
+        "e2-21"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "int-e2",
+      "title": "Interview E2 – berufstätiges Elternpaar, zweites Kind",
+      "kind": "interview",
+      "default_class": "reported",
+      "date": "2026-02",
+      "n": 1,
+      "participants": "Elternpaar, beide berufstätig, Betreuungsbedarf ab dem ersten Tag",
+      "pii_status": "anonymised",
+      "location": "input/interview-e2.md",
+      "notes": "Synthetisches Transkript."
+    },
+    {
+      "id": "anfragen",
+      "title": "Anfragen an die Kreisschulbehörde (anonymisierter Export)",
+      "kind": "inquiry_log",
+      "default_class": "observed",
+      "date": "2024-12 bis 2025-11",
+      "n": 30,
+      "participants": "Eltern, die telefonisch, per E-Mail oder am Schalter nachgefragt haben",
+      "pii_status": "anonymised",
+      "location": "input/anfragen-export.csv",
+      "notes": "Synthetische Stichprobe von 30 Anfragen über einen Jahreszyklus; Kurztexte ohne Namen und Adressen."
+    },
+    {
+      "id": "befragung",
+      "title": "Elternbefragung Kindergarteneintritt (aggregiert)",
+      "kind": "survey",
+      "default_class": "reported",
+      "date": "2025-10",
+      "n": 412,
+      "participants": "Eltern der Kinder mit Eintritt August 2025",
+      "pii_status": "anonymised",
+      "location": "input/elternbefragung.csv",
+      "notes": "Synthetische Aggregatwerte; nur Zustimmungsanteile, keine Einzelantworten."
+    },
+    {
+      "id": "analytics",
+      "title": "Webanalytics Bereich Kindergarten",
+      "kind": "analytics",
+      "default_class": "observed",
+      "date": "2024-12 bis 2025-06",
+      "pii_status": "none",
+      "location": "input/webanalytics.csv",
+      "notes": "Synthetische Seitenstatistik, ohne Personenbezug."
+    },
+    {
+      "id": "prozessdok",
+      "title": "Prozessbeschrieb Einschulung (intern, Soll-Prozess)",
+      "kind": "internal_document",
+      "default_class": "assumed",
+      "date": "2024-09",
+      "pii_status": "none",
+      "location": "input/prozess-einschulung-intern.md",
+      "notes": "Innensicht: beschreibt den Soll-Ablauf, nicht das Erleben. Wird als Annahme behandelt."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e2-01",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Wir dachten, wir wissen, wie es läuft. Das war ein Irrtum. Beim ersten Kind war die Betreuung noch anders organisiert.",
+      "locator": "Zeile 7",
+      "signal": "friction",
+      "phase_hint": "information",
+      "persona_hint": "berufstaetig"
+    },
+    {
+      "id": "e2-03",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Eine Frist habe ich nicht gesehen, oder sie war nicht hervorgehoben.",
+      "locator": "Zeile 11",
+      "signal": "friction",
+      "phase_hint": "information",
+      "channel_hint": "letter",
+      "tags": [
+        "betreuung",
+        "frist"
+      ]
+    },
+    {
+      "id": "e2-04",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe den Brief dreimal gelesen und war mir immer noch nicht sicher, bis wann wir das machen müssen.",
+      "locator": "Zeile 12",
+      "signal": "friction",
+      "phase_hint": "information",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "nicht sicher, bis wann",
+        "explicit": true
+      },
+      "tags": [
+        "frist"
+      ]
+    },
+    {
+      "id": "e2-05",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Das PDF muss man ausdrucken, ausfüllen, unterschreiben und per Post schicken.",
+      "locator": "Zeile 14",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "paper_form",
+      "tags": [
+        "formular"
+      ]
+    },
+    {
+      "id": "e2-07",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Auf dem Formular stand ein Datum, auf der Website ein anderes. Ich habe dann angerufen, um sicherzugehen.",
+      "locator": "Zeile 17",
+      "signal": "breakdown",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "phone",
+      "tags": [
+        "frist"
+      ]
+    },
+    {
+      "id": "e2-08",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Dass die Frist Ende Februar sei, aber dass Anmeldungen bis zum Zuteilungsentscheid noch berücksichtigt würden. Das hat mich beruhigt, aber auch irritiert. Welches Datum gilt denn jetzt?",
+      "locator": "Zeile 19",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "phone",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "beruhigt, aber auch irritiert",
+        "explicit": true
+      },
+      "tags": [
+        "frist"
+      ]
+    },
+    {
+      "id": "e2-10",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Das ist, als würde man einen Parkplatz mieten, bevor man weiss, wo man wohnt.",
+      "locator": "Zeile 22",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "tags": [
+        "reihenfolge"
+      ]
+    },
+    {
+      "id": "e2-11",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Zur Betreuung stand aber nichts drin. Kein Wort.",
+      "locator": "Zeile 26",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "channel_hint": "letter",
+      "tags": [
+        "betreuung"
+      ]
+    },
+    {
+      "id": "e2-12",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Juni. Wir mussten bis Juni warten, um zu wissen, ob unser Kind ab August betreut ist. Mein Arbeitgeber wollte im Mai meine Pensen für das zweite Halbjahr wissen.",
+      "locator": "Zeile 29",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "tags": [
+        "betreuung",
+        "planungssicherheit"
+      ]
+    },
+    {
+      "id": "e2-13",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Das war der Moment, wo ich wirklich wütend wurde. Nicht auf die Person am Telefon, auf das System.",
+      "locator": "Zeile 30",
+      "signal": "breakdown",
+      "phase_hint": "zuteilung",
+      "emotion_hint": {
+        "valence": -2,
+        "label": "wütend auf das System",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e2-15",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Mitte Juni, per Brief. Platz im Hort beim Kindergarten, alles gut. Die Tagesfamilie haben wir wieder abgesagt.",
+      "locator": "Zeile 34",
+      "signal": "positive",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "letter",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "alles gut",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e2-17",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Hilfreich war, dass die Hortleiterin auch da war. So konnten wir die Frage mit dem Mittagessen und dem Weg zwischen Kindergarten und Hort direkt klären.",
+      "locator": "Zeile 39",
+      "signal": "positive",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "event",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "hilfreich (abgeleitet)",
+        "explicit": false
+      }
+    },
+    {
+      "id": "e2-20",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Für Eltern, die das nicht wissen, ist das ein Schock: Das Kind ist zwei Wochen lang nur halbe Tage da und die Betreuung deckt das nicht automatisch ab.",
+      "locator": "Zeile 44",
+      "signal": "breakdown",
+      "phase_hint": "start",
+      "contradicts": [
+        "doc-07"
+      ],
+      "tags": [
+        "eingewoehnung",
+        "betreuung"
+      ]
+    },
+    {
+      "id": "e2-21",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Bei uns ja, weil wir nachgefragt haben. Eine Mutter aus der Klasse hat es nicht gewusst und musste zwei Wochen improvisieren.",
+      "locator": "Zeile 46",
+      "signal": "breakdown",
+      "phase_hint": "start",
+      "tags": [
+        "eingewoehnung",
+        "betreuung"
+      ]
+    },
+    {
+      "id": "e2-22",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Entspannt, verglichen mit dem Frühling. Der Hort hat eine Chat-Gruppe für die Eltern, da erfährt man alles.",
+      "locator": "Zeile 48",
+      "signal": "positive",
+      "phase_hint": "ankommen",
+      "channel_hint": "chat",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "entspannt",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e2-24",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Betreuung gehört in denselben Brief und in denselben Entscheid wie der Kindergarten. Ein Datum, eine Frist, eine Antwort.",
+      "locator": "Zeile 52",
+      "signal": "need",
+      "tags": [
+        "betreuung",
+        "reihenfolge"
+      ]
+    },
+    {
+      "id": "anf-02",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "metric",
+      "text": "7 von 30 Anfragen betreffen die Betreuungsfrist oder die Hortbestätigung; 5 davon gingen vor dem Zuteilungsentscheid ein.",
+      "locator": "kategorie = betreuung_frist (A-004, A-008, A-009, A-012, A-014, A-019, A-026)",
+      "value": 7,
+      "unit": "Anfragen von 30",
+      "signal": "friction",
+      "phase_hint": "vorbereitung"
+    },
+    {
+      "id": "anf-03",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Formular Betreuung nennt 28. Februar, Website nennt 31. März – welche Frist gilt?",
+      "locator": "anfrage_id A-008",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "email"
+    },
+    {
+      "id": "anf-12",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Wann kommt die Bestätigung des Hortplatzes? Arbeitgeber braucht Planungssicherheit.",
+      "locator": "anfrage_id A-026",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "channel_hint": "phone"
+    },
+    {
+      "id": "bef-03",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Ich wusste, bis wann ich die Betreuung anmelden muss»: 46 % Zustimmung (n = 241, nur Eltern mit Betreuungsbedarf), 97 Kommentare.",
+      "locator": "Zeile 4",
+      "value": 46,
+      "unit": "% Zustimmung",
+      "signal": "friction",
+      "phase_hint": "vorbereitung"
+    },
+    {
+      "id": "bef-06",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Der Informationsanlass hat meine offenen Fragen beantwortet»: 89 % Zustimmung (n = 352).",
+      "locator": "Zeile 7",
+      "value": 89,
+      "unit": "% Zustimmung",
+      "signal": "positive",
+      "phase_hint": "vorbereitung"
+    },
+    {
+      "id": "bef-08",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Ich wusste vor dem ersten Kindergartentag, wie die Eingewöhnung abläuft»: 67 % Zustimmung (n = 405).",
+      "locator": "Zeile 9",
+      "value": 67,
+      "unit": "% Zustimmung",
+      "signal": "friction",
+      "phase_hint": "start"
+    },
+    {
+      "id": "bef-09",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Das Elterngespräch in den ersten Wochen war hilfreich»: 86 % Zustimmung (n = 388).",
+      "locator": "Zeile 10",
+      "value": 86,
+      "unit": "% Zustimmung",
+      "signal": "positive",
+      "phase_hint": "ankommen"
+    },
+    {
+      "id": "web-02",
+      "source_ref": "analytics",
+      "class": "observed",
+      "kind": "metric",
+      "text": "PDF «Anmeldung Betreuung»: 9 870 Aufrufe, Ausstiegsrate 88 %, durchschnittliche Dauer 12 Sekunden.",
+      "locator": "Zeile 6",
+      "value": 88,
+      "unit": "% Ausstiegsrate",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "web"
+    },
+    {
+      "id": "doc-07",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die ersten zwei Schulwochen gelten als Eingewöhnung mit reduziertem Stundenplan; die Betreuung wird entsprechend angepasst.",
+      "locator": "Abschnitt 4.8, Zeile 58",
+      "signal": "neutral",
+      "phase_hint": "start"
+    }
+  ],
+  "open_questions": [
+    {
+      "text": "Wie viele Eltern organisieren wegen der späten Bestätigung eine kostenpflichtige Alternative, und was kostet sie?",
+      "phase_ref": "zuteilung",
+      "step_ref": "bestaetigung-warten-b",
+      "proposed_method": "survey"
+    },
+    {
+      "text": "Gibt es Eltern, die wegen der Betreuungsunsicherheit ihr Pensum reduzieren?",
+      "proposed_method": "interview"
+    },
+    {
+      "text": "Wie unterscheidet sich die Journey an Tagesschul-Standorten, wo Betreuung und Unterricht zusammen organisiert sind?",
+      "proposed_method": "interview"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1",
+      "date": "2026-02-27",
+      "summary": "Aus Interview E2 abgeleitet; Phasen von der Hauptjourney übernommen.",
+      "author": "Team Kommunikation"
+    },
+    {
+      "version": "0.2",
+      "date": "2026-06-15",
+      "summary": "Betreuungsanfragen aus dem Export und Befragungswerte ergänzt.",
+      "author": "Team Kommunikation"
+    },
+    {
+      "version": "0.3",
+      "date": "2026-09-30",
+      "summary": "Chancen und Kennzahlen ergänzt; Breakdown Eingewöhnungslücke aufgenommen. Weitere Interviews mit berufstätigen Eltern ausstehend.",
+      "author": "Team Kommunikation"
+    }
+  ]
+}

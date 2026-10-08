@@ -42,7 +42,7 @@ Kodierung UTF-8. Dateien mit Windows-Zeilenenden (CRLF) und mit UTF-8-BOM werden
 | `evidence[]` | `id` (E1…), `type`, `source`, `date`, `n`, `note`, `ref` |
 | `assumptions[]` | Nicht validierte Annahmen (Pflicht bei `proto`) |
 | `unknowns[]` | Offene Fragen – bleiben im Prompt als «unbekannt» |
-| `relations` | `journeys[]` (journeykit-IDs), `personas[]`, `links[]` |
+| `relations` | `journeys[]` (journeykit-`meta.id`, prüfbar mit `lint --journeys`), `personas[]`, `links[]` |
 | `changelog[]` | `version`, `date`, `note` |
 
 Evidenz-Typen: `interview` · `observation` · `survey` · `analytics` · `support-log` · `workshop` · `secondary` · `assumption`.
@@ -145,8 +145,24 @@ Die Persona-Datei bleibt unverändert bei `personakit: "1.0"`; Sets sind eine re
 | X008 | ERROR | Persona im selben Set mehrfach aufgeführt |
 | X009 | WARN | Persona-Datei liegt in einem Set-Ordner, gehört aber zu keinem Set |
 | X010 | ERROR | Set-`id` mehrfach vorhanden |
+| K000 | ERROR | Journey-Datei nicht lesbar, oder `meta.id` bzw. `persona.id` fehlt (nur mit `--journeys`) |
+| K001 | WARN | `relations.journeys` nennt eine Journey, die unter `--journeys` nicht vorkommt |
+| K002 | WARN | Journey nennt in `persona.id` eine unbekannte Persona |
+| K003 | WARN | Persona verweist auf eine Journey, die eine andere Persona führt |
+| K004 | INFO | Journey führt die Persona, `relations.journeys` nennt sie nicht |
 
 X002–X004 laufen pro Set und für das lose Set; ein Set mit `status: retired` wird übersprungen. Überschreibt ein Set die Priorität einer Persona, prüft der Linter die prioritätsabhängigen Regeln E002, J001 und N001 im Set erneut und meldet nur, was mit der wirksamen Priorität zusätzlich anfällt.
+
+### Kopplung mit journeykit (`--journeys`)
+
+`personakit lint personas --journeys <pfad>` prüft die Verweise zwischen Personas und [journeykit](https://github.com/malkreide/journeykit)-Journeys in beide Richtungen. Begründung und Abgrenzung: [`JOURNEYKIT.md`](JOURNEYKIT.md).
+
+- Eine Journey nennt ihre Persona in `persona.id`; diese ID ist die personakit-`id`. Die Persona nennt ihre Journeys in `relations.journeys` mit der `meta.id` der Journey.
+- `<pfad>` ist eine Journey-Datei oder ein Ordner (rekursiv `*.json`, ohne `*.schema.json`); `--journeys` darf mehrfach stehen. Jede übergebene Journey gehört zum geprüften Bestand, ihre `persona.id` gilt also als Verweis.
+- personakit liest von einer Journey nur `meta.id` und `persona.id`. Ob die Journey sonst gültig ist, prüft `journeykit lint`.
+- Mehrere Dateien mit derselben `meta.id` (z. B. Hypothese und Synthese) zählen als eine Journey. K003 meldet nur, wenn keine davon die Persona führt.
+- Personas, die ein Set ausserhalb der übergebenen Pfade auflöst, gelten für K002 als bekannt.
+- Ohne `--journeys` läuft keine K-Regel. In `personakit.api` entspricht das `lint_workspace(paths, journeys=[…])`.
 
 ### Maschinenlesbare Ausgabe
 

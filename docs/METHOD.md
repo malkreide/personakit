@@ -58,6 +58,12 @@ Factoids sind zugleich der Teil der Pipeline, der Personendaten berührt. Rohmat
 
 → **Entscheid:** Factoids haben ein eigenes Format (`factoids/<studie>/<quelle>.factoids.md`, eine Tabellenzeile pro Factoid, `variables.yml` für die Skalen). `personakit factoids` verortet die Teilnehmenden (Median ihrer Factoids), meldet dünn belegte Variablen (F010) und Teilnehmende, die auf mindestens zwei Variablen ≥ 2 Punkte von allen anderen abliegen (F011) – dieselbe Schwelle wie die Abgrenzungsregel für Personas im Erhebungsleitfaden. `personakit skeleton` füllt nur Verhaltenswerte, Evidenz, Zitate und `evidence_level` (ab 5 Interviews/Beobachtungen `qualitative`) und warnt bei Frankenstein-Auswahlen; Archetyp, Ziele, Jobs und Simulationsregeln bleiben leer und werden im Abschnitt `## Herleitung` mit Factoid-IDs belegt. Teilnehmende erscheinen nur als Codes (F006), `consent_note` ist Pflicht, reale Studienordner sind per `.gitignore` ausgeschlossen.
 
+### 1.9 Persona und Journey: zwei Werkzeuge, eine Quelle pro Begriff
+
+Eine Journey braucht genau eine Persona als Akteur, und Personas werden über Journeys überprüfbar: Wo eine Phase scheitert, zeigt sich, ob die Persona die richtigen Schmerzpunkte hat. Werden die beiden in getrennten Werkzeugen gepflegt, driften sie leise auseinander. Die Journey behält einen Persona-Namen, den es nicht mehr gibt, oder die Persona verweist auf eine Journey, die inzwischen jemand anderen beschreibt. In den Beispielen beider Repos war genau das der Fall (`eltern-neu-in-zuerich` ↔ `eltern-zugezogen`).
+
+→ **Entscheid:** Die Werkzeuge koppeln sich über IDs, nicht über geteilte Inhalte. Die Journey-`persona.id` ist die personakit-`id`, `relations.journeys` nennt die `meta.id` der Journey. personakit besitzt die Prüfung (`lint --journeys`, K000–K004), weil nur personakit ein Feld hat, das auf das andere Werkzeug zeigt, und weil journeykit ohne personakit lauffähig bleiben soll. Verweise sind wie X005 Warnungen, ein fehlender Rückverweis ist Info. Evidenz wird nicht in einer gemeinsamen Datei geteilt, sondern über die Namenskonvention (Erhebung, Teilnehmer-Code) zusammengeführt. Abwägung: [`JOURNEYKIT.md`](JOURNEYKIT.md).
+
 ## 2. Was das Format bewusst nicht enthält
 
 | Weggelassen | Grund |
@@ -65,7 +71,7 @@ Factoids sind zugleich der Teil der Pipeline, der Personendaten berührt. Rohmat
 | Foto, Alter, Familienstand als eigene Felder | Stereotypisierung; keine Gestaltungsrelevanz ohne Begründung |
 | Marketing-Felder (Kaufkraft, Markenaffinität) | B2C-Marketing-Persona ist ein anderes Werkzeug |
 | Freitext-«Biografie» als Pflichtfeld | Lädt zu erfundenen Details ein; `## Narrativ` im Body ist optional und darf keine neuen Fakten einführen |
-| Fertige Journey-Map | Gehört in journeykit; `relations.journeys` verlinkt |
+| Fertige Journey-Map | Gehört in journeykit; `relations.journeys` verlinkt, `lint --journeys` prüft (1.9) |
 
 ## 3. Wie Personas als Input für andere Lösungen dienen
 
@@ -73,7 +79,7 @@ Factoids sind zugleich der Teil der Pipeline, der Personendaten berührt. Rohmat
 |---|---|---|
 | Content-Generierung für ein Zielpublikum (Elternbrief, Website-Text, FAQ) | `render -f prompt -m audience` | Erlebnisziele als Veto-Kriterium; Register der Persona, nicht der Verwaltung |
 | Synthetische Gegenprobe (Entwurf «vorlesen», Interview üben) | `render -f prompt -m simulate` | Hypothese, nicht Evidenz; Ergebnisse nie als Nutzerforschung ausgeben |
-| User Journeys (journeykit) | `render -f json` oder `bundle` | Persona-ID als Akteur; Jobs als Journey-Treiber |
+| User Journeys (journeykit) | `render -f json` oder `bundle` | Persona-ID als Journey-`persona.id`; Jobs als Journey-Treiber; `lint --journeys` prüft beide Richtungen |
 | Priorisierung von Features/Massnahmen | `render -f matrix` | Opportunity-Score pro Job; primäre Persona entscheidet bei Konflikt |
 | Dokumentation (Notion, Confluence, Wiki) | `render -f md` / `card` | Card für Übersichten, md für Detailseiten |
 | Team-Kommunikation | `render -f html` | Galerie als Single-File, offline, gruppiert nach Set, Filter nach Set/Priorität/Status |

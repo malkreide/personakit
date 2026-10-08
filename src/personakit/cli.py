@@ -201,7 +201,7 @@ def cmd_validate(a: argparse.Namespace) -> int:
 
 
 def cmd_lint(a: argparse.Namespace) -> int:
-    report = lint_workspace(a.paths)
+    report = lint_workspace(a.paths, journeys=a.journeys)
     findings = report.findings
     personas, sets = report.personas, report.sets
     if a.min_level == "warn":
@@ -212,7 +212,8 @@ def cmd_lint(a: argparse.Namespace) -> int:
     n_err = sum(1 for f in findings if f.level == ERROR)
     n_warn = sum(1 for f in findings if f.level == WARN)
     in_sets = f" in {len(sets)} Set(s)" if sets else ""
-    print(f"— {len(personas)} Persona(s){in_sets}: {n_err} Fehler, {n_warn} Warnungen", file=sys.stderr)
+    with_journeys = f", {len(report.journeys)} Journey(s)" if a.journeys else ""
+    print(f"— {len(personas)} Persona(s){in_sets}{with_journeys}: {n_err} Fehler, {n_warn} Warnungen", file=sys.stderr)
     if n_err or (a.strict and n_warn):
         return 1
     return 0
@@ -340,6 +341,12 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--strict", action="store_true", help="Auch bei Warnungen mit Exit-Code 1 beenden")
     s.add_argument("--min-level", choices=["info", "warn", "error"], default="info")
     s.add_argument("--json", action="store_true", help="Findings als JSON-Liste auf stdout (für CI und Werkzeuge)")
+    s.add_argument(
+        "--journeys",
+        action="append",
+        metavar="PFAD",
+        help="journeykit-Journeys (Datei oder Ordner, mehrfach möglich) gegen die Personas prüfen (K000–K004)",
+    )
     s.set_defaults(func=cmd_lint)
 
     s = sub.add_parser(
