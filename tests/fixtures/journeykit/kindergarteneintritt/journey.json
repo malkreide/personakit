@@ -1,0 +1,2231 @@
+{
+  "schema_version": "1.0",
+  "meta": {
+    "id": "kindergarteneintritt-eltern",
+    "title": "Kindergarteneintritt aus Elternsicht",
+    "version": "1.0",
+    "status": "validated",
+    "map_type": "user_journey",
+    "diagnosis": {
+      "rationale": "Die Fragestellung ist das Erleben der Eltern über zehn Monate und mehrere Stellen hinweg (Kreisschulbehörde, Schulleitung, Betreuung): Wo entstehen Unsicherheit, Rückfragen und Ausweichhandlungen? Dafür braucht es die Front-Stage-Sicht einer Persona, nicht die Prozesslogik. Der interne Ablauf steht im Prozessbeschrieb und wird separat als Service Blueprint «Einschulungsprozess» dokumentiert.",
+      "alternatives_considered": [
+        "Service Blueprint «Einschulungsprozess»: zeigt Zuständigkeiten, Systeme und Fristen, aber nicht, warum Eltern anrufen.",
+        "User Flow «Betreuung online anmelden»: zu eng, das Online-Formular existiert noch nicht."
+      ],
+      "backstage_documented_in": "Service Blueprint «Einschulungsprozess» (separates Dokument, in Arbeit)"
+    },
+    "language": "de",
+    "created": "2025-11-18",
+    "updated": "2026-09-30",
+    "owner": {
+      "role": "Leitung Kommunikation",
+      "unit": "Schulamt, Marketing und Kommunikation",
+      "contact": "Funktionsadresse"
+    },
+    "review_cycle_days": 180,
+    "next_review": "2027-03-31",
+    "context": {
+      "organisation": "Schulamt der Stadt Zürich (fiktives Beispiel)",
+      "domain": "public_administration",
+      "service": "Kindergarteneintritt",
+      "notes": "Synthetisches Beispiel. Ablauf, Rollen, Zahlen und Zitate sind erfunden und vereinfacht; keine Dokumentation des realen Verfahrens."
+    },
+    "synthetic": true
+  },
+  "persona": {
+    "id": "eltern-zugezogen",
+    "name": "Neu zugezogene Eltern",
+    "role": "Elternteil",
+    "description": "Familie, die in den letzten zwölf Monaten nach Zürich gezogen ist – aus einem anderen Kanton oder aus dem Ausland. Kennt das Zürcher Schulsystem nicht und weiss nicht, dass der Kindergarteneintritt automatisch erfasst wird. Verwaltungsbegriffe und Zuständigkeiten sind neu; teils ist Deutsch Zweitsprache.",
+    "goals": [
+      "Sicher sein, dass unser Kind erfasst ist und wir nichts verpasst haben",
+      "Verstehen, was wann passiert und was wir selbst tun müssen",
+      "Ein Kindergarten in der Nähe, den das Kind bald sicher allein erreicht"
+    ],
+    "frustrations": [
+      "Auf einen Brief warten, von dem andere Eltern schon erzählen",
+      "Die Website beantwortet die Frage «Gilt das auch für uns?» nicht",
+      "Verwaltungsbegriffe wie Kreisschulbehörde, Stichtag, Zuteilungsentscheid"
+    ],
+    "context": {
+      "language_situation": "Deutsch als Erst- oder Zweitsprache; Verwaltungsdeutsch ist in beiden Fällen neu. Übersetzung kommt aus dem privaten Umfeld.",
+      "digital_access": "Smartphone und Website-Nutzung selbstverständlich; nicht immer ein Drucker im Haushalt.",
+      "time_budget": "Teilzeit berufstätig; Zeit für Nachfragen vorhanden, aber jede Nachfrage kostet Überwindung.",
+      "prior_experience": "Keine Erfahrung mit der Volksschule Zürich; teils ein Herkunftssystem mit Anmeldepflicht."
+    },
+    "evidence_refs": [
+      "e1-01",
+      "e1-03",
+      "e3-03",
+      "e3-05",
+      "anf-04",
+      "anf-09"
+    ],
+    "is_hypothesis": false
+  },
+  "scenario": {
+    "title": "Vom ersten Brief bis zum Elterngespräch",
+    "goal": "Ich will sicher sein, dass mein Kind einen Kindergartenplatz hat, wissen, wo es hingeht – und nichts verpasst haben.",
+    "trigger": "Der Informationsbrief der Kreisschulbehörde im Dezember – oder sein Ausbleiben, während andere Eltern davon erzählen.",
+    "end_state": "Das Kind geht seit einigen Wochen in den Kindergarten; die Eltern haben mit der Lehrperson gesprochen und wissen, was im Quartal läuft.",
+    "timeframe": "Dezember bis Oktober",
+    "scope_exclusions": [
+      "Sonderpädagogische Abklärungen und Rückstellungen",
+      "Privatschulen",
+      "Umzug während des Schuljahrs",
+      "Schulische Angebote nach dem Kindergarten"
+    ],
+    "evidence_refs": [
+      "e3-16"
+    ]
+  },
+  "phases": [
+    {
+      "id": "information",
+      "name": "Brief und Orientierung",
+      "description": "Vom ersten Hörensagen bis zum Moment, in dem die Eltern wissen, dass ihr Kind erfasst ist und was auf sie zukommt.",
+      "user_intent": "Verstehen, was auf uns zukommt – und ob wir etwas tun müssen.",
+      "duration": "Dezember bis Februar",
+      "kpis": [
+        {
+          "name": "Anteil Eltern, die nach dem Brief wussten, was zu tun ist",
+          "category": "perception",
+          "indicator_type": "leading",
+          "definition": "Zustimmung zur Befragungsfrage «Ich wusste nach dem Brief, was ich tun muss und was automatisch geschieht».",
+          "unit": "% Zustimmung",
+          "current_value": 58,
+          "target": 85,
+          "source_ref": "bef-02",
+          "commercial_equivalent": "Conversion Rate (Brief → verstandene Handlung)"
+        },
+        {
+          "name": "Anteil Anfragen per Telefon trotz Online-Information",
+          "category": "outcome",
+          "indicator_type": "lagging",
+          "definition": "Anteil der Anfragen an die Kreisschulbehörde, die telefonisch eingehen, obwohl die Information online steht.",
+          "unit": "% der Anfragen",
+          "current_value": 57,
+          "target": 35,
+          "source_ref": "anf-01",
+          "commercial_equivalent": "Churn / Ausweichen in Workarounds"
+        }
+      ],
+      "steps": [
+        {
+          "id": "brief-erhalten",
+          "name": "Informationsbrief erhalten",
+          "action": "Die Eltern erhalten im Dezember den Informationsbrief der Kreisschulbehörde – oder warten darauf, während andere Eltern schon davon erzählen.",
+          "channel": "letter",
+          "touchpoint": "Informationsbrief der Kreisschulbehörde",
+          "counterpart": "Kreisschulbehörde",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Muss ich jetzt etwas tun, oder passiert das automatisch?",
+              "evidence_refs": [
+                "e1-03",
+                "bef-02"
+              ]
+            },
+            {
+              "text": "Alle anderen haben den Brief – warum wir nicht?",
+              "evidence_refs": [
+                "e1-02",
+                "anf-04"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -2,
+            "label": "Angst, etwas falsch zu machen; nervös, weil der Brief ausbleibt",
+            "evidence_refs": [
+              "e3-01",
+              "e1-02"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-brief-nicht-erhalten",
+              "text": "Der Brief kommt nicht an (Umzug, Zuzug, Adressabgleich hinkt hinterher). Die Eltern wissen wochenlang nicht, ob ihr Kind erfasst ist.",
+              "type": "breakdown",
+              "severity": 4,
+              "frequency": "occasional",
+              "workaround": "Anruf bei der Kreisschulbehörde; Nachfragen bei anderen Eltern; im schlechtesten Fall abwarten.",
+              "owner": "Kreisschulbehörde (Erfassung und Adressabgleich)",
+              "status": "open",
+              "evidence_refs": [
+                "e1-02",
+                "e1-05",
+                "anf-04",
+                "anf-09"
+              ]
+            },
+            {
+              "id": "pp-brief-nicht-verstanden",
+              "text": "Der Brief wird sprachlich nicht verstanden (Verwaltungsbegriffe, nur Deutsch). Ohne Hilfe aus dem Umfeld bleibt er liegen.",
+              "type": "breakdown",
+              "severity": 4,
+              "frequency": "occasional",
+              "workaround": "Nachbarin oder Bekannte übersetzen; Schalterbesuch mit dem Brief in der Hand; Nichthandeln.",
+              "owner": "Zentrale Stelle Informationsmaterial",
+              "status": "open",
+              "evidence_refs": [
+                "e3-03",
+                "e3-04",
+                "e3-16",
+                "anf-09"
+              ]
+            },
+            {
+              "id": "pp-keine-gesamtuebersicht",
+              "text": "Der Brief nennt Daten, aber keine Zeitachse: Was passiert wann, was tun wir, was geschieht von selbst?",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "systematic",
+              "workaround": "Selbst zusammensuchen; andere Eltern fragen.",
+              "owner": "Zentrale Stelle Informationsmaterial",
+              "status": "in_progress",
+              "evidence_refs": [
+                "e1-07",
+                "bef-02"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Umzug nach dem Adressabgleich: Der Brief geht an die alte Adresse, obwohl die Familie korrekt gemeldet ist.",
+              "evidence_refs": [
+                "e1-05"
+              ]
+            },
+            {
+              "text": "Zuzug aus einem Kanton mit Anmeldepflicht: Die Eltern erwarten, selbst aktiv werden zu müssen.",
+              "evidence_refs": [
+                "e1-01"
+              ]
+            },
+            {
+              "text": "Soll-Prozess und Workshop gehen davon aus, dass alle Eltern den Brief bis Mitte Dezember erhalten und sich darauf freuen – bei Umzug und Sprachhürde trifft beides nicht zu.",
+              "evidence_refs": [
+                "doc-01",
+                "ws-02",
+                "e1-02",
+                "e3-01"
+              ]
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Brief nicht erhalten",
+              "path": "Anruf bei der Kreisschulbehörde; das Kind wird im System gefunden, der Brief erneut zugestellt.",
+              "exists": true,
+              "evidence_refs": [
+                "e1-05"
+              ]
+            },
+            {
+              "trigger": "Brief nicht verstanden",
+              "path": "Übersetzung durch das private Umfeld oder Schalterbesuch, bei dem der Brief gezeigt werden kann.",
+              "exists": true,
+              "evidence_refs": [
+                "e3-04"
+              ]
+            },
+            {
+              "trigger": "Brief nicht erhalten",
+              "path": "Soll: Hinweis auf den Kindergarteneintritt bei der Anmeldung am Personenmeldeamt, mit Verweis auf eine Seite für Zugezogene.",
+              "exists": false,
+              "evidence_refs": [
+                "e1-17"
+              ]
+            },
+            {
+              "trigger": "Brief nicht verstanden",
+              "path": "Soll: Kernsatz «Sie müssen nichts tun, Ihr Kind ist angemeldet» mehrsprachig am Anfang des Briefs.",
+              "exists": false,
+              "evidence_refs": [
+                "e3-18"
+              ]
+            }
+          ],
+          "backstage_notes": [
+            "Adressabgleich mit dem Einwohnerregister läuft monatlich; Versand Anfang Dezember erfasst Umzüge aus November nicht."
+          ],
+          "evidence_refs": [
+            "e3-16"
+          ]
+        },
+        {
+          "id": "website-suchen",
+          "name": "Auf der Website nach Antworten suchen",
+          "action": "Die Eltern suchen auf der Website der Stadt, ob das Verfahren auch für sie gilt und was sie tun müssen.",
+          "channel": "web",
+          "touchpoint": "Website Stadt Zürich, Bereich Kindergarten",
+          "counterpart": "Zentrale Stelle Informationsmaterial",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Gilt das auch für uns, wenn wir neu hier sind?",
+              "evidence_refs": [
+                "e1-03"
+              ]
+            },
+            {
+              "text": "Gibt es das in meiner Sprache?",
+              "evidence_refs": [
+                "e3-05"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "Gefühl, alle anderen wissen Bescheid und ich nicht",
+            "evidence_refs": [
+              "e1-04"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-web-keine-zugezogenen-info",
+              "text": "Die Website beantwortet die Frage «Gilt das auch für uns?» nicht; es gibt keinen Einstieg für Zugezogene.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "frequent",
+              "workaround": "Kontaktseite aufrufen und anrufen.",
+              "owner": "Zentrale Stelle Informationsmaterial",
+              "status": "open",
+              "evidence_refs": [
+                "e1-03"
+              ]
+            },
+            {
+              "id": "pp-web-nur-deutsch",
+              "text": "Inhalte nur auf Deutsch; das mehrsprachige Merkblatt ist veraltet und schwer zu finden.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "occasional",
+              "workaround": "Handy-Übersetzung; Nachbarin; Schalter.",
+              "owner": "Zentrale Stelle Informationsmaterial",
+              "status": "open",
+              "evidence_refs": [
+                "e3-05"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Der Soll-Prozess verweist auf ein mehrsprachiges Merkblatt; gefunden wird nur eine veraltete Fassung.",
+              "evidence_refs": [
+                "doc-05",
+                "e3-05"
+              ]
+            }
+          ],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "nachfragen",
+          "name": "Bei der Kreisschulbehörde nachfragen",
+          "action": "Die Eltern rufen an oder gehen an den Schalter, um sicherzugehen, dass ihr Kind erfasst ist und für sie nichts zu tun bleibt.",
+          "channel": "phone",
+          "touchpoint": "Telefon und Schalter der Kreisschulbehörde",
+          "counterpart": "Kreisschulbehörde (Auskunft)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Hoffentlich finden sie uns im System.",
+              "evidence_refs": [
+                "e1-05"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "erleichtert – endlich etwas Schriftliches; für mich ist nichts zu tun",
+            "evidence_refs": [
+              "e3-09"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [
+            {
+              "text": "Innensicht: Telefonische Rückfragen seien selten, weil die Website alles erkläre – 57 % der Anfragen kommen per Telefon, 43 % der Eltern mussten anrufen oder vorbeigehen.",
+              "evidence_refs": [
+                "ws-08",
+                "anf-01",
+                "bef-10"
+              ]
+            }
+          ],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": [
+            "anf-01",
+            "bef-10"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zuteilung",
+      "name": "Zuteilungsentscheid",
+      "description": "Der Brief im April sagt, welcher Kindergarten es wird. Für viele Eltern der emotionalste Moment – und der mit den meisten Rückfragen.",
+      "user_intent": "Wissen, in welchen Kindergarten unser Kind geht – und verstehen, warum.",
+      "duration": "April bis Mai",
+      "kpis": [
+        {
+          "name": "Anteil Eltern, für die der Zuteilungsentscheid nachvollziehbar war",
+          "category": "perception",
+          "indicator_type": "lagging",
+          "definition": "Zustimmung zur Befragungsfrage «Der Zuteilungsentscheid war nachvollziehbar».",
+          "unit": "% Zustimmung",
+          "current_value": 62,
+          "target": 80,
+          "source_ref": "bef-04"
+        },
+        {
+          "name": "Anteil Anfragen zur Zuteilung an allen Anfragen",
+          "category": "outcome",
+          "indicator_type": "leading",
+          "definition": "Anteil der Anfragen in der Kategorie Zuteilung (Wunschkindergarten, Begründung, Einsprache) am Jahrestotal.",
+          "unit": "% der Anfragen",
+          "current_value": 23,
+          "target": 15,
+          "source_ref": "anf-05",
+          "commercial_equivalent": "Support-Ticket-Rate pro Entscheid"
+        }
+      ],
+      "steps": [
+        {
+          "id": "entscheid-erhalten",
+          "name": "Zuteilungsentscheid erhalten",
+          "action": "Die Eltern öffnen den Zuteilungsentscheid und vergleichen den zugeteilten Kindergarten mit ihrer Erwartung.",
+          "channel": "letter",
+          "touchpoint": "Zuteilungsentscheid (Brief)",
+          "counterpart": "Kreisschulbehörde",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Warum nicht der Kindergarten um die Ecke?",
+              "evidence_refs": [
+                "e1-08"
+              ]
+            },
+            {
+              "text": "Was heisst «Kapazität» konkret – und war das alles an Begründung?",
+              "evidence_refs": [
+                "e1-09"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "enttäuscht; die Begründung nicht verstanden",
+            "evidence_refs": [
+              "e1-09"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-zuteilung-begruendung",
+              "text": "Die Begründung im Entscheid besteht aus Stichworten (Kapazität, Schulweg). Eltern können nicht nachvollziehen, warum der nähere Kindergarten nicht möglich war.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "frequent",
+              "workaround": "E-Mail oder Anruf mit Bitte um Begründung; Einsprache.",
+              "owner": "Kreisschulbehörde (Zuteilung)",
+              "status": "in_progress",
+              "evidence_refs": [
+                "e1-09",
+                "anf-05",
+                "bef-04"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Der Soll-Prozess nennt die Begründung «nachvollziehbar»; 38 % der Eltern widersprechen, die Frage hat die meisten Kommentare der Befragung.",
+              "evidence_refs": [
+                "doc-03",
+                "bef-04",
+                "e1-09"
+              ]
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Zuteilung nicht nachvollziehbar",
+              "path": "Schriftliche Nachfrage; Antwort innert einer Woche, inhaltlich korrekt, aber ohne neue Information.",
+              "exists": true,
+              "evidence_refs": [
+                "e1-10"
+              ]
+            }
+          ],
+          "backstage_notes": [
+            "Zuteilungskriterien (Kapazität, Schulweg, Geschwister) sind intern dokumentiert, im Brief nur als Stichworte."
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "zuteilung-nachfragen",
+          "name": "Nachfragen und Entscheid einordnen",
+          "action": "Die Eltern fragen per E-Mail oder Telefon nach, prüfen eine Einsprache und entscheiden, ob sie den Entscheid akzeptieren.",
+          "channel": "email",
+          "touchpoint": "E-Mail an die Kreisschulbehörde",
+          "counterpart": "Kreisschulbehörde (Zuteilung)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Lohnt es sich, dagegen vorzugehen – oder reibe ich mich nur auf?",
+              "evidence_refs": [
+                "e1-11"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "akzeptiert, aber resigniert",
+            "evidence_refs": [
+              "e1-11"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": [
+            "e1-10"
+          ]
+        },
+        {
+          "id": "schulweg-pruefen",
+          "name": "Schulweg prüfen",
+          "action": "Die Eltern gehen den Weg zum zugeteilten Kindergarten ab und beurteilen, ob ein Vierjähriges ihn bald allein gehen kann.",
+          "channel": "in_person",
+          "touchpoint": "Weg zwischen Wohnung und Kindergarten",
+          "counterpart": "Schulleitung (Schulwegsicherheit), Kreisschulbehörde (Auskunft)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Zwölf Minuten über eine grosse Strasse – ist das für ein kleines Kind zumutbar?",
+              "evidence_refs": [
+                "e1-08"
+              ]
+            },
+            {
+              "text": "Gibt es an der Kreuzung einen Lotsendienst, und ab wann muss das Kind allein gehen?",
+              "evidence_refs": [
+                "anf-13"
+              ]
+            }
+          ],
+          "feeling": null,
+          "pain_points": [
+            {
+              "id": "pp-schulweg-sicherheit",
+              "text": "Der zugeteilte Kindergarten liegt weiter weg als erwartet; der Weg führt über eine grosse Strasse. Informationen zu Schulweg, Lotsendienst und Begleitung fehlen im Entscheid.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "occasional",
+              "workaround": "Nachfrage bei der Kreisschulbehörde; Bitte um Überprüfung der Zuteilung.",
+              "owner": "Schulleitung gemeinsam mit Kreisschulbehörde",
+              "status": "open",
+              "evidence_refs": [
+                "e1-08",
+                "anf-13"
+              ]
+            }
+          ],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "vorbereitung",
+      "name": "Vorbereitung",
+      "description": "Betreuung anmelden, Fragen klären, den Ort kennenlernen. Die Betreuungsanmeldung läuft zeitlich vor dem Zuteilungsentscheid – diese Reihenfolge ist die grösste Reibung der Journey.",
+      "user_intent": "Alles organisiert haben, bevor es losgeht – Betreuung, offene Fragen, den Ort kennen.",
+      "duration": "Januar bis Juni (Betreuungsanmeldung bis Ende Februar, Infoanlass Mai, Schnupperbesuch Juni)",
+      "kpis": [
+        {
+          "name": "Anteil Eltern mit Betreuungsbedarf, die die Anmeldefrist kannten",
+          "category": "perception",
+          "indicator_type": "leading",
+          "definition": "Zustimmung zur Befragungsfrage «Ich wusste, bis wann ich die Betreuung anmelden muss» (nur Eltern mit Betreuungsbedarf).",
+          "unit": "% Zustimmung",
+          "current_value": 46,
+          "target": 90,
+          "source_ref": "bef-03"
+        },
+        {
+          "name": "Anteil Eltern, deren offene Fragen am Informationsanlass beantwortet wurden",
+          "category": "perception",
+          "indicator_type": "lagging",
+          "definition": "Zustimmung zur Befragungsfrage «Der Informationsanlass hat meine offenen Fragen beantwortet».",
+          "unit": "% Zustimmung",
+          "current_value": 89,
+          "target": 90,
+          "source_ref": "bef-06"
+        }
+      ],
+      "steps": [
+        {
+          "id": "betreuung-anmelden",
+          "name": "Betreuung anmelden (bei Bedarf)",
+          "action": "Eltern mit Betreuungsbedarf laden das PDF-Formular herunter, drucken es, unterschreiben und schicken es per Post – bevor sie wissen, welcher Kindergarten es wird.",
+          "channel": "paper_form",
+          "touchpoint": "PDF-Formular «Anmeldung Betreuung», Postversand",
+          "counterpart": "Betreuung (Hort)",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Bis wann genau? Und für welchen Hort, wenn wir den Kindergarten noch nicht kennen?",
+              "evidence_refs": [
+                "e2-09"
+              ]
+            }
+          ],
+          "feeling": null,
+          "pain_points": [
+            {
+              "id": "pp-betreuungsfrist-unklar",
+              "text": "Die Anmeldefrist für die Betreuung ist im Brief nicht hervorgehoben, Formular und Website nennen unterschiedliche Daten. Eltern verpassen die Frist oder rufen an, um sie zu klären.",
+              "type": "breakdown",
+              "severity": 5,
+              "frequency": "frequent",
+              "workaround": "Anruf bei der Betreuung oder der Kreisschulbehörde; verspätete Anmeldung; Plan B mit privater Tagesfamilie.",
+              "owner": "Betreuung (Hort) gemeinsam mit Kreisschulbehörde",
+              "status": "open",
+              "evidence_refs": [
+                "e2-03",
+                "e2-07",
+                "anf-03",
+                "anf-07",
+                "bef-03"
+              ]
+            },
+            {
+              "id": "pp-betreuung-vor-zuteilung",
+              "text": "Die Betreuung muss angemeldet werden, bevor der Kindergarten bekannt ist; der Zuteilungsentscheid sagt nichts zur Betreuung.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "systematic",
+              "workaround": "Anmelden und hoffen; nach dem Entscheid erneut anrufen.",
+              "owner": "Kreisschulbehörde und Betreuung (Prozessverantwortung)",
+              "status": "open",
+              "evidence_refs": [
+                "e2-09",
+                "e2-11"
+              ]
+            },
+            {
+              "id": "pp-pdf-formular",
+              "text": "Das Formular existiert nur als PDF zum Ausdrucken und Einsenden; viele Haushalte haben keinen Drucker.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "systematic",
+              "workaround": "Ausdrucken am Arbeitsplatz; Schalter.",
+              "owner": "Betreuung (Hort)",
+              "status": "in_progress",
+              "evidence_refs": [
+                "e2-05",
+                "web-02"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Laut Soll-Prozess ist die Frist im Brief hervorgehoben – E2 hat sie nach dreimaligem Lesen nicht gefunden.",
+              "evidence_refs": [
+                "doc-04",
+                "e2-03"
+              ]
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Frist verpasst oder unklar",
+              "path": "Anruf bei der Betreuung; Anmeldungen bis zum Zuteilungsentscheid werden faktisch noch berücksichtigt.",
+              "exists": true,
+              "evidence_refs": [
+                "e2-08"
+              ]
+            },
+            {
+              "trigger": "Frist verpasst, keine Plätze mehr",
+              "path": "Soll: Online-Anmeldung mit Eingangsbestätigung und Fristerinnerung; eine Frist, die an allen Stellen gleich lautet.",
+              "exists": false,
+              "evidence_refs": [
+                "e2-24"
+              ]
+            }
+          ],
+          "backstage_notes": [
+            "Betreuungsplanung läuft parallel zur Zuteilung: zwei Stellen, zwei Fristen, zwei Briefe."
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "infoanlass",
+          "name": "Informationsanlass besuchen",
+          "action": "Die Eltern gehen im Mai an den Informationsanlass im Schulhaus, sehen Lehrpersonen, Räume und andere Eltern und stellen ihre Fragen.",
+          "channel": "event",
+          "touchpoint": "Informationsanlass im Schulhaus",
+          "counterpart": "Schulleitung, Kindergarten-Lehrperson, Hortleitung",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Endlich Gesichter. Wie sieht ein Tag im Kindergarten überhaupt aus?",
+              "evidence_refs": [
+                "e1-12"
+              ]
+            },
+            {
+              "text": "Hätte ich das nicht schon im Dezember fragen können?",
+              "evidence_refs": [
+                "e3-20"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 2,
+            "label": "der beste Moment im ganzen Ablauf",
+            "evidence_refs": [
+              "e1-12",
+              "e3-10"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-infoanlass-zeitpunkt",
+              "text": "Der Anlass kommt spät (Mai) und liegt um 18 Uhr; die drängendsten Fragen stellen sich im Dezember, und Berufstätige kommen nur zu zweit, wenn es passt.",
+              "type": "friction",
+              "severity": 2,
+              "frequency": "occasional",
+              "workaround": "Fragen vorher per Telefon oder Schalter klären; nur ein Elternteil geht.",
+              "owner": "Schulleitung",
+              "status": "open",
+              "evidence_refs": [
+                "e3-20"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Übersetzung am Anlass gibt es nur, wenn zufällig eine Person da ist, die übersetzt.",
+              "evidence_refs": [
+                "e3-10"
+              ]
+            }
+          ],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": [
+            "bef-06"
+          ]
+        },
+        {
+          "id": "schnupperbesuch",
+          "name": "Schnupperbesuch",
+          "action": "Kind und Elternteil besuchen den künftigen Kindergarten für eine Lektion, vormittags an einem Werktag.",
+          "channel": "in_person",
+          "touchpoint": "Kindergarten (Schnupperlektion)",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Soll ich bleiben oder gehen? Niemand sagt es.",
+              "evidence_refs": [
+                "e3-12"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "schön – das Kind hat gespielt, ich habe geschaut",
+            "evidence_refs": [
+              "e3-12"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-schnupper-arbeitszeit",
+              "text": "Der Schnupperbesuch liegt an einem Werktagvormittag; berufstätige Eltern müssen frei nehmen.",
+              "type": "friction",
+              "severity": 2,
+              "frequency": "frequent",
+              "workaround": "Freien Tag beziehen.",
+              "owner": "Schulleitung",
+              "status": "wontfix",
+              "evidence_refs": [
+                "e2-18"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Die Rolle der Eltern während der Lektion ist unklar (bleiben oder gehen).",
+              "evidence_refs": [
+                "e3-12"
+              ]
+            }
+          ],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "start",
+      "name": "Start",
+      "description": "Die ersten Tage im August: loslassen, und herausfinden, wie die zwei Eingewöhnungswochen mit reduziertem Stundenplan organisiert sind.",
+      "user_intent": "Das Kind gut loslassen und wissen, wie die ersten zwei Wochen laufen.",
+      "duration": "August, erste zwei Wochen",
+      "kpis": [
+        {
+          "name": "Anteil Eltern, die vor dem ersten Tag wussten, wie die Eingewöhnung abläuft",
+          "category": "perception",
+          "indicator_type": "leading",
+          "definition": "Zustimmung zur Befragungsfrage «Ich wusste vor dem ersten Kindergartentag, wie die Eingewöhnung abläuft».",
+          "unit": "% Zustimmung",
+          "current_value": 67,
+          "target": 85,
+          "source_ref": "bef-08"
+        }
+      ],
+      "steps": [
+        {
+          "id": "erster-tag",
+          "name": "Erster Kindergartentag",
+          "action": "Die Eltern bringen ihr Kind am ersten Tag in den Kindergarten und müssen entscheiden, wie lange sie bleiben.",
+          "channel": "in_person",
+          "touchpoint": "Kindergarten, Garderobe und Eingang",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Bleiben oder gehen?",
+              "evidence_refs": [
+                "e1-14"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 0,
+            "label": "emotional – unsicher, ob bleiben oder gehen",
+            "evidence_refs": [
+              "e1-14"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": []
+        },
+        {
+          "id": "eingewoehnung",
+          "name": "Eingewöhnung mit reduziertem Stundenplan",
+          "action": "Die Eltern erhalten am ersten Tag das Blatt mit den Zeiten der ersten zwei Wochen und organisieren die halben Tage.",
+          "channel": "in_person",
+          "touchpoint": "Stundenplan-Blatt für die ersten zwei Wochen",
+          "counterpart": "Kindergarten-Lehrperson, Betreuung (Hort)",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Wer betreut das Kind am Nachmittag, wenn der Kindergarten nur halbtags ist?",
+              "evidence_refs": [
+                "e2-20"
+              ]
+            }
+          ],
+          "feeling": null,
+          "pain_points": [
+            {
+              "id": "pp-eingewoehnung-betreuungsluecke",
+              "text": "Der reduzierte Stundenplan der ersten zwei Wochen wird erst am ersten Tag kommuniziert; die Betreuung deckt die freien Halbtage nicht automatisch ab.",
+              "type": "breakdown",
+              "severity": 4,
+              "frequency": "occasional",
+              "workaround": "Zwei Wochen privat improvisieren; Nachfragen beim Hort.",
+              "owner": "Betreuung (Hort) gemeinsam mit Schulleitung",
+              "status": "open",
+              "evidence_refs": [
+                "e2-20",
+                "e2-21",
+                "bef-08"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Eltern ohne älteres Kind kennen den reduzierten Stundenplan nicht und erfahren erst am ersten Tag davon.",
+              "evidence_refs": [
+                "e2-20",
+                "bef-08"
+              ]
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Betreuungslücke in den ersten zwei Wochen",
+              "path": "Nachfragen beim Hort; die Abdeckung wird auf Anfrage eingerichtet.",
+              "exists": true,
+              "evidence_refs": [
+                "e2-21"
+              ]
+            },
+            {
+              "trigger": "Betreuungslücke in den ersten zwei Wochen",
+              "path": "Soll: Eingewöhnungsplan und Betreuungsabdeckung werden mit dem Zuteilungsentscheid kommuniziert, nicht erst am ersten Tag.",
+              "exists": false,
+              "evidence_refs": [
+                "e2-24",
+                "doc-07"
+              ]
+            }
+          ],
+          "backstage_notes": [],
+          "evidence_refs": [
+            "doc-07"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ankommen",
+      "name": "Ankommen",
+      "description": "Die ersten Wochen: Routinen, Informationsfluss, Elterngespräch. Hier erleben die Eltern, was sie sich für den ganzen Ablauf davor gewünscht hätten.",
+      "user_intent": "Spüren, dass das Kind gut aufgehoben ist – und immer wissen, was läuft.",
+      "duration": "September bis Oktober",
+      "kpis": [
+        {
+          "name": "Anteil Eltern, die sich insgesamt gut begleitet fühlten",
+          "category": "perception",
+          "indicator_type": "lagging",
+          "definition": "Zustimmung zur Befragungsfrage «Insgesamt fühlte ich mich beim Kindergarteneintritt gut begleitet».",
+          "unit": "% Zustimmung",
+          "current_value": 74,
+          "target": 85,
+          "source_ref": "bef-11",
+          "commercial_equivalent": "Kundenzufriedenheit (CSAT)"
+        },
+        {
+          "name": "Anteil Eltern, die das Elterngespräch als hilfreich erlebten",
+          "category": "outcome",
+          "indicator_type": "lagging",
+          "definition": "Zustimmung zur Befragungsfrage «Das Elterngespräch in den ersten Wochen war hilfreich».",
+          "unit": "% Zustimmung",
+          "current_value": 86,
+          "target": 90,
+          "source_ref": "bef-09"
+        }
+      ],
+      "steps": [
+        {
+          "id": "alltag-finden",
+          "name": "Alltag und Informationsfluss finden",
+          "action": "Die Eltern finden in die Routine: Quartalsheft mit Terminen, Tür-und-Angel-Gespräche, andere Eltern.",
+          "channel": "in_person",
+          "touchpoint": "Quartalsheft mit Terminen, Kindergarten-Alltag",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Jetzt wissen wir immer, was läuft – warum nicht schon vorher so?",
+              "evidence_refs": [
+                "e1-20"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 1,
+            "label": "eigentlich gut, weil wir immer wussten, was läuft",
+            "evidence_refs": [
+              "e1-20"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": [
+            "bef-11"
+          ]
+        },
+        {
+          "id": "elterngespraech",
+          "name": "Elterngespräch",
+          "action": "Die Eltern führen nach einigen Wochen das erste Gespräch mit der Lehrperson über das Ankommen ihres Kindes.",
+          "channel": "in_person",
+          "touchpoint": "Elterngespräch im Kindergarten",
+          "counterpart": "Kindergarten-Lehrperson",
+          "is_transition": false,
+          "thinking": [
+            {
+              "text": "Hat sich unser Kind eingelebt?",
+              "evidence_refs": [
+                "bef-09"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": 2,
+            "label": "sehr gefreut, dass nach einer Übersetzung gefragt wurde",
+            "evidence_refs": [
+              "e3-15"
+            ]
+          },
+          "pain_points": [],
+          "edge_cases": [
+            {
+              "text": "Übersetzung wird aktiv angeboten – ob das in allen Kindergärten gleich gehandhabt wird, ist offen.",
+              "evidence_refs": [
+                "e3-15"
+              ]
+            }
+          ],
+          "recovery_paths": [],
+          "backstage_notes": [],
+          "evidence_refs": [
+            "bef-09"
+          ]
+        }
+      ]
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "opp-zugezogenen-seite",
+      "hmw": "Wie können wir zugezogenen Eltern auf einen Blick zeigen, was automatisch passiert und was sie selbst tun müssen?",
+      "description": "Eine Einstiegsseite «Neu in Zürich – Kindergarten» mit Zeitachse Dezember bis August, Prüfmöglichkeit «Ist mein Kind erfasst?» und prominenter Telefonnummer.",
+      "linked_pain_points": [
+        "pp-web-keine-zugezogenen-info",
+        "pp-brief-nicht-erhalten",
+        "pp-keine-gesamtuebersicht"
+      ],
+      "phase_ref": "information",
+      "user_impact": 4,
+      "public_value": 3,
+      "effort": 2,
+      "owner": "Zentrale Stelle Informationsmaterial",
+      "status": "in_progress",
+      "stories": [
+        {
+          "text": "Als zugezogenes Elternteil möchte ich auf einer Seite sehen, ob mein Kind erfasst ist und was ich tun muss, damit ich nicht wochenlang warte.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich eine Zeitachse von Dezember bis August sehen, damit ich weiss, was wann passiert.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich bei der Anmeldung am Personenmeldeamt einen Hinweis auf den Kindergarteneintritt erhalten, damit der Brief mich erreicht.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e1-03",
+        "e1-07",
+        "e1-17",
+        "bef-02"
+      ]
+    },
+    {
+      "id": "opp-brief-mehrsprachig",
+      "hmw": "Wie können wir den Informationsbrief so gestalten, dass Eltern ohne Deutschkenntnisse in einem Satz verstehen, dass nichts zu tun ist?",
+      "description": "Kernsatz mehrsprachig am Briefanfang, Piktogramm-Zeitachse, aktualisiertes und verlinktes mehrsprachiges Merkblatt.",
+      "linked_pain_points": [
+        "pp-brief-nicht-verstanden",
+        "pp-web-nur-deutsch"
+      ],
+      "phase_ref": "information",
+      "user_impact": 5,
+      "public_value": 4,
+      "effort": 2,
+      "owner": "Zentrale Stelle Informationsmaterial",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als fremdsprachiges Elternteil möchte ich oben im Brief in meiner Sprache lesen, dass mein Kind angemeldet ist und ich nichts tun muss, damit ich ruhig schlafen kann.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich den Ablauf als Zeichnung sehen (Dezember Brief, April Kindergarten, August Start), damit ich ihn ohne Fachbegriffe verstehe.",
+          "mvp": true
+        },
+        {
+          "text": "Als fremdsprachiges Elternteil möchte ich das mehrsprachige Merkblatt des aktuellen Jahres finden, damit ich mich nicht auf Nachbarn verlassen muss.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e3-03",
+        "e3-05",
+        "e3-18"
+      ]
+    },
+    {
+      "id": "opp-zuteilung-begruendung",
+      "hmw": "Wie können wir den Zuteilungsentscheid so begründen, dass Eltern ihn ohne Rückfrage nachvollziehen können?",
+      "description": "Kriterien in Elternsprache, konkrete Angaben zu Kapazität und Schulweg des Wunschkindergartens, Vorgehen bei Einsprache direkt im Brief.",
+      "linked_pain_points": [
+        "pp-zuteilung-begruendung"
+      ],
+      "phase_ref": "zuteilung",
+      "user_impact": 4,
+      "public_value": 4,
+      "effort": 3,
+      "owner": "Kreisschulbehörde (Zuteilung)",
+      "status": "in_progress",
+      "stories": [
+        {
+          "text": "Als Elternteil möchte ich im Entscheid lesen, nach welchen Kriterien und in welcher Reihenfolge zugeteilt wurde, damit ich den Entscheid verstehe.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich wissen, wie und bis wann ich Einsprache erheben kann, ohne zuerst auf der Website suchen zu müssen.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich eine Karte mit Schulweg und Auslastung der Kindergärten in meiner Umgebung sehen, damit «Kapazität» greifbar wird.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e1-09",
+        "anf-05",
+        "bef-04"
+      ]
+    },
+    {
+      "id": "opp-schulweg",
+      "hmw": "Wie können wir Eltern mit dem Zuteilungsentscheid gleich den Schulweg und seine Sicherheit erklären?",
+      "description": "Schulwegbeilage zum Entscheid: empfohlener Weg, Lotsendienste, ab wann Kinder allein gehen, Ansprechstelle.",
+      "linked_pain_points": [
+        "pp-schulweg-sicherheit"
+      ],
+      "phase_ref": "zuteilung",
+      "user_impact": 3,
+      "public_value": 4,
+      "effort": 2,
+      "owner": "Schulleitung gemeinsam mit Kreisschulbehörde",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Elternteil möchte ich mit dem Entscheid eine Schulwegbeilage erhalten, damit ich den Weg nicht selbst beurteilen muss.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich wissen, ob an gefährlichen Kreuzungen ein Lotsendienst besteht, damit ich mein Kind irgendwann allein gehen lassen kann.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e1-08",
+        "anf-13"
+      ]
+    },
+    {
+      "id": "opp-betreuung-integriert",
+      "hmw": "Wie können wir Betreuungsanmeldung und Zuteilung zu einem Vorgang mit einer Frist und einer Antwort zusammenführen?",
+      "description": "Eine Frist, an allen Stellen gleich; Betreuungsbestätigung im Zuteilungsentscheid; Eingewöhnungs-Abdeckung automatisch mitgeplant.",
+      "linked_pain_points": [
+        "pp-betreuungsfrist-unklar",
+        "pp-betreuung-vor-zuteilung",
+        "pp-eingewoehnung-betreuungsluecke"
+      ],
+      "phase_ref": "vorbereitung",
+      "user_impact": 5,
+      "public_value": 5,
+      "effort": 5,
+      "owner": "Kreisschulbehörde und Betreuung (Leitung)",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als berufstätiges Elternteil möchte ich im Informationsbrief eine hervorgehobene Frist für die Betreuung sehen, die überall gleich lautet, damit ich sie nicht verpasse.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich eine Eingangsbestätigung meiner Anmeldung erhalten, damit ich nicht anrufen muss, um zu prüfen, ob sie angekommen ist.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil möchte ich mit dem Zuteilungsentscheid wissen, ob der Hortplatz bestätigt ist, damit ich meine Pensen planen kann.",
+          "mvp": false
+        },
+        {
+          "text": "Als Elternteil möchte ich, dass die Betreuung die reduzierten Eingewöhnungstage automatisch abdeckt, damit ich nicht zwei Wochen improvisieren muss.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e2-09",
+        "e2-24",
+        "bef-03"
+      ]
+    },
+    {
+      "id": "opp-online-formular",
+      "hmw": "Wie können wir die Betreuungsanmeldung ohne Drucker und Post ermöglichen?",
+      "description": "Online-Formular mit Eingangsbestätigung statt PDF; Schalter als Alternative für Eltern ohne digitalen Zugang.",
+      "linked_pain_points": [
+        "pp-pdf-formular"
+      ],
+      "phase_ref": "vorbereitung",
+      "user_impact": 4,
+      "public_value": 3,
+      "effort": 3,
+      "owner": "Betreuung (Hort)",
+      "status": "in_progress",
+      "stories": [
+        {
+          "text": "Als Elternteil möchte ich die Betreuung online anmelden, damit ich kein PDF ausdrucken und per Post schicken muss.",
+          "mvp": true
+        },
+        {
+          "text": "Als Elternteil ohne digitalen Zugang möchte ich die Anmeldung am Schalter mit Unterstützung ausfüllen können.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e2-05",
+        "web-02"
+      ]
+    },
+    {
+      "id": "opp-infoanlass-frueher",
+      "hmw": "Wie können wir die Fragen der Eltern schon im Dezember beantworten statt erst im Mai?",
+      "description": "Kurze Informationsveranstaltung oder offene Sprechstunde kurz nach dem Briefversand, mit Übersetzung.",
+      "linked_pain_points": [
+        "pp-infoanlass-zeitpunkt"
+      ],
+      "phase_ref": "vorbereitung",
+      "user_impact": 3,
+      "public_value": 2,
+      "effort": 2,
+      "owner": "Schulleitung",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Elternteil möchte ich kurz nach dem Brief eine Gelegenheit haben, meine Fragen persönlich zu stellen, damit ich nicht bis Mai warte.",
+          "mvp": true
+        },
+        {
+          "text": "Als fremdsprachiges Elternteil möchte ich am Anlass eine Übersetzung erhalten, die nicht vom Zufall abhängt.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "e3-20",
+        "e3-10"
+      ]
+    },
+    {
+      "id": "opp-schnupper-termine",
+      "hmw": "Wie können wir Schnupperbesuche auch ausserhalb der üblichen Arbeitszeiten anbieten?",
+      "description": "Alternative Termine am späten Nachmittag; geprüft und zurückgestellt, weil der Besuch den regulären Kindergartenbetrieb zeigen soll.",
+      "linked_pain_points": [
+        "pp-schnupper-arbeitszeit"
+      ],
+      "phase_ref": "vorbereitung",
+      "user_impact": 2,
+      "public_value": 2,
+      "effort": 3,
+      "owner": "Schulleitung",
+      "status": "wontfix",
+      "stories": [
+        {
+          "text": "Als berufstätiges Elternteil möchte ich einen Schnuppertermin ausserhalb meiner Arbeitszeit wählen können.",
+          "mvp": false
+        },
+        {
+          "text": "Als Elternteil möchte ich den Schnuppertermin früh kennen, damit ich rechtzeitig frei nehmen kann.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "e2-18"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "int-e1",
+      "title": "Interview E1 – zugezogenes Elternteil",
+      "kind": "interview",
+      "default_class": "reported",
+      "date": "2026-02",
+      "n": 1,
+      "participants": "Elternteil, im Herbst aus einem anderen Kanton zugezogen",
+      "pii_status": "anonymised",
+      "location": "input/interview-e1.md",
+      "notes": "Synthetisches Transkript; Kind im Jahrgang mit Eintritt August 2025."
+    },
+    {
+      "id": "int-e2",
+      "title": "Interview E2 – berufstätiges Elternpaar, zweites Kind",
+      "kind": "interview",
+      "default_class": "reported",
+      "date": "2026-02",
+      "n": 1,
+      "participants": "Elternpaar, beide berufstätig, Betreuungsbedarf ab dem ersten Tag",
+      "pii_status": "anonymised",
+      "location": "input/interview-e2.md",
+      "notes": "Synthetisches Transkript."
+    },
+    {
+      "id": "int-e3",
+      "title": "Interview E3 – fremdsprachiges Elternteil",
+      "kind": "interview",
+      "default_class": "reported",
+      "date": "2026-02",
+      "n": 1,
+      "participants": "Elternteil, Erstsprache nicht Deutsch, seit drei Jahren in der Schweiz",
+      "pii_status": "anonymised",
+      "location": "input/interview-e3.md",
+      "notes": "Synthetisches Transkript; Interview auf Deutsch in einfacher Sprache."
+    },
+    {
+      "id": "anfragen",
+      "title": "Anfragen an die Kreisschulbehörde (anonymisierter Export)",
+      "kind": "inquiry_log",
+      "default_class": "observed",
+      "date": "2024-12 bis 2025-11",
+      "n": 30,
+      "participants": "Eltern, die telefonisch, per E-Mail oder am Schalter nachgefragt haben",
+      "pii_status": "anonymised",
+      "location": "input/anfragen-export.csv",
+      "notes": "Synthetische Stichprobe von 30 Anfragen über einen Jahreszyklus; Kurztexte ohne Namen und Adressen."
+    },
+    {
+      "id": "befragung",
+      "title": "Elternbefragung Kindergarteneintritt (aggregiert)",
+      "kind": "survey",
+      "default_class": "reported",
+      "date": "2025-10",
+      "n": 412,
+      "participants": "Eltern der Kinder mit Eintritt August 2025",
+      "pii_status": "anonymised",
+      "location": "input/elternbefragung.csv",
+      "notes": "Synthetische Aggregatwerte; nur Zustimmungsanteile, keine Einzelantworten."
+    },
+    {
+      "id": "analytics",
+      "title": "Webanalytics Bereich Kindergarten",
+      "kind": "analytics",
+      "default_class": "observed",
+      "date": "2024-12 bis 2025-06",
+      "pii_status": "none",
+      "location": "input/webanalytics.csv",
+      "notes": "Synthetische Seitenstatistik, ohne Personenbezug."
+    },
+    {
+      "id": "prozessdok",
+      "title": "Prozessbeschrieb Einschulung (intern, Soll-Prozess)",
+      "kind": "internal_document",
+      "default_class": "assumed",
+      "date": "2024-09",
+      "pii_status": "none",
+      "location": "input/prozess-einschulung-intern.md",
+      "notes": "Innensicht: beschreibt den Soll-Ablauf, nicht das Erleben. Wird als Annahme behandelt."
+    },
+    {
+      "id": "workshop",
+      "title": "Hypothesen-Workshop Team Kommunikation",
+      "kind": "workshop",
+      "default_class": "assumed",
+      "date": "2025-11-18",
+      "n": 6,
+      "participants": "Mitarbeitende Kommunikation, Kreisschulbehörde, Betreuung – ohne Eltern",
+      "pii_status": "none",
+      "location": "input/workshop-notizen.md",
+      "notes": "Team-Annahmen vor jeder Nutzerevidenz."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e1-01",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Wir sind im Oktober aus dem Aargau nach Zürich gezogen. Dort hätte man sich anmelden müssen, hier hiess es, das laufe automatisch.",
+      "locator": "Zeile 7",
+      "signal": "need",
+      "phase_hint": "information",
+      "persona_hint": "zugezogen",
+      "tags": [
+        "zuzug",
+        "automatischer-eintritt"
+      ]
+    },
+    {
+      "id": "e1-02",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Nicht im Dezember. Ich habe gewartet und gewartet. Im Januar habe ich dann angefangen, nervös zu werden.",
+      "locator": "Zeile 11",
+      "signal": "friction",
+      "phase_hint": "information",
+      "channel_hint": "letter",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "nervös",
+        "explicit": true
+      },
+      "contradicts": [
+        "doc-01"
+      ],
+      "tags": [
+        "brief-spaet"
+      ]
+    },
+    {
+      "id": "e1-03",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Da steht viel, aber ich wusste nicht, ob ich etwas tun muss oder nicht. Es stand nirgends: Wenn Sie zugezogen sind, dann machen Sie das.",
+      "locator": "Zeile 13",
+      "signal": "friction",
+      "phase_hint": "information",
+      "channel_hint": "web",
+      "tags": [
+        "website",
+        "zuzug"
+      ]
+    },
+    {
+      "id": "e1-04",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich hatte das Gefühl, alle anderen wissen Bescheid und ich nicht.",
+      "locator": "Zeile 14",
+      "signal": "friction",
+      "phase_hint": "information",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "Gefühl, alle anderen wissen Bescheid und ich nicht",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e1-05",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Mitte Januar habe ich bei der Kreisschulbehörde angerufen. Die Frau am Telefon war sehr freundlich, sie hat mich sofort gefunden und gesagt, der Brief sei an die alte Adresse gegangen.",
+      "locator": "Zeile 16",
+      "signal": "workaround",
+      "phase_hint": "information",
+      "channel_hint": "phone",
+      "contradicts": [
+        "doc-01"
+      ],
+      "tags": [
+        "adressabgleich"
+      ]
+    },
+    {
+      "id": "e1-07",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Was mir fehlte, war eine Zeitachse. Es standen Daten drin, aber ich musste mir selber zusammensuchen, was wann passiert.",
+      "locator": "Zeile 23",
+      "signal": "need",
+      "phase_hint": "information",
+      "channel_hint": "letter",
+      "tags": [
+        "zeitachse"
+      ]
+    },
+    {
+      "id": "e1-08",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Wir hatten den Kindergarten um die Ecke erwartet, zugeteilt wurde einer, der zwölf Minuten zu Fuss entfernt ist, über eine grosse Strasse.",
+      "locator": "Zeile 27",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "tags": [
+        "schulweg"
+      ]
+    },
+    {
+      "id": "e1-09",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Im Brief stand ein Satz zur Begründung, Kapazität und Schulweg, aber ich habe nicht verstanden, warum der nähere nicht ging.",
+      "locator": "Zeile 28",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "channel_hint": "letter",
+      "contradicts": [
+        "doc-03"
+      ],
+      "tags": [
+        "begruendung"
+      ]
+    },
+    {
+      "id": "e1-10",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe eine E-Mail geschrieben und nachgefragt. Die Antwort kam nach einer Woche und war korrekt, aber eben: Kapazität.",
+      "locator": "Zeile 30",
+      "signal": "workaround",
+      "phase_hint": "zuteilung",
+      "channel_hint": "email"
+    },
+    {
+      "id": "e1-11",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe es dann akzeptiert. Es bringt nichts, sich aufzureiben.",
+      "locator": "Zeile 31",
+      "signal": "neutral",
+      "phase_hint": "zuteilung",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "resigniert (abgeleitet)",
+        "explicit": false
+      }
+    },
+    {
+      "id": "e1-12",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Das war der beste Moment im ganzen Ablauf. Man sah die Lehrpersonen, den Raum, die anderen Eltern.",
+      "locator": "Zeile 35",
+      "signal": "positive",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "event",
+      "emotion_hint": {
+        "valence": 2,
+        "label": "bester Moment im ganzen Ablauf",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e1-14",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Der erste Tag war emotional. Man steht da mit dem Kind und weiss nicht, ob man bleiben oder gehen soll.",
+      "locator": "Zeile 42",
+      "signal": "friction",
+      "phase_hint": "start",
+      "emotion_hint": {
+        "valence": 0,
+        "label": "emotional, unsicher ob bleiben oder gehen",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e1-17",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Eine Seite für Zugezogene: Sie sind neu hier, so läuft es, das müssen Sie tun, das passiert von selbst. Und eine Nummer, die man anrufen kann, prominent.",
+      "locator": "Zeile 52",
+      "signal": "need",
+      "phase_hint": "information",
+      "channel_hint": "web",
+      "tags": [
+        "zuzug"
+      ]
+    },
+    {
+      "id": "e1-20",
+      "source_ref": "int-e1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Anstrengend für die Kleine, sie war jeden Nachmittag müde. Für uns eigentlich gut, weil wir immer wussten, was läuft.",
+      "locator": "Zeile 45",
+      "signal": "positive",
+      "phase_hint": "ankommen",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "eigentlich gut, weil wir immer wussten, was läuft",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e2-03",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Eine Frist habe ich nicht gesehen, oder sie war nicht hervorgehoben.",
+      "locator": "Zeile 11",
+      "signal": "friction",
+      "phase_hint": "information",
+      "channel_hint": "letter",
+      "contradicts": [
+        "doc-04"
+      ],
+      "tags": [
+        "betreuung",
+        "frist"
+      ]
+    },
+    {
+      "id": "e2-05",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Das PDF muss man ausdrucken, ausfüllen, unterschreiben und per Post schicken.",
+      "locator": "Zeile 14",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "paper_form",
+      "tags": [
+        "formular"
+      ]
+    },
+    {
+      "id": "e2-07",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Auf dem Formular stand ein Datum, auf der Website ein anderes. Ich habe dann angerufen, um sicherzugehen.",
+      "locator": "Zeile 17",
+      "signal": "breakdown",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "phone",
+      "tags": [
+        "frist"
+      ]
+    },
+    {
+      "id": "e2-08",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Dass die Frist Ende Februar sei, aber dass Anmeldungen bis zum Zuteilungsentscheid noch berücksichtigt würden. Das hat mich beruhigt, aber auch irritiert. Welches Datum gilt denn jetzt?",
+      "locator": "Zeile 19",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "phone",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "beruhigt, aber auch irritiert",
+        "explicit": true
+      },
+      "tags": [
+        "frist"
+      ]
+    },
+    {
+      "id": "e2-09",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Weil wir die Betreuung anmelden mussten, bevor wir wussten, welcher Kindergarten es wird. Man meldet sich also für einen Hort an, ohne zu wissen, ob er zum Kindergarten passt.",
+      "locator": "Zeile 21",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "tags": [
+        "betreuung",
+        "reihenfolge"
+      ]
+    },
+    {
+      "id": "e2-11",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Zur Betreuung stand aber nichts drin. Kein Wort.",
+      "locator": "Zeile 26",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "channel_hint": "letter",
+      "tags": [
+        "betreuung"
+      ]
+    },
+    {
+      "id": "e2-18",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Vormittags, an einem Dienstag. Ich musste frei nehmen. Beim ersten Kind war das auch so.",
+      "locator": "Zeile 41",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "in_person"
+    },
+    {
+      "id": "e2-20",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Für Eltern, die das nicht wissen, ist das ein Schock: Das Kind ist zwei Wochen lang nur halbe Tage da und die Betreuung deckt das nicht automatisch ab.",
+      "locator": "Zeile 44",
+      "signal": "breakdown",
+      "phase_hint": "start",
+      "contradicts": [
+        "doc-07"
+      ],
+      "tags": [
+        "eingewoehnung",
+        "betreuung"
+      ]
+    },
+    {
+      "id": "e2-21",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Bei uns ja, weil wir nachgefragt haben. Eine Mutter aus der Klasse hat es nicht gewusst und musste zwei Wochen improvisieren.",
+      "locator": "Zeile 46",
+      "signal": "breakdown",
+      "phase_hint": "start",
+      "tags": [
+        "eingewoehnung",
+        "betreuung"
+      ]
+    },
+    {
+      "id": "e2-24",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Betreuung gehört in denselben Brief und in denselben Entscheid wie der Kindergarten. Ein Datum, eine Frist, eine Antwort.",
+      "locator": "Zeile 52",
+      "signal": "need",
+      "tags": [
+        "betreuung",
+        "reihenfolge"
+      ]
+    },
+    {
+      "id": "e2-26",
+      "source_ref": "int-e2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Leute. Jede einzelne Person am Telefon war hilfsbereit. Das System ist das Problem, nicht die Menschen.",
+      "locator": "Zeile 55",
+      "signal": "neutral"
+    },
+    {
+      "id": "e3-01",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ein grosses Couvert mit dem Stadtlogo. Ich habe gesehen, es ist offiziell, und ich habe Angst bekommen.",
+      "locator": "Zeile 7",
+      "signal": "friction",
+      "phase_hint": "information",
+      "channel_hint": "letter",
+      "emotion_hint": {
+        "valence": -2,
+        "label": "Angst bekommen",
+        "explicit": true
+      },
+      "contradicts": [
+        "ws-02"
+      ],
+      "persona_hint": "fremdsprachig"
+    },
+    {
+      "id": "e3-03",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Hälfte. Die Wörter sind schwierig. Kreisschulbehörde, Zuteilungsentscheid, Stichtag. Ich habe mit dem Handy übersetzt, aber die Übersetzung war komisch.",
+      "locator": "Zeile 11",
+      "signal": "friction",
+      "phase_hint": "information",
+      "tags": [
+        "sprache"
+      ]
+    },
+    {
+      "id": "e3-04",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Dann habe ich die Nachbarin gefragt. Sie hat Kinder in der Schule und hat mir alles erklärt. Ohne sie hätte ich den Brief weggelegt.",
+      "locator": "Zeile 12",
+      "signal": "workaround",
+      "phase_hint": "information",
+      "tags": [
+        "netzwerk"
+      ]
+    },
+    {
+      "id": "e3-05",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ja, aber alles auf Deutsch. Sehr viel Text. Ich habe nach meiner Sprache gesucht, aber nichts gefunden. Nur ein PDF mit Informationen in mehreren Sprachen, aber das war von einem anderen Jahr.",
+      "locator": "Zeile 16",
+      "signal": "friction",
+      "phase_hint": "information",
+      "channel_hint": "web",
+      "contradicts": [
+        "doc-05"
+      ],
+      "tags": [
+        "sprache",
+        "website"
+      ]
+    },
+    {
+      "id": "e3-09",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Person war geduldig. Sie hat gesagt, für mich ist nichts zu tun. Das war eine grosse Erleichterung.",
+      "locator": "Zeile 26",
+      "signal": "positive",
+      "phase_hint": "information",
+      "channel_hint": "counter",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "grosse Erleichterung",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e3-10",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Das war das Beste. Ich habe die Lehrerin gesehen, sie hat langsam gesprochen und Bilder gezeigt. Und es gab eine Frau, die für drei Familien übersetzt hat.",
+      "locator": "Zeile 28",
+      "signal": "positive",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "event",
+      "emotion_hint": {
+        "valence": 2,
+        "label": "das Beste",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e3-12",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Mein Sohn hat gespielt, ich habe geschaut. Es war schön. Aber ich habe nicht gewusst, ob ich bleiben soll oder gehen, niemand hat es gesagt.",
+      "locator": "Zeile 34",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "in_person",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "schön",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e3-15",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ja, im Oktober. Die Lehrerin hat gefragt, ob ich eine Übersetzung möchte. Das hat mich sehr gefreut, dass sie gefragt hat.",
+      "locator": "Zeile 41",
+      "signal": "positive",
+      "phase_hint": "ankommen",
+      "emotion_hint": {
+        "valence": 2,
+        "label": "sehr gefreut",
+        "explicit": true
+      }
+    },
+    {
+      "id": "e3-16",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Der erste Brief. Ich habe ihn eine Woche auf dem Tisch liegen lassen, weil ich nicht wusste, was ich tun soll.",
+      "locator": "Zeile 44",
+      "signal": "breakdown",
+      "phase_hint": "information",
+      "channel_hint": "letter",
+      "tags": [
+        "nichthandeln"
+      ]
+    },
+    {
+      "id": "e3-18",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ein Satz oben im Brief in meiner Sprache: Sie müssen nichts tun, Ihr Kind ist angemeldet. Dann hätte ich ruhig geschlafen.",
+      "locator": "Zeile 47",
+      "signal": "need",
+      "phase_hint": "information",
+      "tags": [
+        "sprache"
+      ]
+    },
+    {
+      "id": "e3-20",
+      "source_ref": "int-e3",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Der Infoabend sollte früher sein. Im Dezember, wenn der Brief kommt. Dann hätte ich die Fragen gleich stellen können.",
+      "locator": "Zeile 54",
+      "signal": "need",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "event"
+    },
+    {
+      "id": "anf-01",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "metric",
+      "text": "17 von 30 Anfragen (57 %) gingen per Telefon ein, 9 per E-Mail, 4 am Schalter.",
+      "locator": "Spalte kanal, alle 30 Zeilen",
+      "value": 57,
+      "unit": "% der Anfragen",
+      "signal": "workaround",
+      "contradicts": [
+        "ws-08"
+      ]
+    },
+    {
+      "id": "anf-03",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Formular Betreuung nennt 28. Februar, Website nennt 31. März – welche Frist gilt?",
+      "locator": "anfrage_id A-008",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "email"
+    },
+    {
+      "id": "anf-04",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Zugezogen aus anderem Kanton, wartet seit Dezember auf Brief.",
+      "locator": "anfrage_id A-007",
+      "signal": "breakdown",
+      "phase_hint": "information",
+      "channel_hint": "phone",
+      "contradicts": [
+        "doc-01"
+      ]
+    },
+    {
+      "id": "anf-05",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "metric",
+      "text": "7 von 30 Anfragen betreffen die Zuteilung (Wunschkindergarten, Begründung, Einsprache), alle zwischen 10. April und 3. Juni.",
+      "locator": "kategorie = zuteilung_wunschkindergarten (A-016 bis A-027)",
+      "value": 7,
+      "unit": "Anfragen von 30",
+      "signal": "friction",
+      "phase_hint": "zuteilung"
+    },
+    {
+      "id": "anf-07",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Frist verpasst, weil im Brief nicht ersichtlich – gibt es noch Plätze?",
+      "locator": "anfrage_id A-014",
+      "signal": "breakdown",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "phone"
+    },
+    {
+      "id": "anf-09",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "metric",
+      "text": "4 von 30 Anfragen: Brief nicht erhalten (Umzug, Zuzug); 2 weitere: Brief nicht verstanden, beide am Schalter.",
+      "locator": "kategorie = brief_nicht_erhalten (A-002, A-003, A-006, A-007) und brief_nicht_verstanden (A-005, A-013)",
+      "value": 6,
+      "unit": "Anfragen von 30",
+      "signal": "breakdown",
+      "phase_hint": "information"
+    },
+    {
+      "id": "anf-12",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Wann kommt die Bestätigung des Hortplatzes? Arbeitgeber braucht Planungssicherheit.",
+      "locator": "anfrage_id A-026",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "channel_hint": "phone"
+    },
+    {
+      "id": "anf-13",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Schulweg führt über unübersichtliche Kreuzung – gibt es einen Lotsendienst?",
+      "locator": "anfrage_id A-021",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "channel_hint": "email"
+    },
+    {
+      "id": "bef-02",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Ich wusste nach dem Brief, was ich tun muss und was automatisch geschieht»: 58 % Zustimmung (n = 395), 88 Kommentare.",
+      "locator": "Zeile 3",
+      "value": 58,
+      "unit": "% Zustimmung",
+      "signal": "friction",
+      "phase_hint": "information"
+    },
+    {
+      "id": "bef-03",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Ich wusste, bis wann ich die Betreuung anmelden muss»: 46 % Zustimmung (n = 241, nur Eltern mit Betreuungsbedarf), 97 Kommentare.",
+      "locator": "Zeile 4",
+      "value": 46,
+      "unit": "% Zustimmung",
+      "signal": "friction",
+      "phase_hint": "vorbereitung"
+    },
+    {
+      "id": "bef-04",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Der Zuteilungsentscheid war nachvollziehbar»: 62 % Zustimmung (n = 401), 112 Kommentare – höchste Kommentarzahl der Befragung.",
+      "locator": "Zeile 5",
+      "value": 62,
+      "unit": "% Zustimmung",
+      "signal": "friction",
+      "phase_hint": "zuteilung",
+      "contradicts": [
+        "doc-03"
+      ]
+    },
+    {
+      "id": "bef-06",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Der Informationsanlass hat meine offenen Fragen beantwortet»: 89 % Zustimmung (n = 352).",
+      "locator": "Zeile 7",
+      "value": 89,
+      "unit": "% Zustimmung",
+      "signal": "positive",
+      "phase_hint": "vorbereitung"
+    },
+    {
+      "id": "bef-08",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Ich wusste vor dem ersten Kindergartentag, wie die Eingewöhnung abläuft»: 67 % Zustimmung (n = 405).",
+      "locator": "Zeile 9",
+      "value": 67,
+      "unit": "% Zustimmung",
+      "signal": "friction",
+      "phase_hint": "start"
+    },
+    {
+      "id": "bef-09",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Das Elterngespräch in den ersten Wochen war hilfreich»: 86 % Zustimmung (n = 388).",
+      "locator": "Zeile 10",
+      "value": 86,
+      "unit": "% Zustimmung",
+      "signal": "positive",
+      "phase_hint": "ankommen"
+    },
+    {
+      "id": "bef-10",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Ich musste mindestens einmal anrufen oder vorbeigehen, um eine Frage zu klären»: 43 % Zustimmung (n = 412).",
+      "locator": "Zeile 11",
+      "value": 43,
+      "unit": "% Zustimmung",
+      "signal": "workaround",
+      "contradicts": [
+        "ws-08"
+      ]
+    },
+    {
+      "id": "bef-11",
+      "source_ref": "befragung",
+      "class": "reported",
+      "kind": "metric",
+      "text": "«Insgesamt fühlte ich mich beim Kindergarteneintritt gut begleitet»: 74 % Zustimmung (n = 409).",
+      "locator": "Zeile 12",
+      "value": 74,
+      "unit": "% Zustimmung",
+      "signal": "positive",
+      "phase_hint": "ankommen"
+    },
+    {
+      "id": "web-02",
+      "source_ref": "analytics",
+      "class": "observed",
+      "kind": "metric",
+      "text": "PDF «Anmeldung Betreuung»: 9 870 Aufrufe, Ausstiegsrate 88 %, durchschnittliche Dauer 12 Sekunden.",
+      "locator": "Zeile 6",
+      "value": 88,
+      "unit": "% Ausstiegsrate",
+      "signal": "friction",
+      "phase_hint": "vorbereitung",
+      "channel_hint": "web"
+    },
+    {
+      "id": "doc-01",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Alle Eltern erhalten den Informationsbrief bis Mitte Dezember.",
+      "locator": "Abschnitt 4.2, Zeile 38",
+      "signal": "neutral",
+      "phase_hint": "information"
+    },
+    {
+      "id": "doc-03",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Der Zuteilungsentscheid enthält eine für die Eltern nachvollziehbare Begründung.",
+      "locator": "Abschnitt 4.4, Zeile 46",
+      "signal": "neutral",
+      "phase_hint": "zuteilung"
+    },
+    {
+      "id": "doc-04",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die Anmeldefrist für die Betreuung ist im Informationsbrief hervorgehoben.",
+      "locator": "Abschnitt 4.2, Zeile 38",
+      "signal": "neutral",
+      "phase_hint": "information"
+    },
+    {
+      "id": "doc-05",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die Informationen stehen auf der Website in deutscher Sprache sowie als mehrsprachiges Merkblatt zur Verfügung.",
+      "locator": "Abschnitt 4.2, Zeile 38",
+      "signal": "neutral",
+      "phase_hint": "information"
+    },
+    {
+      "id": "doc-07",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die ersten zwei Schulwochen gelten als Eingewöhnung mit reduziertem Stundenplan; die Betreuung wird entsprechend angepasst.",
+      "locator": "Abschnitt 4.8, Zeile 58",
+      "signal": "neutral",
+      "phase_hint": "start"
+    },
+    {
+      "id": "ws-02",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Eltern freuen sich auf den Brief, er ist der erste offizielle Schritt ins Schulsystem.",
+      "locator": "Zeile 17",
+      "signal": "positive",
+      "phase_hint": "information",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "freuen sich",
+        "explicit": false
+      }
+    },
+    {
+      "id": "ws-08",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Rückfragen per Telefon sind selten, weil die Website alles erklärt.",
+      "locator": "Zeile 26",
+      "signal": "neutral"
+    }
+  ],
+  "open_questions": [
+    {
+      "text": "Wie erleben Eltern den Brief, die weder Deutsch sprechen noch ein Netzwerk haben, das übersetzt – handeln sie gar nicht, und was geschieht dann?",
+      "phase_ref": "information",
+      "step_ref": "brief-erhalten",
+      "proposed_method": "interview"
+    },
+    {
+      "text": "Wie viele Betreuungsanmeldungen gehen nach der Frist ein, und wie viele davon erhalten keinen Platz?",
+      "phase_ref": "vorbereitung",
+      "step_ref": "betreuung-anmelden",
+      "proposed_method": "ticket_analysis"
+    },
+    {
+      "text": "Welche Elemente einer Begründung im Zuteilungsentscheid senken die Rückfragen tatsächlich?",
+      "phase_ref": "zuteilung",
+      "step_ref": "entscheid-erhalten",
+      "proposed_method": "survey"
+    },
+    {
+      "text": "Wie viele Familien haben in den ersten zwei Eingewöhnungswochen eine Betreuungslücke, und wie überbrücken sie sie?",
+      "phase_ref": "start",
+      "step_ref": "eingewoehnung",
+      "proposed_method": "survey"
+    },
+    {
+      "text": "Welche Rolle spielen informelle Netzwerke (Nachbarn, andere Eltern, Chatgruppen) im Informationsfluss – und wer hat keines?",
+      "proposed_method": "diary_study"
+    },
+    {
+      "text": "Warum verlassen zwei Drittel der Besuchenden die Kontaktseite nach unter 30 Sekunden – rufen sie an, oder geben sie auf?",
+      "phase_ref": "information",
+      "step_ref": "website-suchen",
+      "proposed_method": "analytics"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1",
+      "date": "2025-11-18",
+      "summary": "Hypothesen-Workshop: Phasen, Gefühlskurve und Pain Points aus Innensicht, ohne Nutzerevidenz.",
+      "author": "Team Kommunikation"
+    },
+    {
+      "version": "0.2",
+      "date": "2026-02-27",
+      "summary": "Drei Elterninterviews (E1–E3) eingearbeitet; Breakdowns «Brief nicht erhalten», «Brief nicht verstanden» und «Betreuungsfrist» ergänzt; Gefühlskurve korrigiert.",
+      "author": "Team Kommunikation"
+    },
+    {
+      "version": "1.0",
+      "date": "2026-09-30",
+      "summary": "Anfragen-Export, Elternbefragung und Webanalytics eingearbeitet; Kennzahlen hinterlegt; Chancen priorisiert; Review durch Kreisschulbehörde und Betreuung.",
+      "author": "Team Kommunikation"
+    }
+  ]
+}

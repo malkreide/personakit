@@ -1,0 +1,733 @@
+{
+  "schema_version": "1.0",
+  "meta": {
+    "id": "baubewilligung-waermepumpe-nachbarschaft",
+    "title": "Baubewilligung für eine Wärmepumpe aus Sicht der Nachbarschaft",
+    "version": "0.2",
+    "status": "draft",
+    "map_type": "user_journey",
+    "diagnosis": {
+      "rationale": "Dieselbe Leistung aus Sicht einer Drittperson mit eigenem Rechtsanspruch und gegenläufigem Interesse. Eigene Datei, weil Bauherrschaft und Nachbarschaft an derselben Stelle gegensätzlich fühlen. Phasen-IDs stimmen mit der Bauherrschaft überein, wo sich die Zeiträume decken, damit der Viewer die Kurven überlagern kann.",
+      "alternatives_considered": [
+        "Nachbarschaft als Edge Case in der Bauherrschafts-Journey: verliert die eigene Gefühlskurve und den eigenen Kanal (Schalter, Einsprache)."
+      ]
+    },
+    "language": "de",
+    "created": "2026-09-20",
+    "updated": "2026-10-01",
+    "owner": {
+      "role": "Leitung Bauberatung",
+      "unit": "Bauamt, Bauberatung",
+      "contact": "Funktionsadresse"
+    },
+    "review_cycle_days": 180,
+    "next_review": "2027-04-30",
+    "context": {
+      "organisation": "Gemeinde Musterau, Bauamt (fiktives Beispiel)",
+      "domain": "public_administration",
+      "service": "Baubewilligung Wärmepumpe (ordentliches Verfahren)",
+      "notes": "Synthetisches Beispiel zur Prüfung der Übertragbarkeit. Verfahren, Rollen, Zahlen und Zitate sind erfunden und stark vereinfacht; kein Abbild eines realen kantonalen oder kommunalen Baubewilligungsverfahrens."
+    },
+    "synthetic": true
+  },
+  "persona": {
+    "id": "nachbarschaft",
+    "name": "Direkte Nachbarschaft",
+    "role": "Anstösserin oder Anstösser",
+    "description": "Wohnt im Nachbarhaus, oft mit Schlafzimmer oder Sitzplatz zur Grenze. Hat keinen Anlass, Amtsblatt oder Publikationen zu verfolgen, und ist nicht gegen Wärmepumpen – will aber wissen, ob es nachts laut wird.",
+    "goals": [
+      "Rechtzeitig erfahren, was nebenan gebaut wird",
+      "Beurteilen können, ob es mich stört",
+      "Kein Streit mit den Nachbarn"
+    ],
+    "frustrations": [
+      "Pläne, die nur Fachleute lesen können",
+      "Einsprache als einziger Weg zu einer Antwort"
+    ],
+    "context": {
+      "language_situation": "Deutsch als Erstsprache; Lärmwerte und Baurecht sind fremd.",
+      "digital_access": "Liest keine Online-Publikationen; geht für Akteneinsicht an den Schalter.",
+      "time_budget": "Pensioniert, tagsüber meist zu Hause.",
+      "prior_experience": "Keine Erfahrung mit Einsprachen."
+    },
+    "evidence_refs": [
+      "n1-01",
+      "n1-06",
+      "anf-n5"
+    ],
+    "is_hypothesis": true
+  },
+  "scenario": {
+    "title": "Von der Publikation bis zur laufenden Anlage nebenan",
+    "goal": "Ich will wissen, was nebenan gebaut wird und ob es mich nachts stört – ohne mich mit den Nachbarn zu zerstreiten.",
+    "trigger": "Ein Hinweis aus dem Bekanntenkreis, dass nebenan etwas publiziert ist.",
+    "end_state": "Die Anlage läuft, und die Persona weiss, an wen sie sich wenden kann, wenn es lauter wird.",
+    "timeframe": "Auflagefrist von 20 Tagen bis einige Monate nach Inbetriebnahme",
+    "scope_exclusions": [
+      "Rechtsmittel nach dem Entscheid",
+      "Mietende ohne Einspracherecht"
+    ],
+    "evidence_refs": [
+      "n1-01"
+    ]
+  },
+  "phases": [
+    {
+      "id": "warten",
+      "name": "Auflage: erfahren, einsehen, Einsprache",
+      "description": "Für die Bauherrschaft die Wartezeit, für die Nachbarschaft die einzige Phase, in der sie handeln kann.",
+      "user_intent": "Verstehen, was nebenan entsteht, und ob ich etwas tun muss.",
+      "duration": "20 Tage Auflagefrist",
+      "kpis": [
+        {
+          "name": "Anteil Anfragen aus der Nachbarschaft",
+          "category": "outcome",
+          "indicator_type": "leading",
+          "definition": "Anteil der Anfragen an die Bauberatung, die von Nachbarinnen und Nachbarn kommen.",
+          "unit": "% der Anfragen",
+          "current_value": 13,
+          "target": 10,
+          "source_ref": "anf-n5"
+        }
+      ],
+      "steps": [
+        {
+          "id": "n-erfahren",
+          "name": "Vom Vorhaben erfahren",
+          "action": "Die Persona erfährt zufällig aus dem Bekanntenkreis, dass nebenan eine Wärmepumpe publiziert ist.",
+          "channel": "publication",
+          "touchpoint": "Amtliche Publikation (indirekt)",
+          "counterpart": "Bekanntenkreis",
+          "thinking": [
+            {
+              "text": "Was bedeutet das für mich?",
+              "evidence_refs": [
+                "n1-13"
+              ]
+            }
+          ],
+          "pain_points": [
+            {
+              "id": "pp-n-zufall",
+              "text": "Ohne Baugespann und ohne Brief erfährt die Nachbarschaft nur zufällig oder gar nicht von der Wärmepumpe; ein Teil der Auflagefrist ist dann schon vorbei.",
+              "type": "breakdown",
+              "severity": 4,
+              "frequency": "frequent",
+              "owner": "Bausekretariat",
+              "status": "open",
+              "evidence_refs": [
+                "n1-01",
+                "n1-02",
+                "n1-03",
+                "anf-n3",
+                "web-05"
+              ],
+              "workaround": "Hinweis aus dem Bekanntenkreis – oder zu spät."
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Nachbarschaft erfährt nichts von der Auflage",
+              "path": "Brief an die direkten Nachbarn vor der Auflage, in verständlicher Sprache.",
+              "exists": false,
+              "evidence_refs": [
+                "n1-13"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "n-plaene-einsehen",
+          "name": "Pläne am Schalter einsehen",
+          "action": "Die Persona geht an den Schalter und sieht Situationsplan und Lärmwerte ein.",
+          "channel": "counter",
+          "touchpoint": "Akteneinsicht am Schalter",
+          "counterpart": "Bausekretariat",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Ist das laut oder nicht?",
+              "evidence_refs": [
+                "n1-04"
+              ]
+            }
+          ],
+          "pain_points": [
+            {
+              "id": "pp-n-plaene-unverstaendlich",
+              "text": "Die Unterlagen sind für Laien nicht lesbar, und am Schalter darf niemand sagen, ob die Werte unproblematisch sind.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "frequent",
+              "owner": "Fachstelle Lärmschutz",
+              "status": "open",
+              "evidence_refs": [
+                "n1-04",
+                "n1-05",
+                "anf-n1"
+              ],
+              "workaround": "Einsprache erheben, um eine Antwort zu bekommen."
+            }
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "n-einsprache-erheben",
+          "name": "Einsprache erheben",
+          "action": "Die Persona schreibt eine Einsprache, um eine fachliche Antwort zu erhalten.",
+          "channel": "letter",
+          "touchpoint": "Einsprache (eingeschrieben)",
+          "counterpart": "Baukommission",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Was gehört in eine Einsprache?",
+              "evidence_refs": [
+                "n1-07",
+                "anf-n2"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "Angst, als schwierig zu gelten",
+            "evidence_refs": [
+              "n1-08"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-n-einsprache-als-auskunft",
+              "text": "Die Einsprache wird zum Ersatz für eine Auskunft – mit Aufwand für die Persona und Belastung für das Nachbarschaftsverhältnis.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "occasional",
+              "owner": "Bauberatung",
+              "status": "open",
+              "evidence_refs": [
+                "n1-06",
+                "n1-07",
+                "anf-n2"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "entscheid",
+      "name": "Einigung",
+      "description": "Einigungsverhandlung mit Lärmfachperson.",
+      "user_intent": "Eine Antwort, ob es mich stören wird – und eine Lösung, falls ja.",
+      "duration": "Einige Wochen",
+      "kpis": [
+        {
+          "name": "Anteil Einsprachen, die durch Einigung erledigt werden",
+          "category": "public_value",
+          "indicator_type": "lagging",
+          "definition": "Anteil Einsprachen, die nach einer Einigungsverhandlung zurückgezogen werden.",
+          "unit": "% der Einsprachen",
+          "current_value": 67,
+          "target": 80,
+          "source_ref": "stat-10"
+        }
+      ],
+      "steps": [
+        {
+          "id": "n-einigung",
+          "name": "Einigungsverhandlung",
+          "action": "Eine Lärmfachperson erklärt die Werte; man einigt sich auf Nachtabsenkung und Schallschutz, die Einsprache wird zurückgezogen.",
+          "channel": "in_person",
+          "touchpoint": "Einigungsverhandlung",
+          "counterpart": "Baukommission, Lärmfachperson, Bauherrschaft",
+          "is_transition": true,
+          "feeling": {
+            "valence": 1,
+            "label": "erleichtert",
+            "evidence_refs": [
+              "n1-10"
+            ]
+          },
+          "edge_cases": [
+            {
+              "text": "Die Lärmwerte erklärt erst die Einigungsverhandlung – also erst, nachdem Einsprache erhoben wurde.",
+              "evidence_refs": [
+                "n1-09"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "umsetzung",
+      "name": "Mit der Anlage leben",
+      "description": "Die Anlage läuft nebenan.",
+      "user_intent": "Ruhe – und wissen, wohin ich mich wende, wenn nicht.",
+      "duration": "Erstes Betriebsjahr",
+      "steps": [
+        {
+          "id": "n-mit-anlage-leben",
+          "name": "Mit der Anlage leben",
+          "action": "Die Persona hört die Anlage in stillen Momenten und weiss inzwischen, wen sie bei Problemen kontaktieren kann.",
+          "feeling": {
+            "valence": 0,
+            "label": "in Ordnung",
+            "evidence_refs": [
+              "n1-11"
+            ]
+          },
+          "edge_cases": [
+            {
+              "text": "Wer nach dem Einbau für Lärm zuständig ist, wissen Nachbarn ohne Einsprache nicht.",
+              "evidence_refs": [
+                "n1-12",
+                "anf-n4",
+                "stat-12"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        }
+      ]
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "opp-n-nachbarbrief",
+      "hmw": "Wie könnten wir die direkten Nachbarn vor der Auflage verständlich informieren?",
+      "description": "Kurzer Brief an die Anstösser bei Wärmepumpen: was, wo, welcher Lärmwert, was das bedeutet, an wen man sich wenden kann.",
+      "linked_pain_points": [
+        "pp-n-zufall",
+        "pp-n-plaene-unverstaendlich"
+      ],
+      "phase_ref": "warten",
+      "user_impact": 5,
+      "public_value": 5,
+      "effort": 2,
+      "owner": "Bausekretariat",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Nachbarin möchte ich einen Brief erhalten, der in normaler Sprache erklärt, was nebenan gebaut wird und wie laut es ist, damit ich nicht zufällig davon erfahre.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "n1-13",
+        "n1-02"
+      ]
+    },
+    {
+      "id": "opp-n-laerm-erklaeren",
+      "hmw": "Wie könnten wir Lärmwerte erklären, bevor jemand Einsprache erheben muss, um eine Antwort zu bekommen?",
+      "description": "Lärmfachstelle beantwortet Fragen der Nachbarschaft während der Auflage; Einordnung der Werte im Auflagedossier.",
+      "linked_pain_points": [
+        "pp-n-plaene-unverstaendlich",
+        "pp-n-einsprache-als-auskunft"
+      ],
+      "phase_ref": "warten",
+      "user_impact": 4,
+      "public_value": 4,
+      "effort": 2,
+      "owner": "Fachstelle Lärmschutz",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Nachbar möchte ich während der Auflage eine Fachperson fragen können, was der Lärmwert für mich bedeutet, damit ich keine Einsprache erheben muss, nur um eine Antwort zu bekommen.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "n1-05",
+        "n1-06",
+        "n1-09"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "int-n1",
+      "title": "Interview N1 – Nachbarin mit Einsprache",
+      "kind": "interview",
+      "default_class": "reported",
+      "date": "2026-03",
+      "n": 1,
+      "participants": "Wohnungseigentümerin im Nachbarhaus, hat Einsprache erhoben",
+      "pii_status": "anonymised",
+      "location": "input/interview-n1.md",
+      "notes": "Synthetisches Transkript, gekürzt. Eigener Fall, nicht die Nachbarschaft aus B2."
+    },
+    {
+      "id": "anfragen",
+      "title": "Anfragen an die Bauberatung (anonymisierter Export)",
+      "kind": "inquiry_log",
+      "default_class": "observed",
+      "date": "2025-01 bis 2025-12",
+      "n": 30,
+      "participants": "Eigentümerschaften, Installationsfirmen, Nachbarschaft",
+      "pii_status": "anonymised",
+      "location": "input/anfragen-export.csv",
+      "notes": "Synthetische Stichprobe von 30 Anfragen zu Wärmepumpen; Kurztexte ohne Namen und Adressen."
+    },
+    {
+      "id": "statistik",
+      "title": "Gesuchsstatistik Wärmepumpen 2025 (Geschäftskontrolle)",
+      "kind": "case_records",
+      "default_class": "observed",
+      "date": "2025",
+      "n": 84,
+      "participants": "alle ordentlichen Verfahren für Wärmepumpen an Ein- und Zweifamilienhäusern",
+      "pii_status": "none",
+      "location": "input/gesuchsstatistik.csv",
+      "notes": "Aggregierte Auswertung aus der Geschäftskontrolle."
+    },
+    {
+      "id": "analytics",
+      "title": "Webanalytics Bauen und Gesuchsportal",
+      "kind": "analytics",
+      "default_class": "observed",
+      "date": "2025",
+      "pii_status": "none",
+      "location": "input/webanalytics.csv"
+    },
+    {
+      "id": "prozessdok",
+      "title": "Prozessbeschrieb Baubewilligung, ordentliches Verfahren (Soll, intern)",
+      "kind": "internal_document",
+      "default_class": "assumed",
+      "date": "2025",
+      "pii_status": "none",
+      "location": "input/prozess-baubewilligung-intern.md"
+    },
+    {
+      "id": "workshop",
+      "title": "Hypothesen-Workshop ohne Gesuchstellende und Nachbarn",
+      "kind": "workshop",
+      "default_class": "assumed",
+      "date": "2026-03-12",
+      "n": 5,
+      "participants": "Bauberatung, Bausekretariat, Fachstelle Lärmschutz (Rollen)",
+      "pii_status": "none",
+      "location": "input/workshop-notizen.md"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "n1-01",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Durch Zufall. Ich lese das Amtsblatt nicht.",
+      "locator": "Zeile 7",
+      "signal": "breakdown",
+      "phase_hint": "warten",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "n1-02",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Es gab kein Baugespann, nichts. Bei einer Garage stehen Stangen, bei einer Wärmepumpe sieht man gar nichts.",
+      "locator": "Zeile 8",
+      "signal": "breakdown",
+      "phase_hint": "warten",
+      "persona_hint": "nachbarschaft",
+      "contradicts": [
+        "doc-04"
+      ]
+    },
+    {
+      "id": "n1-03",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich bin auf die Gemeinde gegangen, um die Pläne anzuschauen. Die Auflagefrist war schon zur Hälfte vorbei.",
+      "locator": "Zeile 10",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "counter",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "n1-04",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Pläne habe ich nicht verstanden. Ein Punkt auf dem Situationsplan und eine Tabelle mit Dezibel. Ob das laut ist oder nicht, konnte ich nicht beurteilen.",
+      "locator": "Zeile 11",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "counter",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "n1-05",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Frau am Schalter war freundlich, aber sie durfte mir nicht sagen, ob das in Ordnung ist.",
+      "locator": "Zeile 13",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "counter",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "n1-06",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Nicht weil ich gegen die Wärmepumpe bin, sondern weil ich sonst keine Möglichkeit hatte, eine Antwort zu bekommen.",
+      "locator": "Zeile 14",
+      "signal": "workaround",
+      "phase_hint": "warten",
+      "persona_hint": "nachbarschaft",
+      "contradicts": [
+        "ws-03"
+      ]
+    },
+    {
+      "id": "n1-07",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe zwei Abende daran gesessen, weil ich nicht wusste, was hineingehört.",
+      "locator": "Zeile 16",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "letter",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "n1-08",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich hatte Angst, dass die Nachbarn jetzt denken, ich sei die schwierige Alte.",
+      "locator": "Zeile 17",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "persona_hint": "nachbarschaft",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "Angst, als schwierig zu gelten",
+        "explicit": true
+      }
+    },
+    {
+      "id": "n1-09",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Zum ersten Mal hat mir jemand die Zahlen erklärt.",
+      "locator": "Zeile 19",
+      "signal": "positive",
+      "phase_hint": "entscheid",
+      "channel_hint": "in_person",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "n1-10",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe die Einsprache zurückgezogen und war erleichtert.",
+      "locator": "Zeile 20",
+      "signal": "positive",
+      "phase_hint": "entscheid",
+      "persona_hint": "nachbarschaft",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "erleichtert",
+        "explicit": true
+      }
+    },
+    {
+      "id": "n1-11",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Man hört sie, wenn es still ist. Aber es ist in Ordnung.",
+      "locator": "Zeile 22",
+      "signal": "neutral",
+      "phase_hint": "umsetzung",
+      "persona_hint": "nachbarschaft",
+      "emotion_hint": {
+        "valence": 0,
+        "label": "in Ordnung",
+        "explicit": false
+      }
+    },
+    {
+      "id": "n1-12",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich weiss jetzt, an wen ich mich wenden kann, wenn es lauter wird. Das wusste ich vorher nicht.",
+      "locator": "Zeile 22",
+      "signal": "need",
+      "phase_hint": "umsetzung",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "n1-13",
+      "source_ref": "int-n1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Wenn mir jemand vor der Auflage erklärt hätte, was das für mich bedeutet. Ein Brief an die direkten Nachbarn, in normaler Sprache.",
+      "locator": "Zeile 24",
+      "signal": "need",
+      "phase_hint": "warten",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "anf-n1",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Möchte Pläne der Wärmepumpe nebenan einsehen. Versteht die Lärmwerte nicht, fragt, ob das zulässig ist.",
+      "locator": "anfrage_id B-005",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "counter",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "anf-n2",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Wie formuliert man eine Einsprache? Möchte nur wissen, ob das Gerät nachts leiser läuft.",
+      "locator": "anfrage_id B-012",
+      "signal": "need",
+      "phase_hint": "warten",
+      "channel_hint": "counter",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "anf-n3",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Hat erst nach Ablauf der Auflagefrist von der Wärmepumpe erfahren. Kann sie noch etwas tun?",
+      "locator": "anfrage_id B-016",
+      "signal": "breakdown",
+      "phase_hint": "warten",
+      "channel_hint": "phone",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "anf-n4",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Nachbar baut Wärmepumpe direkt an der Grenze. Wer prüft den Lärm nach dem Einbau?",
+      "locator": "anfrage_id B-024",
+      "signal": "need",
+      "phase_hint": "umsetzung",
+      "channel_hint": "counter",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "anf-n5",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "metric",
+      "text": "4 von 30 Anfragen kommen aus der Nachbarschaft, alle zu Lärm oder zum Vorgehen bei einer Einsprache.",
+      "locator": "Spalte rolle = nachbarschaft",
+      "value": 13,
+      "unit": "% der Anfragen",
+      "signal": "need",
+      "phase_hint": "warten",
+      "persona_hint": "nachbarschaft"
+    },
+    {
+      "id": "stat-10",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "67 % der Einsprachen werden nach einer Einigungsverhandlung zurückgezogen.",
+      "locator": "Zeile 11",
+      "value": 67,
+      "unit": "% der Einsprachen",
+      "signal": "positive",
+      "phase_hint": "entscheid"
+    },
+    {
+      "id": "stat-12",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "3 Lärmklagen bei 71 in Betrieb genommenen Anlagen.",
+      "locator": "Zeile 13",
+      "value": 4.2,
+      "unit": "Klagen je 100 Anlagen",
+      "signal": "neutral",
+      "phase_hint": "umsetzung"
+    },
+    {
+      "id": "web-05",
+      "source_ref": "analytics",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Seite «Aktuelle Publikationen»: 1240 Aufrufe im Jahr.",
+      "locator": "Zeile 6",
+      "value": 1240,
+      "unit": "Aufrufe",
+      "signal": "neutral",
+      "phase_hint": "warten",
+      "channel_hint": "web"
+    },
+    {
+      "id": "doc-04",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die Anstösser werden durch die amtliche Publikation und das Baugespann informiert.",
+      "locator": "Zeile 29",
+      "signal": "neutral",
+      "phase_hint": "warten"
+    },
+    {
+      "id": "ws-03",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Einsprachen gegen Wärmepumpen kommen vor allem von Personen, die grundsätzlich gegen Bauvorhaben sind.",
+      "locator": "Zeile 13",
+      "signal": "neutral",
+      "phase_hint": "warten"
+    }
+  ],
+  "open_questions": [
+    {
+      "text": "Ist N1 typisch? Weitere Interviews mit Nachbarinnen und Nachbarn – auch mit Einsprachen, die nicht durch Einigung erledigt wurden, und mit solchen, die gar nichts erfahren haben.",
+      "phase_ref": "warten",
+      "proposed_method": "interview"
+    },
+    {
+      "text": "Wie viele Nachbarn erfahren erst nach Ablauf der Auflagefrist von einer Wärmepumpe?",
+      "phase_ref": "warten",
+      "proposed_method": "ticket_analysis"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1",
+      "date": "2026-09-20",
+      "summary": "Zweite Persona angelegt, Phasen-IDs an die Bauherrschafts-Journey angeglichen.",
+      "author": "Bauberatung"
+    },
+    {
+      "version": "0.2",
+      "date": "2026-10-01",
+      "summary": "Interview N1 und Anfragen aus der Nachbarschaft eingearbeitet; Persona bleibt Hypothese (ein Interview).",
+      "author": "Bauberatung"
+    }
+  ]
+}

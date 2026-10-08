@@ -58,7 +58,7 @@ Ohne Material (nur Annahmen) entfallen Schritte 1–4: `personakit new` anlegen,
 |---|---|---|
 | Content für ein Zielpublikum erzeugen | `render -f prompt -m audience` | Prompt-Block als System-Kontext vorschalten; Erlebnisziele sind Veto-Kriterien |
 | Entwurf gegen eine Persona testen, Interview üben | `render -f prompt -m simulate` | Ergebnis ist Hypothese, nie Nutzerforschung; Persona-ID und Version im Output nennen |
-| journeykit-Journey schreiben | `render -f json` | Persona-ID als Akteur; Jobs als Journey-Treiber; `relations.journeys` nachtragen |
+| journeykit-Journey schreiben | `render -f json` | Persona-ID als Journey-`persona.id`; Jobs als Journey-Treiber; `relations.journeys` nachtragen, dann `lint personas --journeys <ordner>` |
 | Massnahmen priorisieren | `render -f matrix` | Opportunity-Score pro Job; bei Konflikt entscheidet die primäre Persona |
 | Notion/Wiki-Seite | `render -f md` oder `-f card` | Karte für Übersichten, md für Detailseiten |
 | Team-Galerie | `render personas -f html -o personas.html` | Single-File, offline |

@@ -1,0 +1,2210 @@
+{
+  "schema_version": "1.0",
+  "meta": {
+    "id": "baubewilligung-waermepumpe-bauherrschaft",
+    "title": "Baubewilligung für eine Wärmepumpe aus Sicht der Bauherrschaft",
+    "version": "1.0",
+    "status": "validated",
+    "map_type": "user_journey",
+    "diagnosis": {
+      "rationale": "Gefragt ist, wie Eigentümerschaften ohne Bauerfahrung das Verfahren erleben: wo sie unsicher werden, warten, nachfragen und ausweichen. Das Baubewilligungsverfahren zieht stark in Richtung Service Blueprint (Vollständigkeitsprüfung, Fachstellen, Publikation, Baukommission); diese Back-Stage-Schritte bleiben bewusst draussen und erscheinen nur dort, wo sie für die Persona sichtbar werden – als Brief, als Statusmeldung, als Wartezeit.",
+      "alternatives_considered": [
+        "Service Blueprint «Baubewilligungsverfahren»: zeigt Fachstellen und Fristen, aber nicht, warum Gesuchstellende täglich die Statusseite öffnen.",
+        "User Flow «Gesuch im Portal einreichen»: zu eng; die grössten Reibungen liegen vor und nach dem Formular."
+      ],
+      "backstage_documented_in": "Service Blueprint «Baubewilligungsverfahren» (fiktiv, nicht Teil des Beispiels)"
+    },
+    "language": "de",
+    "created": "2026-09-15",
+    "updated": "2026-10-01",
+    "owner": {
+      "role": "Leitung Bauberatung",
+      "unit": "Bauamt, Bauberatung",
+      "contact": "Funktionsadresse"
+    },
+    "review_cycle_days": 180,
+    "next_review": "2027-04-30",
+    "context": {
+      "organisation": "Gemeinde Musterau, Bauamt (fiktives Beispiel)",
+      "domain": "public_administration",
+      "service": "Baubewilligung Wärmepumpe (ordentliches Verfahren)",
+      "notes": "Synthetisches Beispiel zur Prüfung der Übertragbarkeit. Verfahren, Rollen, Zahlen und Zitate sind erfunden und stark vereinfacht; kein Abbild eines realen kantonalen oder kommunalen Baubewilligungsverfahrens."
+    },
+    "synthetic": true
+  },
+  "persona": {
+    "id": "erstbauherrschaft",
+    "name": "Erstbauherrschaft beim Heizungsersatz",
+    "role": "Eigentümerschaft (gesuchstellend)",
+    "description": "Eigentümerin oder Eigentümer eines Ein- oder Reiheneinfamilienhauses, die zum ersten Mal ein Baugesuch stellen – für eine Luft-Wasser-Wärmepumpe mit Aussengerät, oft unter Zeitdruck nach einem Heizungsausfall. Die Installationsfirma liefert Unterlagen oder vertritt das Gesuch ganz; das Verfahren selbst ist unbekannt.",
+    "goals": [
+      "Die neue Heizung rasch in Betrieb haben",
+      "Wissen, ob und was ich bei der Gemeinde tun muss",
+      "Keinen Streit mit den Nachbarn"
+    ],
+    "frustrations": [
+      "«Es kommt darauf an» statt einer Antwort",
+      "Wochenlang «in Prüfung» ohne Hinweis, wer was prüft",
+      "Zwischen Firma und Gemeinde vermitteln, ohne die Unterlagen beurteilen zu können"
+    ],
+    "context": {
+      "language_situation": "Deutsch als Erstsprache; Baurecht und Verwaltungsdeutsch sind neu.",
+      "digital_access": "Portal und Website werden genutzt; Unterlagen kommen als PDF von der Installationsfirma.",
+      "time_budget": "Berufstätig; bei einem Heizungsausfall entsteht Druck, der das Verfahren nicht kennt.",
+      "prior_experience": "Kein früheres Baugesuch. Rund sechs von zehn Gesuchen reicht die Installationsfirma als Vertreterin ein."
+    },
+    "evidence_refs": [
+      "b1-01",
+      "b1-02",
+      "b2-01",
+      "b2-02",
+      "stat-02",
+      "stat-03"
+    ],
+    "is_hypothesis": false
+  },
+  "scenario": {
+    "title": "Vom Heizungsentscheid bis zur laufenden Wärmepumpe",
+    "goal": "Ich will meine neue Heizung möglichst rasch einbauen lassen – ohne Ärger mit der Gemeinde und den Nachbarn.",
+    "trigger": "Die alte Heizung fällt aus oder soll ersetzt werden; die Installationsfirma sagt, es brauche eine Bewilligung.",
+    "end_state": "Die Wärmepumpe läuft, die Bewilligung ist abgeschlossen, und das Verhältnis zur Nachbarschaft ist intakt.",
+    "timeframe": "Rund vier Monate ohne Einsprache, bis sieben Monate mit Einsprache",
+    "scope_exclusions": [
+      "Grössere Umbauten mit Architektur- oder Planungsbüro",
+      "Förderbeiträge und Finanzierung",
+      "Meldeverfahren ohne Publikation (z. B. Anlagen im Gebäudeinnern)",
+      "Rechtsmittel nach dem Entscheid"
+    ],
+    "evidence_refs": [
+      "b1-01",
+      "b2-11"
+    ]
+  },
+  "phases": [
+    {
+      "id": "orientierung",
+      "name": "Klären, ob es eine Bewilligung braucht",
+      "description": "Zwischen Heizungsentscheid und erstem Kontakt mit der Gemeinde. Die Bewilligungspflicht erfährt die Persona meist von der Installationsfirma.",
+      "user_intent": "Wissen, ob ich überhaupt etwas tun muss – und was.",
+      "duration": "Tage bis zwei Wochen",
+      "kpis": [
+        {
+          "name": "Anteil Anfragen zur Bewilligungspflicht",
+          "category": "outcome",
+          "indicator_type": "leading",
+          "definition": "Anteil der Anfragen an die Bauberatung in der Kategorie Bewilligungspflicht.",
+          "unit": "% der Anfragen",
+          "current_value": 23,
+          "target": 10,
+          "source_ref": "anf-01",
+          "commercial_equivalent": "Support-Ticket-Rate"
+        },
+        {
+          "name": "Ausstiegsrate der Seite «Braucht es eine Bewilligung?»",
+          "category": "outcome",
+          "indicator_type": "leading",
+          "definition": "Anteil Besuche, die auf dieser Seite enden.",
+          "unit": "% Ausstiegsrate",
+          "current_value": 58,
+          "target": 35,
+          "source_ref": "web-01"
+        }
+      ],
+      "steps": [
+        {
+          "id": "heizung-entscheiden",
+          "name": "Heizungsersatz entscheiden",
+          "action": "Die Eigentümerschaft entscheidet sich – oft nach einem Ausfall und unter Zeitdruck – für eine Wärmepumpe und holt Offerten ein.",
+          "channel": "in_person",
+          "touchpoint": "Offertgespräch",
+          "counterpart": "Installationsfirma",
+          "thinking": [
+            {
+              "text": "Eine Heizung tauscht man doch einfach aus.",
+              "evidence_refs": [
+                "b1-02"
+              ]
+            }
+          ],
+          "pain_points": [
+            {
+              "id": "pp-bewilligungspflicht-unbekannt",
+              "text": "Die Bewilligungspflicht für das Aussengerät ist unbekannt; die Persona erfährt sie erst von der Installationsfirma.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "frequent",
+              "owner": "Bauberatung",
+              "status": "open",
+              "evidence_refs": [
+                "b1-02",
+                "b1-03",
+                "anf-01"
+              ],
+              "workaround": "Sich auf die Auskunft der Installationsfirma verlassen."
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Ersatz nach Ausfall: Rund jedes dritte Gesuch entsteht unter Zeitdruck, das Haus wird bis zum Einbau provisorisch beheizt.",
+              "evidence_refs": [
+                "b1-01",
+                "stat-02",
+                "anf-03"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "bewilligungspflicht-klaeren",
+          "name": "Bewilligungspflicht klären",
+          "action": "Die Persona sucht auf der Website der Gemeinde nach einer Antwort und ruft schliesslich die Bauberatung an.",
+          "channel": "web",
+          "touchpoint": "Seite «Braucht es eine Bewilligung?»",
+          "counterpart": "Bauberatung",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Brauche ich eine Bewilligung – oder nicht?",
+              "evidence_refs": [
+                "b1-04",
+                "anf-02",
+                "b1-27"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "verunsichert",
+            "evidence_refs": [
+              "b1-05"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-website-kommt-darauf-an",
+              "text": "Die Website beantwortet die Frage nach der Bewilligungspflicht mit «es kommt darauf an»; die Kriterien kann die Persona nicht auf ihr Haus anwenden.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "frequent",
+              "owner": "Bauberatung",
+              "status": "open",
+              "evidence_refs": [
+                "b1-04",
+                "b1-05",
+                "web-01",
+                "anf-01",
+                "anf-02"
+              ],
+              "workaround": "Anruf bei der Bauberatung."
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Website beantwortet die Frage nicht",
+              "path": "Telefon mit der Bauberatung; klare Auskunft zum Verfahren.",
+              "exists": true,
+              "evidence_refs": [
+                "b1-06",
+                "b1-07"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "gesuch",
+      "name": "Gesuch zusammenstellen und einreichen",
+      "description": "Unterlagen sammeln, Lärmschutznachweis von der Installationsfirma, Upload im Portal – und die erste Rückweisung.",
+      "user_intent": "Ein vollständiges Gesuch einreichen, ohne selbst Fachfrau oder Fachmann werden zu müssen.",
+      "duration": "Zwei bis sechs Wochen",
+      "kpis": [
+        {
+          "name": "Anteil Gesuche ohne Rückweisung wegen Unvollständigkeit",
+          "category": "outcome",
+          "indicator_type": "lagging",
+          "definition": "Anteil Gesuche, die beim ersten Einreichen vollständig sind.",
+          "unit": "% der Gesuche",
+          "current_value": 59,
+          "target": 85,
+          "source_ref": "stat-04",
+          "commercial_equivalent": "Conversion Rate"
+        }
+      ],
+      "steps": [
+        {
+          "id": "unterlagen-zusammenstellen",
+          "name": "Unterlagen zusammenstellen",
+          "action": "Die Persona sammelt Situationsplan, Grundriss und Datenblatt; den Lärmschutznachweis erstellt die Installationsfirma.",
+          "channel": "web",
+          "touchpoint": "Unterlagenliste im Portal",
+          "counterpart": "Installationsfirma",
+          "performed_by": {
+            "kind": "shared",
+            "role": "Installationsfirma",
+            "mandate": "formal"
+          },
+          "thinking": [
+            {
+              "text": "Wer macht einen Lärmschutznachweis – und woran sehe ich, ob er stimmt?",
+              "evidence_refs": [
+                "b1-08"
+              ]
+            }
+          ],
+          "pain_points": [
+            {
+              "id": "pp-laermnachweis-unklar",
+              "text": "Welches Formular für den Lärmschutznachweis gilt und welcher Standort einzutragen ist, wissen weder Eigentümerschaft noch Installationsfirma sicher.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "frequent",
+              "owner": "Fachstelle Lärmschutz",
+              "status": "open",
+              "evidence_refs": [
+                "b1-08",
+                "b1-09",
+                "anf-04",
+                "anf-05"
+              ],
+              "workaround": "Die Installationsfirma verwendet ein Formular aus anderen Gemeinden."
+            },
+            {
+              "id": "pp-postbotin",
+              "text": "Die Eigentümerschaft reicht weiter, was die Installationsfirma liefert, ohne es beurteilen zu können.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "frequent",
+              "owner": "Bauberatung",
+              "status": "open",
+              "evidence_refs": [
+                "b1-09",
+                "b1-26"
+              ]
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Gesuch ganz durch die Installationsfirma als Vertreterin eingereicht: Die Eigentümerschaft sieht keine Unterlagen und keine Korrespondenz.",
+              "evidence_refs": [
+                "b2-02",
+                "stat-03"
+              ]
+            }
+          ],
+          "evidence_refs": [
+            "b1-09",
+            "stat-03"
+          ]
+        },
+        {
+          "id": "gesuch-einreichen",
+          "name": "Gesuch im Portal einreichen",
+          "action": "Die Persona lädt die Unterlagen im Gesuchsportal hoch und schickt das Gesuch ab.",
+          "channel": "web",
+          "touchpoint": "Gesuchsportal",
+          "thinking": [
+            {
+              "text": "Jetzt läuft es.",
+              "evidence_refs": [
+                "b1-11"
+              ]
+            }
+          ],
+          "pain_points": [
+            {
+              "id": "pp-upload",
+              "text": "Der Upload bricht bei einzelnen PDF-Dateien ab; das Formular wird häufig verlassen.",
+              "type": "friction",
+              "severity": 2,
+              "frequency": "occasional",
+              "owner": "Bausekretariat",
+              "status": "open",
+              "evidence_refs": [
+                "anf-16",
+                "web-03"
+              ],
+              "workaround": "Anruf bei der Bauberatung."
+            }
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "rueckweisung",
+          "name": "Rückweisung: Gesuch unvollständig",
+          "action": "Nach Wochen kommt per Brief die Mitteilung, das Gesuch sei unvollständig; der Lärmschutznachweis muss neu erstellt werden.",
+          "channel": "letter",
+          "touchpoint": "Brief «Gesuch unvollständig»",
+          "counterpart": "Bauberatung",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Warum hat das beim Hochladen niemand gemerkt?",
+              "evidence_refs": [
+                "b1-12"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -2,
+            "label": "wütend",
+            "evidence_refs": [
+              "b1-12"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-rueckweisung-nach-wochen",
+              "text": "Die Unvollständigkeit wird erst nach rund drei Wochen mitgeteilt; bis dahin glaubt die Persona, das Gesuch sei in Bearbeitung. Häufigster Grund ist der Lärmschutznachweis.",
+              "type": "breakdown",
+              "severity": 5,
+              "frequency": "frequent",
+              "owner": "Bauberatung",
+              "status": "open",
+              "evidence_refs": [
+                "b1-10",
+                "b1-11",
+                "b1-12",
+                "anf-18",
+                "stat-04",
+                "stat-05",
+                "stat-06"
+              ],
+              "workaround": "Installationsfirma erneut beauftragen; bei der Bauberatung nachfragen, was genau fehlt."
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Notheizung während des Verfahrens: Elektroöfen und Holzofen, im Badezimmer zwölf Grad.",
+              "evidence_refs": [
+                "b1-13",
+                "anf-09"
+              ]
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Gesuch unvollständig",
+              "path": "Lärmschutznachweis mit dem kantonalen Formular nachreichen.",
+              "exists": true,
+              "evidence_refs": [
+                "b1-10"
+              ]
+            },
+            {
+              "trigger": "Unterlagen fehlen oder sind fehlerhaft",
+              "path": "Vollständigkeitsprüfung beim Hochladen oder Vorprüfung des Lärmschutznachweises vor dem Einreichen.",
+              "exists": false,
+              "evidence_refs": [
+                "b1-12",
+                "anf-06"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "warten",
+      "name": "Warten auf den Entscheid",
+      "description": "Publikation, Auflage und Prüfung. Für die Persona eine Phase fast ohne Kontaktpunkt – ausser der Statusseite und, bei einer Einsprache, einem eingeschriebenen Brief.",
+      "user_intent": "Wissen, dass etwas passiert, und wann ich mit dem Einbau rechnen kann.",
+      "duration": "Fünf Wochen bis vier Monate",
+      "duration_days": {
+        "typical": 38,
+        "max": 112,
+        "basis": "Median vom vollständigen Gesuch bis zum Entscheid, ohne bzw. mit Einsprache; schliesst die Phase «Einigung und Entscheid» ein.",
+        "evidence_refs": [
+          "stat-07",
+          "stat-08"
+        ]
+      },
+      "kpis": [
+        {
+          "name": "Durchlaufzeit vom vollständigen Gesuch bis zum Entscheid, ohne Einsprache (Median)",
+          "category": "outcome",
+          "indicator_type": "lagging",
+          "definition": "Kalendertage vom vollständigen Gesuch bis zum Entscheid.",
+          "unit": "Kalendertage",
+          "current_value": 38,
+          "target": 30,
+          "source_ref": "stat-07"
+        },
+        {
+          "name": "Anteil Statusanfragen an allen Anfragen",
+          "category": "outcome",
+          "indicator_type": "leading",
+          "definition": "Anteil der Anfragen an die Bauberatung in der Kategorie Status.",
+          "unit": "% der Anfragen",
+          "current_value": 23,
+          "target": 10,
+          "source_ref": "anf-07",
+          "commercial_equivalent": "Support-Ticket-Rate"
+        }
+      ],
+      "steps": [
+        {
+          "id": "publikation",
+          "name": "Von der Publikation erfahren",
+          "action": "Das Gesuch wird amtlich publiziert und liegt auf; die Persona erfährt davon über die Nachbarschaft.",
+          "channel": "publication",
+          "touchpoint": "Amtliche Publikation (Amtsblatt)",
+          "counterpart": "Nachbarschaft",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Warum sagt mir das niemand von der Gemeinde?",
+              "evidence_refs": [
+                "b1-14"
+              ]
+            }
+          ],
+          "pain_points": [
+            {
+              "id": "pp-publikation-ohne-mitteilung",
+              "text": "Die Persona erfährt von der Publikation ihres eigenen Gesuchs nicht von der Gemeinde, sondern zufällig.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "occasional",
+              "owner": "Bausekretariat",
+              "status": "open",
+              "evidence_refs": [
+                "b1-14"
+              ],
+              "workaround": "Hinweis aus der Nachbarschaft."
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Wer die Nachbarschaft vorher informiert hat, erlebt die Auflage ohne Einsprache.",
+              "evidence_refs": [
+                "b1-19",
+                "b2-17"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "status-verfolgen",
+          "name": "Status verfolgen",
+          "action": "Die Persona öffnet fast täglich die Statusseite und ruft an, wenn sich wochenlang nichts ändert.",
+          "channel": "web",
+          "touchpoint": "Statusseite im Portal",
+          "counterpart": "Bauberatung",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Was heisst «in Prüfung»? Wer prüft? Wie lange noch?",
+              "evidence_refs": [
+                "b1-16",
+                "anf-08"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -2,
+            "label": "zermürbt",
+            "evidence_refs": [
+              "b1-17",
+              "b2-14"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-status-ohne-aussage",
+              "text": "Der Status zeigt wochenlang «in Prüfung», ohne Hinweis auf den nächsten Schritt oder die übliche Dauer.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "systematic",
+              "owner": "Bausekretariat",
+              "status": "open",
+              "evidence_refs": [
+                "b1-15",
+                "b1-16",
+                "b1-18",
+                "web-04",
+                "anf-07",
+                "anf-08"
+              ],
+              "workaround": "Anrufe bei der Bauberatung."
+            },
+            {
+              "id": "pp-vertretung-keine-auskunft",
+              "text": "Ist die Installationsfirma als Vertreterin eingetragen, erhält die Eigentümerschaft keine Post und am Telefon zunächst keine Auskunft – über das eigene Haus.",
+              "type": "breakdown",
+              "severity": 4,
+              "frequency": "occasional",
+              "owner": "Bausekretariat",
+              "status": "open",
+              "evidence_refs": [
+                "b2-03",
+                "b2-13",
+                "b2-14",
+                "anf-10",
+                "anf-11"
+              ],
+              "workaround": "Bei der Installationsfirma nachfragen."
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Keine Information wegen Vertretung",
+              "path": "Kopie aller Schreiben an die Eigentümerschaft; Auskunft an die Eigentümerschaft auch bei Vertretung.",
+              "exists": false,
+              "evidence_refs": [
+                "b2-16",
+                "anf-11"
+              ]
+            }
+          ],
+          "backstage_notes": [
+            "Laut Prozessbeschrieb geht die gesamte Korrespondenz an die Vertretung (doc-02)."
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "einsprache-erhalten",
+          "name": "Von einer Einsprache erfahren",
+          "action": "Ein eingeschriebener Brief teilt mit, dass aus der Nachbarschaft Einsprache erhoben wurde.",
+          "channel": "letter",
+          "touchpoint": "Eingeschriebener Brief «Einsprache»",
+          "counterpart": "Baukommission",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Habe ich etwas falsch gemacht?",
+              "evidence_refs": [
+                "b2-04"
+              ]
+            }
+          ],
+          "feeling": {
+            "valence": -1,
+            "label": "unangenehm",
+            "evidence_refs": [
+              "b2-06"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-einsprache-unvorbereitet",
+              "text": "Die Einsprache trifft die Persona unvorbereitet; niemand hatte den Standort mit der Nachbarschaft besprochen.",
+              "type": "friction",
+              "severity": 4,
+              "frequency": "occasional",
+              "owner": "Bauberatung",
+              "status": "open",
+              "evidence_refs": [
+                "b2-04",
+                "b2-05",
+                "b2-07",
+                "stat-09",
+                "anf-14"
+              ],
+              "workaround": "Direktes Gespräch mit dem Nachbarn."
+            }
+          ],
+          "edge_cases": [
+            {
+              "text": "Die Installationsfirma kannte den heiklen Standort und wählte ihn, weil er am günstigsten war.",
+              "evidence_refs": [
+                "b2-12"
+              ]
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Einsprache aus der Nachbarschaft",
+              "path": "Gespräch mit dem Nachbarn; der Einwand betrifft den Standort, nicht die Anlage.",
+              "exists": true,
+              "evidence_refs": [
+                "b2-07"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "entscheid",
+      "name": "Einigung und Entscheid",
+      "description": "Einigungsverhandlung bei Einsprachen, dann der Entscheid mit Auflagen und Gebühr.",
+      "user_intent": "Eine Bewilligung, mit der ich bauen kann – und verstehen, was sie verlangt und kostet.",
+      "duration": "Zwei bis acht Wochen",
+      "kpis": [
+        {
+          "name": "Anteil Einsprachen, die durch Einigung erledigt werden",
+          "category": "public_value",
+          "indicator_type": "lagging",
+          "definition": "Anteil Einsprachen, die nach einer Einigungsverhandlung zurückgezogen werden.",
+          "unit": "% der Einsprachen",
+          "current_value": 67,
+          "target": 80,
+          "source_ref": "stat-10"
+        }
+      ],
+      "steps": [
+        {
+          "id": "einigungsverhandlung",
+          "name": "Einigungsverhandlung",
+          "action": "Die Baukommission lädt Gesuchstellende und Nachbarschaft mit einer Lärmfachperson ein; der Standort wird verschoben.",
+          "channel": "in_person",
+          "touchpoint": "Einigungsverhandlung",
+          "counterpart": "Baukommission, Lärmfachperson, Nachbarschaft",
+          "is_transition": true,
+          "feeling": {
+            "valence": 1,
+            "label": "sachlich, gut gemacht",
+            "evidence_refs": [
+              "b2-08"
+            ]
+          },
+          "pain_points": [
+            {
+              "id": "pp-standort-nachtraeglich",
+              "text": "Der Standort wird erst nach der Einsprache geändert: neue Pläne, neuer Lärmnachweis, Mehrkosten und mehrere Monate Verzögerung.",
+              "type": "friction",
+              "severity": 3,
+              "frequency": "occasional",
+              "owner": "Bauberatung",
+              "status": "open",
+              "evidence_refs": [
+                "b2-09",
+                "b2-10",
+                "b2-11",
+                "stat-08"
+              ],
+              "workaround": "Installationsfirma erstellt neue Unterlagen auf Kosten der Eigentümerschaft."
+            }
+          ],
+          "recovery_paths": [
+            {
+              "trigger": "Einsprache wegen Lärm",
+              "path": "Einigungsverhandlung mit Lärmfachperson; Standortverschiebung, Rückzug der Einsprache.",
+              "exists": true,
+              "evidence_refs": [
+                "b2-08",
+                "b2-09",
+                "stat-10"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        },
+        {
+          "id": "entscheid-erhalten",
+          "name": "Entscheid mit Auflagen und Gebühr erhalten",
+          "action": "Der Entscheid kommt per Post: bewilligt mit Auflagen, Rechtsmittelbelehrung und Gebühr.",
+          "channel": "letter",
+          "touchpoint": "Baurechtlicher Entscheid",
+          "counterpart": "Baukommission",
+          "is_transition": true,
+          "thinking": [
+            {
+              "text": "Was kostet das – und hätte ich das nicht vorher wissen können?",
+              "evidence_refs": [
+                "b1-21",
+                "b1-22"
+              ]
+            }
+          ],
+          "pain_points": [
+            {
+              "id": "pp-gebuehr-unbekannt",
+              "text": "Die Höhe der Gebühr erfährt die Persona erst mit dem Entscheid.",
+              "type": "friction",
+              "severity": 2,
+              "frequency": "frequent",
+              "owner": "Bausekretariat",
+              "status": "open",
+              "evidence_refs": [
+                "b1-21",
+                "b1-22",
+                "anf-12",
+                "anf-13",
+                "stat-11"
+              ],
+              "workaround": "Nachfrage bei der Bauberatung, etwa für die Finanzierung."
+            },
+            {
+              "id": "pp-entscheid-schwer-lesbar",
+              "text": "Der Entscheid besteht zur Hälfte aus Rechtsmittelbelehrung und Gebühren; was die Persona tun muss, steht dazwischen.",
+              "type": "friction",
+              "severity": 2,
+              "frequency": "frequent",
+              "owner": "Bausekretariat",
+              "status": "open",
+              "evidence_refs": [
+                "b1-20"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        }
+      ]
+    },
+    {
+      "id": "umsetzung",
+      "name": "Einbau und Betrieb",
+      "description": "Einbau durch die Installationsfirma, Umsetzung der Auflagen, erster Betrieb.",
+      "user_intent": "Dass es warm ist und das Thema abgeschlossen ist.",
+      "duration": "Wenige Tage bis Wochen",
+      "duration_days": {
+        "typical": 2,
+        "basis": "Nur der Einbau; der Betrieb danach ist offen. Eine einzelne Aussage.",
+        "evidence_refs": [
+          "b1-28"
+        ]
+      },
+      "kpis": [
+        {
+          "name": "Lärmklagen nach Inbetriebnahme je 100 Anlagen",
+          "category": "public_value",
+          "indicator_type": "lagging",
+          "definition": "Lärmklagen bei der Gemeinde im ersten Betriebsjahr, bezogen auf in Betrieb genommene Anlagen.",
+          "unit": "Klagen je 100 Anlagen",
+          "current_value": 4.2,
+          "target": 2,
+          "source_ref": "stat-12"
+        }
+      ],
+      "steps": [
+        {
+          "id": "einbau",
+          "name": "Einbau durch die Installationsfirma",
+          "action": "Die Installationsfirma montiert die Anlage und setzt die Auflagen um; die Persona leitet die Auflagen weiter.",
+          "channel": "in_person",
+          "touchpoint": "Montage",
+          "counterpart": "Installationsfirma",
+          "performed_by": {
+            "kind": "intermediary",
+            "role": "Installationsfirma",
+            "mandate": "formal"
+          },
+          "is_transition": true,
+          "feeling": {
+            "valence": 1,
+            "label": "froh, dass es vorbei ist",
+            "evidence_refs": [
+              "b1-24"
+            ]
+          },
+          "edge_cases": [
+            {
+              "text": "Ob die Auflagen erfüllt sind, kann die Eigentümerschaft nicht beurteilen; sie verlässt sich auf die Firma.",
+              "evidence_refs": [
+                "b1-23"
+              ]
+            }
+          ],
+          "evidence_refs": [
+            "b1-23"
+          ]
+        },
+        {
+          "id": "betrieb",
+          "name": "Erster Betrieb",
+          "action": "Die Anlage läuft; die Persona meldet die Fertigstellung und das Verhältnis zur Nachbarschaft normalisiert sich.",
+          "feeling": {
+            "valence": 1,
+            "label": "erleichtert; mit dem Nachbarn wieder gut",
+            "evidence_refs": [
+              "b2-15"
+            ]
+          },
+          "edge_cases": [
+            {
+              "text": "Wie die Fertigstellung zu melden ist, ist unklar.",
+              "evidence_refs": [
+                "anf-17"
+              ]
+            }
+          ],
+          "evidence_refs": []
+        }
+      ]
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "opp-bewilligungs-check",
+      "hmw": "Wie könnten wir Eigentümerschaften in zwei Minuten sagen, ob ihre Wärmepumpe eine Bewilligung braucht und welches Verfahren gilt?",
+      "description": "Ein kurzer Fragenpfad (Standort des Geräts, Abstand zur Grenze, Zone) mit eindeutigem Ergebnis statt «es kommt darauf an».",
+      "linked_pain_points": [
+        "pp-website-kommt-darauf-an",
+        "pp-bewilligungspflicht-unbekannt"
+      ],
+      "phase_ref": "orientierung",
+      "user_impact": 4,
+      "public_value": 3,
+      "effort": 2,
+      "owner": "Bauberatung",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Eigentümerin möchte ich nach wenigen Fragen wissen, ob ich ein Gesuch brauche, damit ich nicht auf einen Rückruf warten muss.",
+          "mvp": true
+        },
+        {
+          "text": "Als Eigentümer möchte ich am Ende sehen, welche Unterlagen ich brauche und wer sie erstellt.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "b1-27",
+        "web-01",
+        "anf-01"
+      ]
+    },
+    {
+      "id": "opp-vollstaendigkeit-beim-upload",
+      "hmw": "Wie könnten wir Unvollständigkeit beim Hochladen erkennen statt nach drei Wochen?",
+      "description": "Pflichtfelder und Formularprüfung im Portal; Hinweis auf das gültige Lärmschutzformular direkt beim Upload.",
+      "linked_pain_points": [
+        "pp-rueckweisung-nach-wochen",
+        "pp-laermnachweis-unklar"
+      ],
+      "phase_ref": "gesuch",
+      "user_impact": 5,
+      "public_value": 4,
+      "effort": 3,
+      "owner": "Bauberatung",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Gesuchstellende möchte ich beim Hochladen erfahren, ob ein Dokument fehlt, damit mein Gesuch nicht wochenlang ruht.",
+          "mvp": true
+        },
+        {
+          "text": "Als Installationsfirma möchte ich den Lärmschutznachweis vorprüfen lassen, bevor das Gesuch eingereicht wird.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "b1-12",
+        "stat-04",
+        "stat-05",
+        "anf-06"
+      ]
+    },
+    {
+      "id": "opp-installationsfirmen-befaehigen",
+      "hmw": "Wie könnten wir Installationsfirmen befähigen, den Lärmschutznachweis beim ersten Mal richtig zu liefern?",
+      "description": "Vorlage mit ausgefülltem Beispiel und Merkblatt für Firmen; die Firmen sind die eigentlichen Nutzenden des Formulars.",
+      "linked_pain_points": [
+        "pp-laermnachweis-unklar",
+        "pp-postbotin"
+      ],
+      "phase_ref": "gesuch",
+      "user_impact": 4,
+      "public_value": 4,
+      "effort": 2,
+      "owner": "Fachstelle Lärmschutz",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Installationsfirma möchte ich ein ausgefülltes Beispiel des Lärmschutznachweises, damit das Gesuch nicht zurückkommt.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "anf-05",
+        "b1-09"
+      ]
+    },
+    {
+      "id": "opp-status-mit-naechstem-schritt",
+      "hmw": "Wie könnten wir die Wartezeit sichtbar machen – wer prüft, was als Nächstes kommt, wie lange es üblicherweise dauert?",
+      "description": "Statusseite mit Meilensteinen (vollständig, publiziert, Auflage endet am …, Fachprüfung, Entscheid) und typischer Restdauer; Mitteilung bei der Publikation.",
+      "linked_pain_points": [
+        "pp-status-ohne-aussage",
+        "pp-publikation-ohne-mitteilung"
+      ],
+      "phase_ref": "warten",
+      "user_impact": 4,
+      "public_value": 3,
+      "effort": 3,
+      "owner": "Bausekretariat",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Gesuchstellender möchte ich sehen, in welchem Schritt mein Gesuch ist und wie lange dieser üblicherweise dauert, damit ich den Einbau planen kann.",
+          "mvp": true
+        },
+        {
+          "text": "Als Gesuchstellende möchte ich benachrichtigt werden, wenn mein Gesuch publiziert wird.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "b1-16",
+        "b1-25",
+        "web-04"
+      ]
+    },
+    {
+      "id": "opp-eigentuemerschaft-informiert",
+      "hmw": "Wie könnten wir die Eigentümerschaft informiert halten, auch wenn eine Firma das Gesuch vertritt?",
+      "description": "Kopie aller Schreiben und Statuszugang für die Eigentümerschaft, unabhängig von der Vertretung.",
+      "linked_pain_points": [
+        "pp-vertretung-keine-auskunft"
+      ],
+      "phase_ref": "warten",
+      "user_impact": 3,
+      "public_value": 3,
+      "effort": 1,
+      "owner": "Bausekretariat",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Eigentümer möchte ich eine Kopie jedes Schreibens erhalten, das an meine Vertretung geht, damit ich über mein Haus Bescheid weiss.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "b2-16",
+        "anf-11"
+      ]
+    },
+    {
+      "id": "opp-nachbarschaft-frueh",
+      "hmw": "Wie könnten wir Gesuchstellende ermutigen, den Standort vor dem Einreichen mit der Nachbarschaft zu besprechen?",
+      "description": "Hinweis im Bewilligungs-Check und in der Unterlagenliste; Vorlage für ein kurzes Informationsschreiben an die Nachbarn.",
+      "linked_pain_points": [
+        "pp-einsprache-unvorbereitet",
+        "pp-standort-nachtraeglich"
+      ],
+      "phase_ref": "warten",
+      "user_impact": 4,
+      "public_value": 5,
+      "effort": 2,
+      "owner": "Bauberatung",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Gesuchstellende möchte ich vor dem Einreichen einen Hinweis und eine Vorlage, um die Nachbarn zu informieren, damit wir uns nicht über die Gemeinde begegnen.",
+          "mvp": true
+        }
+      ],
+      "evidence_refs": [
+        "b2-17",
+        "b1-19",
+        "stat-09"
+      ]
+    },
+    {
+      "id": "opp-gebuehr-vorab",
+      "hmw": "Wie könnten wir die Gebühr vor dem Einreichen abschätzbar machen?",
+      "description": "Richtwert der Gebühr im Bewilligungs-Check und in der Eingangsbestätigung.",
+      "linked_pain_points": [
+        "pp-gebuehr-unbekannt"
+      ],
+      "phase_ref": "entscheid",
+      "user_impact": 2,
+      "public_value": 2,
+      "effort": 1,
+      "owner": "Bausekretariat",
+      "status": "open",
+      "stories": [
+        {
+          "text": "Als Eigentümerin möchte ich die ungefähre Gebühr kennen, bevor ich einreiche, damit ich sie in die Finanzierung einrechnen kann.",
+          "mvp": false
+        }
+      ],
+      "evidence_refs": [
+        "b1-22",
+        "anf-12"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "int-b1",
+      "title": "Interview B1 – Eigentümerin, erstes Baugesuch ohne Planungsbüro",
+      "kind": "interview",
+      "default_class": "reported",
+      "date": "2026-02",
+      "n": 1,
+      "participants": "Eigentümerin Einfamilienhaus, Heizungsersatz nach Ausfall",
+      "pii_status": "anonymised",
+      "location": "input/interview-b1.md",
+      "notes": "Synthetisches Transkript, gekürzt."
+    },
+    {
+      "id": "int-b2",
+      "title": "Interview B2 – Eigentümer, Gesuch durch die Installationsfirma",
+      "kind": "interview",
+      "default_class": "reported",
+      "date": "2026-02",
+      "n": 1,
+      "participants": "Eigentümer Reiheneckhaus, Gesuch vertreten durch Installationsfirma",
+      "pii_status": "anonymised",
+      "location": "input/interview-b2.md",
+      "notes": "Synthetisches Transkript, gekürzt."
+    },
+    {
+      "id": "anfragen",
+      "title": "Anfragen an die Bauberatung (anonymisierter Export)",
+      "kind": "inquiry_log",
+      "default_class": "observed",
+      "date": "2025-01 bis 2025-12",
+      "n": 30,
+      "participants": "Eigentümerschaften, Installationsfirmen, Nachbarschaft",
+      "pii_status": "anonymised",
+      "location": "input/anfragen-export.csv",
+      "notes": "Synthetische Stichprobe von 30 Anfragen zu Wärmepumpen; Kurztexte ohne Namen und Adressen."
+    },
+    {
+      "id": "statistik",
+      "title": "Gesuchsstatistik Wärmepumpen 2025 (Geschäftskontrolle)",
+      "kind": "case_records",
+      "default_class": "observed",
+      "date": "2025",
+      "n": 84,
+      "participants": "alle ordentlichen Verfahren für Wärmepumpen an Ein- und Zweifamilienhäusern",
+      "pii_status": "none",
+      "location": "input/gesuchsstatistik.csv",
+      "notes": "Aggregierte Auswertung aus der Geschäftskontrolle."
+    },
+    {
+      "id": "analytics",
+      "title": "Webanalytics Bauen und Gesuchsportal",
+      "kind": "analytics",
+      "default_class": "observed",
+      "date": "2025",
+      "pii_status": "none",
+      "location": "input/webanalytics.csv"
+    },
+    {
+      "id": "prozessdok",
+      "title": "Prozessbeschrieb Baubewilligung, ordentliches Verfahren (Soll, intern)",
+      "kind": "internal_document",
+      "default_class": "assumed",
+      "date": "2025",
+      "pii_status": "none",
+      "location": "input/prozess-baubewilligung-intern.md"
+    },
+    {
+      "id": "workshop",
+      "title": "Hypothesen-Workshop ohne Gesuchstellende und Nachbarn",
+      "kind": "workshop",
+      "default_class": "assumed",
+      "date": "2026-03-12",
+      "n": 5,
+      "participants": "Bauberatung, Bausekretariat, Fachstelle Lärmschutz (Rollen)",
+      "pii_status": "none",
+      "location": "input/workshop-notizen.md"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "b1-01",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Ölheizung ist im Oktober ausgestiegen.",
+      "locator": "Zeile 7",
+      "signal": "breakdown",
+      "phase_hint": "orientierung",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "ersatz-nach-ausfall"
+      ]
+    },
+    {
+      "id": "b1-02",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich dachte, eine Heizung ist eine Heizung, die tauscht man einfach aus.",
+      "locator": "Zeile 10",
+      "signal": "need",
+      "phase_hint": "orientierung",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-03",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Dass das Aussengerät ein Bauvorhaben ist, hat mir erst der Installateur gesagt.",
+      "locator": "Zeile 10",
+      "signal": "need",
+      "phase_hint": "orientierung",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b1-04",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Es gibt eine Seite «Braucht es eine Bewilligung?», aber die Antwort war: Es kommt darauf an.",
+      "locator": "Zeile 12",
+      "signal": "friction",
+      "phase_hint": "orientierung",
+      "channel_hint": "web",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-05",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich wusste danach weniger als vorher und war ziemlich verunsichert.",
+      "locator": "Zeile 13",
+      "signal": "friction",
+      "phase_hint": "orientierung",
+      "channel_hint": "web",
+      "persona_hint": "erstbauherrschaft",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "verunsichert",
+        "explicit": true
+      }
+    },
+    {
+      "id": "b1-06",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe die Bauberatung angerufen.",
+      "locator": "Zeile 15",
+      "signal": "workaround",
+      "phase_hint": "orientierung",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-07",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Das Telefonat hat mehr gebracht als eine Stunde auf der Website.",
+      "locator": "Zeile 16",
+      "signal": "positive",
+      "phase_hint": "orientierung",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-08",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Beim Lärmschutznachweis wusste ich nicht einmal, wer so etwas macht.",
+      "locator": "Zeile 18",
+      "signal": "friction",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-09",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Der Installateur hat dann ein Formular ausgefüllt, das er schon von anderen Gemeinden kannte. Ich habe einfach hochgeladen, was er mir geschickt hat.",
+      "locator": "Zeile 19",
+      "signal": "workaround",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b1-10",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Nach drei Wochen kam ein Brief: Das Gesuch sei unvollständig, der Lärmschutznachweis müsse mit dem kantonalen Formular und mit dem genauen Standort gemacht werden.",
+      "locator": "Zeile 21",
+      "signal": "breakdown",
+      "phase_hint": "gesuch",
+      "channel_hint": "letter",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-11",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Drei Wochen, in denen ich dachte, es läuft. Und es lief gar nichts.",
+      "locator": "Zeile 22",
+      "signal": "breakdown",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft",
+      "contradicts": [
+        "doc-01"
+      ]
+    },
+    {
+      "id": "b1-12",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich war wütend, ehrlich gesagt. Nicht auf die Person, sondern weil man das doch beim Hochladen hätte merken können.",
+      "locator": "Zeile 23",
+      "signal": "breakdown",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft",
+      "emotion_hint": {
+        "valence": -2,
+        "label": "wütend",
+        "explicit": true
+      }
+    },
+    {
+      "id": "b1-13",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Mit zwei Elektroöfen, die uns der Installateur geliehen hat. Und der Holzofen im Wohnzimmer. Das Badezimmer war im Dezember zwölf Grad.",
+      "locator": "Zeile 25",
+      "signal": "workaround",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "ersatz-nach-ausfall"
+      ]
+    },
+    {
+      "id": "b1-14",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe es im Amtsblatt gesehen, weil der Nachbar mich darauf angesprochen hat, nicht weil mir jemand Bescheid gegeben hat.",
+      "locator": "Zeile 27",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft",
+      "contradicts": [
+        "doc-03"
+      ]
+    },
+    {
+      "id": "b1-15",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Danach habe ich im Portal fast jeden Tag auf den Status geschaut. Da stand wochenlang «in Prüfung».",
+      "locator": "Zeile 28",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "web",
+      "persona_hint": "erstbauherrschaft",
+      "contradicts": [
+        "ws-05"
+      ]
+    },
+    {
+      "id": "b1-16",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Was heisst in Prüfung? Wer prüft? Wie lange noch?",
+      "locator": "Zeile 28",
+      "signal": "need",
+      "phase_hint": "warten",
+      "channel_hint": "web",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-17",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Dieses Warten ohne Information hat mich mehr zermürbt als das kalte Badezimmer.",
+      "locator": "Zeile 29",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft",
+      "emotion_hint": {
+        "valence": -2,
+        "label": "zermürbt",
+        "explicit": true
+      },
+      "contradicts": [
+        "ws-02"
+      ]
+    },
+    {
+      "id": "b1-18",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Zweimal angerufen. Beide Male hiess es, das sei normal, man könne noch nichts sagen.",
+      "locator": "Zeile 31",
+      "signal": "workaround",
+      "phase_hint": "warten",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-19",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Der Nachbar hatte vorher gefragt, wo das Gerät hinkommt, und ich habe es ihm gezeigt.",
+      "locator": "Zeile 33",
+      "signal": "positive",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-20",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Vier Seiten, die Hälfte davon Rechtsmittelbelehrung und Gebühren.",
+      "locator": "Zeile 35",
+      "signal": "friction",
+      "phase_hint": "entscheid",
+      "channel_hint": "letter",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-21",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Gebühr war 740 Franken. Das stand nirgends vorher.",
+      "locator": "Zeile 36",
+      "signal": "friction",
+      "phase_hint": "entscheid",
+      "persona_hint": "erstbauherrschaft",
+      "contradicts": [
+        "ws-04"
+      ]
+    },
+    {
+      "id": "b1-22",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich hätte es nicht anders gemacht, aber ich hätte es gern gewusst.",
+      "locator": "Zeile 36",
+      "signal": "need",
+      "phase_hint": "entscheid",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-23",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe das an den Installateur weitergeleitet, und er hat gesagt, das mache er sowieso.",
+      "locator": "Zeile 37",
+      "signal": "neutral",
+      "phase_hint": "umsetzung",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b1-24",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Seither ist es warm. Ich bin froh, dass es vorbei ist.",
+      "locator": "Zeile 39",
+      "signal": "positive",
+      "phase_hint": "umsetzung",
+      "persona_hint": "erstbauherrschaft",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "froh, dass es vorbei ist",
+        "explicit": true
+      }
+    },
+    {
+      "id": "b1-25",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Und während des Wartens irgendein Zeichen, dass jemand an meinem Gesuch arbeitet.",
+      "locator": "Zeile 41",
+      "signal": "need",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-26",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich war ja nur die Postbotin zwischen ihm und der Gemeinde.",
+      "locator": "Zeile 42",
+      "signal": "friction",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b1-27",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Am Anfang eine klare Antwort, ob ich eine Bewilligung brauche.",
+      "locator": "Zeile 41",
+      "signal": "need",
+      "phase_hint": "orientierung",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b1-28",
+      "source_ref": "int-b1",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Mitte Februar, zwei Tage.",
+      "locator": "Zeile 39",
+      "signal": "neutral",
+      "phase_hint": "umsetzung",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b2-01",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe keine Zeit, mich in Baurecht einzulesen.",
+      "locator": "Zeile 7",
+      "signal": "need",
+      "phase_hint": "orientierung",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b2-02",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Ich habe eine Vollmacht unterschrieben, und dann habe ich ehrlich gesagt nicht mehr daran gedacht.",
+      "locator": "Zeile 8",
+      "signal": "neutral",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b2-03",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Briefe der Gemeinde gingen an die Firma, weil sie als Vertreterin eingetragen war. Ich habe nichts bekommen, bis die Einsprache kam.",
+      "locator": "Zeile 10",
+      "signal": "breakdown",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft",
+      "contradicts": [
+        "ws-01"
+      ],
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b2-04",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Davon habe ich durch einen eingeschriebenen Brief erfahren, der direkt an mich ging. Ich dachte zuerst, ich hätte etwas falsch gemacht.",
+      "locator": "Zeile 12",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "letter",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b2-05",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Bei einer Wärmepumpe hätte ich das nie erwartet.",
+      "locator": "Zeile 13",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b2-06",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Es war unangenehm. Wir wohnen seit acht Jahren nebeneinander, und plötzlich kommunizieren wir über die Gemeinde.",
+      "locator": "Zeile 15",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft",
+      "emotion_hint": {
+        "valence": -1,
+        "label": "unangenehm",
+        "explicit": true
+      }
+    },
+    {
+      "id": "b2-07",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Er hat gesagt, er habe nichts gegen die Wärmepumpe, nur gegen den Standort direkt unter seinem Schlafzimmerfenster. Das hatte niemand mit ihm besprochen.",
+      "locator": "Zeile 16",
+      "signal": "need",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b2-08",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Gemeinde hat eine Einigungsverhandlung angeboten. Das war gut gemacht, sachlich, mit einem Lärmfachmann.",
+      "locator": "Zeile 18",
+      "signal": "positive",
+      "phase_hint": "entscheid",
+      "channel_hint": "in_person",
+      "persona_hint": "erstbauherrschaft",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "gut gemacht, sachlich",
+        "explicit": false
+      }
+    },
+    {
+      "id": "b2-09",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Wir haben den Standort um drei Meter verschoben, auf die Gartenseite.",
+      "locator": "Zeile 18",
+      "signal": "neutral",
+      "phase_hint": "entscheid",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b2-10",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Neue Pläne, neuer Lärmnachweis, das hat die Firma gemacht und mir verrechnet.",
+      "locator": "Zeile 21",
+      "signal": "friction",
+      "phase_hint": "entscheid",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b2-11",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Insgesamt hat es von der Offerte bis zum Einbau fast sieben Monate gedauert. Die Firma hatte drei Monate gesagt.",
+      "locator": "Zeile 21",
+      "signal": "friction",
+      "phase_hint": "entscheid",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b2-12",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Firma wusste, dass der Standort heikel ist. Sie hat das nie erwähnt, weil es der günstigste Standort war.",
+      "locator": "Zeile 22",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b2-13",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Person durfte mir zuerst nichts sagen, weil die Firma als Ansprechpartnerin eingetragen war. Für mein eigenes Haus.",
+      "locator": "Zeile 24",
+      "signal": "breakdown",
+      "phase_hint": "warten",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft",
+      "tags": [
+        "vermittlung"
+      ]
+    },
+    {
+      "id": "b2-14",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Das war der Moment, in dem ich mich am meisten ausgeschlossen gefühlt habe.",
+      "locator": "Zeile 25",
+      "signal": "breakdown",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft",
+      "emotion_hint": {
+        "valence": -2,
+        "label": "ausgeschlossen",
+        "explicit": true
+      }
+    },
+    {
+      "id": "b2-15",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Die Wärmepumpe läuft, sie ist leiser als ich dachte. Mit dem Nachbarn ist es wieder gut, aber es hat gedauert.",
+      "locator": "Zeile 27",
+      "signal": "positive",
+      "phase_hint": "umsetzung",
+      "persona_hint": "erstbauherrschaft",
+      "emotion_hint": {
+        "valence": 1,
+        "label": "erleichtert; mit dem Nachbarn wieder gut",
+        "explicit": false
+      }
+    },
+    {
+      "id": "b2-16",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Eine Kopie von allem, was an die Firma geht.",
+      "locator": "Zeile 29",
+      "signal": "need",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "b2-17",
+      "source_ref": "int-b2",
+      "class": "reported",
+      "kind": "quote",
+      "text": "Reden Sie mit den Nachbarn, bevor Sie einreichen.",
+      "locator": "Zeile 29",
+      "signal": "need",
+      "phase_hint": "orientierung",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-02",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Braucht der Ersatz der Ölheizung durch eine Wärmepumpe eine Bewilligung? Website sagt «kommt darauf an».",
+      "locator": "anfrage_id B-001",
+      "signal": "friction",
+      "phase_hint": "orientierung",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-03",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Heizung ausgefallen, Wärmepumpe soll sofort eingebaut werden. Gibt es ein schnelleres Verfahren?",
+      "locator": "anfrage_id B-007",
+      "signal": "need",
+      "phase_hint": "orientierung",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-05",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Gesuch zurückgewiesen wegen Lärmschutznachweis. Bitte Vorlage mit Beispiel zusenden.",
+      "locator": "anfrage_id B-010",
+      "signal": "breakdown",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-06",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Bitte um Vorprüfung des Lärmschutznachweises vor dem Einreichen.",
+      "locator": "anfrage_id B-027",
+      "signal": "need",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-08",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Status im Portal unverändert seit sechs Wochen. Ist das Gesuch verloren gegangen?",
+      "locator": "anfrage_id B-014",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-09",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Gesuch seit Oktober hängig, Haus wird mit Elektroöfen geheizt. Gibt es eine Möglichkeit zur Beschleunigung?",
+      "locator": "anfrage_id B-029",
+      "signal": "workaround",
+      "phase_hint": "warten",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-10",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Firma hat Gesuch eingereicht, Eigentümer möchte Stand wissen. Keine Auskunft ohne Vollmacht möglich.",
+      "locator": "anfrage_id B-008",
+      "signal": "breakdown",
+      "phase_hint": "warten",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-11",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Eigentümerin erhält keine Kopien der Schreiben, alles geht an die Firma. Möchte informiert werden.",
+      "locator": "anfrage_id B-018",
+      "signal": "need",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-12",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Was kostet die Bewilligung für eine Wärmepumpe ungefähr? Muss es der Bank für die Finanzierung angeben.",
+      "locator": "anfrage_id B-011",
+      "signal": "need",
+      "phase_hint": "entscheid",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-13",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Gebühr im Entscheid höher als erwartet. Wie setzt sie sich zusammen?",
+      "locator": "anfrage_id B-022",
+      "signal": "friction",
+      "phase_hint": "entscheid",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-14",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Einsprache erhalten. Was passiert jetzt, und wie lange verzögert sich alles?",
+      "locator": "anfrage_id B-025",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-16",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Portal akzeptiert das Datenblatt im PDF nicht, Upload bricht ab.",
+      "locator": "anfrage_id B-026",
+      "signal": "friction",
+      "phase_hint": "gesuch",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-17",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Wie melde ich die Fertigstellung der Anlage?",
+      "locator": "anfrage_id B-030",
+      "signal": "need",
+      "phase_hint": "umsetzung",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-18",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "observation",
+      "text": "Brief erhalten, Gesuch unvollständig. Welche Unterlagen fehlen genau? Installateur nicht erreichbar.",
+      "locator": "anfrage_id B-006",
+      "signal": "breakdown",
+      "phase_hint": "gesuch",
+      "channel_hint": "phone",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-01",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "metric",
+      "text": "7 von 30 Anfragen betreffen die Bewilligungspflicht (B-001, B-002, B-007, B-013, B-019, B-023, B-028) – zusammen mit den Statusfragen die häufigste Kategorie.",
+      "locator": "Spalte kategorie = bewilligungspflicht",
+      "value": 23,
+      "unit": "% der Anfragen",
+      "signal": "friction",
+      "phase_hint": "orientierung",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-04",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "metric",
+      "text": "7 von 30 Anfragen betreffen Unterlagen oder den Lärmschutznachweis; 4 davon stellen Installationsfirmen.",
+      "locator": "Spalte kategorie = laermnachweis oder unterlagen",
+      "value": 23,
+      "unit": "% der Anfragen",
+      "signal": "friction",
+      "phase_hint": "gesuch",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "anf-07",
+      "source_ref": "anfragen",
+      "class": "observed",
+      "kind": "metric",
+      "text": "7 von 30 Anfragen sind Statusfragen während der Prüfung (B-004, B-009, B-014, B-017, B-021, B-025, B-029).",
+      "locator": "Spalte kategorie = status",
+      "value": 23,
+      "unit": "% der Anfragen",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "persona_hint": "erstbauherrschaft"
+    },
+    {
+      "id": "stat-02",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "37 % der Gesuche tragen den Vermerk «Ersatz nach Ausfall».",
+      "locator": "Zeile 3",
+      "value": 37,
+      "unit": "% der Gesuche",
+      "signal": "breakdown",
+      "phase_hint": "orientierung",
+      "contradicts": [
+        "ws-02"
+      ]
+    },
+    {
+      "id": "stat-03",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "58 % der Gesuche reicht eine Installationsfirma als Vertreterin ein.",
+      "locator": "Zeile 4",
+      "value": 58,
+      "unit": "% der Gesuche",
+      "signal": "neutral",
+      "phase_hint": "gesuch"
+    },
+    {
+      "id": "stat-04",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "41 % der Gesuche werden mindestens einmal wegen Unvollständigkeit zurückgewiesen.",
+      "locator": "Zeile 5",
+      "value": 41,
+      "unit": "% der Gesuche",
+      "signal": "breakdown",
+      "phase_hint": "gesuch"
+    },
+    {
+      "id": "stat-05",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Bei 63 % der Rückweisungen fehlt der Lärmschutznachweis oder ist fehlerhaft.",
+      "locator": "Zeile 6",
+      "value": 63,
+      "unit": "% der Rückweisungen",
+      "signal": "breakdown",
+      "phase_hint": "gesuch"
+    },
+    {
+      "id": "stat-06",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Vollständigkeitsprüfung im Median 17 Arbeitstage vom Eingang bis zur Mitteilung.",
+      "locator": "Zeile 7",
+      "value": 17,
+      "unit": "Arbeitstage",
+      "signal": "friction",
+      "phase_hint": "gesuch",
+      "contradicts": [
+        "doc-01"
+      ]
+    },
+    {
+      "id": "stat-07",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Durchlaufzeit ohne Einsprache im Median 38 Kalendertage ab vollständigem Gesuch.",
+      "locator": "Zeile 8",
+      "value": 38,
+      "unit": "Kalendertage",
+      "signal": "neutral",
+      "phase_hint": "warten"
+    },
+    {
+      "id": "stat-08",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Durchlaufzeit mit Einsprache im Median 112 Kalendertage ab vollständigem Gesuch.",
+      "locator": "Zeile 9",
+      "value": 112,
+      "unit": "Kalendertage",
+      "signal": "friction",
+      "phase_hint": "entscheid",
+      "contradicts": [
+        "doc-05"
+      ]
+    },
+    {
+      "id": "stat-09",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "14 % der Gesuche erhalten mindestens eine Einsprache.",
+      "locator": "Zeile 10",
+      "value": 14,
+      "unit": "% der Gesuche",
+      "signal": "friction",
+      "phase_hint": "warten"
+    },
+    {
+      "id": "stat-10",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "67 % der Einsprachen werden nach einer Einigungsverhandlung zurückgezogen.",
+      "locator": "Zeile 11",
+      "value": 67,
+      "unit": "% der Einsprachen",
+      "signal": "positive",
+      "phase_hint": "entscheid"
+    },
+    {
+      "id": "stat-11",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Bewilligungsgebühr im Median CHF 720 inklusive Publikation.",
+      "locator": "Zeile 12",
+      "value": 720,
+      "unit": "CHF",
+      "signal": "neutral",
+      "phase_hint": "entscheid"
+    },
+    {
+      "id": "stat-12",
+      "source_ref": "statistik",
+      "class": "observed",
+      "kind": "metric",
+      "text": "3 Lärmklagen bei 71 in Betrieb genommenen Anlagen.",
+      "locator": "Zeile 13",
+      "value": 4.2,
+      "unit": "Klagen je 100 Anlagen",
+      "signal": "neutral",
+      "phase_hint": "umsetzung"
+    },
+    {
+      "id": "web-01",
+      "source_ref": "analytics",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Seite «Braucht es eine Bewilligung?»: 9420 Aufrufe, Ausstiegsrate 58 %.",
+      "locator": "Zeile 2",
+      "value": 58,
+      "unit": "% Ausstiegsrate",
+      "signal": "friction",
+      "phase_hint": "orientierung",
+      "channel_hint": "web"
+    },
+    {
+      "id": "web-03",
+      "source_ref": "analytics",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Gesuchsformular im Portal: Ausstiegsrate 44 %, durchschnittlich 610 Sekunden.",
+      "locator": "Zeile 4",
+      "value": 44,
+      "unit": "% Ausstiegsrate",
+      "signal": "friction",
+      "phase_hint": "gesuch",
+      "channel_hint": "web"
+    },
+    {
+      "id": "web-04",
+      "source_ref": "analytics",
+      "class": "observed",
+      "kind": "metric",
+      "text": "Statusseite im Portal: 7960 Aufrufe bei 84 Gesuchen, Ausstiegsrate 71 %, durchschnittlich 22 Sekunden.",
+      "locator": "Zeile 5",
+      "value": 7960,
+      "unit": "Aufrufe",
+      "signal": "friction",
+      "phase_hint": "warten",
+      "channel_hint": "web"
+    },
+    {
+      "id": "doc-01",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die Vollständigkeitsprüfung erfolgt innert zehn Arbeitstagen nach Eingang.",
+      "locator": "Zeile 22",
+      "signal": "neutral",
+      "phase_hint": "gesuch"
+    },
+    {
+      "id": "doc-02",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Ist eine Vertretung bezeichnet, erfolgt die gesamte Korrespondenz an die Vertretung.",
+      "locator": "Zeile 24",
+      "signal": "neutral",
+      "phase_hint": "warten"
+    },
+    {
+      "id": "doc-03",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Die Gesuchstellenden werden über die Publikation schriftlich informiert.",
+      "locator": "Zeile 28",
+      "signal": "neutral",
+      "phase_hint": "warten"
+    },
+    {
+      "id": "doc-05",
+      "source_ref": "prozessdok",
+      "class": "assumed",
+      "kind": "document_excerpt",
+      "text": "Ordentliche Verfahren werden innert zwei Monaten nach Vollständigkeit entschieden.",
+      "locator": "Zeile 34",
+      "signal": "neutral",
+      "phase_hint": "entscheid"
+    },
+    {
+      "id": "ws-01",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Gesuchstellende für Wärmepumpen werden vom Installateur vollständig begleitet und erleben das Verfahren kaum.",
+      "locator": "Zeile 11",
+      "signal": "neutral",
+      "phase_hint": "gesuch"
+    },
+    {
+      "id": "ws-02",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Die Wartezeit ist unproblematisch, weil ein Heizungsersatz in der Regel geplant erfolgt.",
+      "locator": "Zeile 12",
+      "signal": "neutral",
+      "phase_hint": "warten",
+      "emotion_hint": {
+        "valence": 0,
+        "label": "unproblematisch",
+        "explicit": false
+      }
+    },
+    {
+      "id": "ws-04",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Die Gebühr spielt neben den Kosten der Anlage keine Rolle.",
+      "locator": "Zeile 14",
+      "signal": "neutral",
+      "phase_hint": "entscheid"
+    },
+    {
+      "id": "ws-05",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Annahme: Der Status im Portal genügt als Information während der Prüfung.",
+      "locator": "Zeile 15",
+      "signal": "neutral",
+      "phase_hint": "warten"
+    },
+    {
+      "id": "ws-06",
+      "source_ref": "workshop",
+      "class": "assumed",
+      "kind": "workshop_statement",
+      "text": "Phasen aus Sicht des Teams: Eingang – Vollständigkeitsprüfung – Publikation – Fachprüfung – Entscheid – Baukontrolle.",
+      "locator": "Zeile 7",
+      "signal": "neutral"
+    }
+  ],
+  "open_questions": [
+    {
+      "text": "Sind Gesuchstellende, die alles selbst einreichen, und solche, die die Installationsfirma vertreten lässt, zwei Personas? Beide warten, aber nur die zweiten sind von Information ausgeschlossen.",
+      "phase_ref": "warten",
+      "proposed_method": "interview"
+    },
+    {
+      "text": "Wie erleben Installationsfirmen das Verfahren? Sie füllen die Formulare aus, kommen in der Journey aber nur als Gegenüber vor.",
+      "phase_ref": "gesuch",
+      "proposed_method": "interview"
+    },
+    {
+      "text": "Wie verteilen sich die Statusanfragen über die Wartezeit – gibt es einen Zeitpunkt, an dem eine Mitteilung die meisten Anrufe ersetzen würde?",
+      "phase_ref": "warten",
+      "proposed_method": "ticket_analysis"
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1",
+      "date": "2026-03-12",
+      "summary": "Hypothesen-Workshop ohne Gesuchstellende: Phasen nach Verwaltungsablauf, keine Nutzerevidenz.",
+      "author": "Bauberatung"
+    },
+    {
+      "version": "1.0",
+      "date": "2026-10-01",
+      "summary": "Zwei Interviews, Anfragen-Export, Gesuchsstatistik und Webanalytics eingearbeitet; Phasen aus Nutzersicht neu geschnitten; Kennzahlen hinterlegt; Chancen priorisiert.",
+      "author": "Bauberatung"
+    }
+  ]
+}

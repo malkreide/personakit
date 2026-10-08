@@ -23,7 +23,7 @@ The format encodes method, not layout: behaviour before demographics (Cooper), g
 - Lifecycle: SemVer, status, review date, changelog – maintained by `bump` and `retire` with clean git diffs
 - `simulation` block (voice, must, must_not, variance) injected into the prompt export in `simulate` or `audience` mode
 - Exports: Markdown, card, JSON, YAML, prompt block, comparison matrix, single-file HTML gallery, JSON bundle
-- 41 lint rules for method (evidence hygiene, JTBD form, guardrails, lifecycle, one primary persona per set)
+- 45 lint rules for method (evidence hygiene, JTBD form, guardrails, lifecycle, one primary persona per set, references to [journeykit](https://github.com/malkreide/journeykit) journeys)
 - Sets per solution (`personas/<set>/set.yml`): the same persona can play a different role – with a different priority – in several solutions; lint rules for focus run per set
 - Factoid pipeline: research material as `factoids/<study>/*.factoids.md` (participant codes only, never names); `factoids` places participants on the behaviour variables and flags thin variables and outliers, `skeleton` pre-fills a persona from chosen participants (medians, evidence, quotes, evidence level)
 - Claude skill `persona-kit` that derives personas from interviews, support logs and workshop notes – counting via `factoids`/`skeleton`, interpretation backed by factoid IDs
@@ -91,7 +91,7 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 |---|---|
 | `new <id> -a …` | Create a persona file from the commented template; the archetype is required (asked for interactively if missing) |
 | `validate <paths>` | Validate the frontmatter against the JSON Schema |
-| `lint <paths>` | Schema plus 41 method rules; exit code 1 on errors (`--strict` also on warnings), `--json` for CI and other tools |
+| `lint <paths>` | Schema plus 45 method rules; exit code 1 on errors (`--strict` also on warnings), `--json` for CI and other tools, `--journeys <path>` checks references to journeykit journeys in both directions |
 | `render <paths> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (per persona) or `matrix`, `html`, `bundle` (grouped by set) |
 | `list <paths>` | Overview table per set (priority in the set, status, evidence, version, review date) |
 | `bump <file>` | Raise the version, write a changelog entry, optionally change status, evidence level and review date |
@@ -105,7 +105,7 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 |---|---|
 | Content for a target audience (letters, web copy, FAQ) | `render -f prompt -m audience` |
 | Test a draft against a persona, rehearse an interview | `render -f prompt -m simulate` |
-| User journeys ([journeykit](https://github.com/malkreide/journeykit)) | `render -f json` / `-f bundle` |
+| User journeys ([journeykit](https://github.com/malkreide/journeykit)) | `render -f json` / `-f bundle`; the journey's `persona.id` is the persona `id`, `lint --journeys` checks both directions ([`docs/JOURNEYKIT.md`](docs/JOURNEYKIT.md), German) |
 | Prioritisation | `render -f matrix` (ODI opportunity score) |
 | Notion, wiki | `render -f md` / `-f card` |
 | Team gallery, offline | `render -f html` |
@@ -140,14 +140,15 @@ personakit/
 │   ├── validate.py       # JSON-Schema validation
 │   ├── sets.py           # set.yml, per-set priority, loose set
 │   ├── factoids.py       # *.factoids.md, participant matrix, persona skeleton
-│   ├── lint.py           # 41 method rules
+│   ├── lint.py           # method rules
+│   ├── journeys.py       # cross-lint against journeykit journeys (K000–K004)
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
 │   ├── schema/           # persona, set, factoids, variables (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # four synthetic example personas in two sets (set.yml)
 ├── factoids/beispiel/    # synthetic example study (real study folders are git-ignored)
 ├── skills/persona-kit/   # Claude skill + elicitation guide
-├── docs/                 # METHOD.md, FORMAT.md, demo.png
+├── docs/                 # METHOD.md, FORMAT.md, JOURNEYKIT.md, demo.png
 ├── scripts/              # validate_repo.py (repo structure check)
 └── tests/
 ```

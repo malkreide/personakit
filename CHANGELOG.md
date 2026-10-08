@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- journeykit coupling (P6): `personakit lint <paths> --journeys <path>` (repeatable; file or folder of journeykit `*.json`, `*.schema.json` skipped) checks references in both directions – K000 unreadable journey or missing `meta.id`/`persona.id` (ERROR), K001 `relations.journeys` names an unknown journey, K002 a journey's `persona.id` names an unknown persona, K003 a persona points to a journey that names another persona (WARN), K004 a journey names the persona but `relations.journeys` does not (INFO). personakit reads only `meta.id` and `persona.id` and does not import or validate journeykit; neither schema changes. Without `--journeys` nothing changes
+- `personakit.api.lint_workspace(paths, journeys=…)` and `LintReport.journeys`; new module `personakit.journeys`
+- Decision note `docs/JOURNEYKIT.md` (which journey fields name actors, why personakit owns the cross-lint, why evidence is joined by a naming convention instead of a shared file) and `docs/METHOD.md` 1.9; journeykit example journeys as test fixtures under `tests/fixtures/journeykit/`
+
 ## [0.2.0] - 2026-10-07
 
 ### Added
