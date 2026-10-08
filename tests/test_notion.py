@@ -196,7 +196,7 @@ def test_evidence_and_assumptions_in_toggles(persona):
 
 def test_body_markdown_table_and_list_become_blocks(persona):
     persona.sections["Herleitung"] = (
-        "| Variable | Wert |\n|---|:---:|\n| Digitale Routine | 3 |\n| Pipe a\\|b | 2 |\n\n- Archetyp ← I02, I05\n1. erstens\n\n**Fett** und normal"
+        "| Variable | Wert |\n|---|:---:|\n| Digitale Routine | 3 |\n| Pipe a\\|b | 2 |\n\n- Archetyp ← I02, I05\n1. erstens\n\n**Fett** und `code` normal"
     )
     blocks = _api([persona], _single(persona))["pages"][0]["children"]
     start = next(n for n, b in enumerate(blocks) if b["type"] == "heading_2" and _text(b) == "Herleitung")
@@ -207,6 +207,7 @@ def test_body_markdown_table_and_list_become_blocks(persona):
     assert rows[2]["table_row"]["cells"][0][0]["text"]["content"] == "Pipe a|b"
     para = section[3]["paragraph"]["rich_text"]
     assert para[0]["text"]["content"] == "Fett" and para[0]["annotations"]["bold"] is True
+    assert para[2]["text"]["content"] == "code" and para[2]["annotations"]["code"] is True
 
 
 # -------------------------------------------------------------- escaping
@@ -274,6 +275,35 @@ def test_mcp_properties(persona):
     schema = doc["database"]["schema"]
     assert schema.startswith('CREATE TABLE ("Name" TITLE, "ID" RICH_TEXT, "Archetyp" RICH_TEXT, "Set" MULTI_SELECT')
     assert "\"Priorität\" SELECT('Primär':blue, " in schema and '"Review bis" DATE' in schema
+
+
+def test_mcp_database_lists_options_for_every_select(persona):
+    # The MCP tools reject values the data source does not know (checked against Notion): the skill adds them first
+    persona.data["tags"] = ["b", "a"]
+    options = _mcp(_single(persona))["database"]["options"]
+    assert options == {
+        "Set": [],
+        "Priorität": ["Primär", "Sekundär", "Ergänzend", "Negativ (nicht bauen für)"],
+        "Status": ["Entwurf", "Aktiv", "Ruhestand"],
+        "Evidenz": ["Proto (Annahmen)", "Qualitativ", "Statistisch"],
+        "Tags": ["b", "a"],
+    }
+
+
+def test_source_file_is_code_so_notion_does_not_link_it(persona):
+    # Notion turns «x.persona.md» into a link (.md is a top-level domain); a code span stays text
+    api = _api([persona], _single(persona))["pages"][0]["children"][-1]["paragraph"]["rich_text"]
+    assert [(r["text"]["content"], r["annotations"]["code"]) for r in api][1] == (
+        "eltern-neu-in-zuerich.persona.md",
+        True,
+    )
+    content = _mcp(_single(persona))["pages"][0]["content"]
+    assert "*Erzeugt mit personakit " in content and " aus* `eltern-neu-in-zuerich.persona.md`*. Änderungen" in content
+
+
+def test_code_span_with_backtick_falls_back_to_escaped_text():
+    rich = [{"type": "text", "text": {"content": "a`b"}, "annotations": {"code": True}}]
+    assert to_markdown([{"object": "block", "type": "paragraph", "paragraph": {"rich_text": rich}}]) == "a\\`b"
 
 
 def test_ddl_quotes_single_quotes(persona):
