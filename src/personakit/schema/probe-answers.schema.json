@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/malkreide/personakit/schema/probe-answers.schema.json",
+  "title": "personakit Probe-Antworten",
+  "description": "Modellantworten für personakit probe evaluate: pro Persona-id und Fragen-id ein String oder eine Liste von Durchgängen. Siehe docs/PROBE.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["personakit_probe_answers", "answers"],
+  "properties": {
+    "personakit_probe_answers": {"type": "string", "const": "1.0", "description": "Format-Version der Antwortdatei."},
+    "plan_id": {"type": "string", "description": "plan_id aus probe.json, gegen den die Antworten entstanden sind (empfohlen)."},
+    "model": {"type": "string", "description": "Modell, Temperatur, Datum – Freitext für den Bericht (empfohlen)."},
+    "answers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "anyOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}}
+          ]
+        }
+      }
+    }
+  }
+}

@@ -44,6 +44,10 @@ Die HCI-Forschung 2025/26 ist eindeutig: LLM-basierte Personas leiden unter **Pe
 
 → **Entscheid:** Der `simulation`-Block ist Teil des Formats: `voice`, `must`, `must_not`, `variance`. Der Prompt-Export (`render --format prompt`) trägt die Guardrails mit: Einzelperson statt Durchschnitt, keine erfundenen Fakten, `unknowns` bleiben offen, Proto-Status wird als Hypothese markiert, keine Innensicht der anbietenden Organisation, keine Überfreundlichkeit. `variance` zwingt zur Festlegung einer konkreten Ausprägung statt des Mittelwerts. Lint verlangt `must_not` und `variance` bei aktiven Personas (S001/S002).
 
+Ob die Guardrails tragen, zeigt erst der Einsatz. Collapse ist messbar, wenn verschiedene Personas dieselbe Frage bekommen: Konvergieren ihre Antworten, sind sie für das Modell nicht mehr verschieden – egal, wie gut die Dateien sind.
+
+→ **Entscheid:** `personakit probe build` erzeugt deterministisch 6–10 Prüffragen pro Persona (Szenario, Jobs, Schmerzpunkte, Unknowns, Endziele) und stellt jede Frage allen Personas; `probe evaluate` misst die paarweise Ähnlichkeit der Antworten (TF-IDF-Kosinus, Standardbibliothek), Verstösse gegen `must_not` über Schlüsselwörter und ob `unknowns` offen bleiben, und zeigt eine Ampel pro Persona-Paar. Das Modell bleibt draussen: Wer prüft, wählt es selbst, und derselbe Plan lässt sich gegen mehrere Modelle oder vor und nach einer Änderung laufen. Lexikalische Ähnlichkeit ist ein grober Proxy; der Bericht nennt seine Grenzen, und Unterscheidbarkeit ist nicht Treue (Fidelity Gap). Notiz: [`PROBE.md`](PROBE.md).
+
 ### 1.7 Stereotypisierung
 
 Stockfotos und demografische Marker lösen Stereotype aus und führen zu exkludierendem Design. Mehrere Frameworks empfehlen rein verhaltensbasierte Archetypen ohne erfundene Biografie.

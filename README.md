@@ -26,6 +26,7 @@ The format encodes method, not layout: behaviour before demographics (Cooper), g
 - 45 lint rules for method (evidence hygiene, JTBD form, guardrails, lifecycle, one primary persona per set, references to [journeykit](https://github.com/malkreide/journeykit) journeys)
 - Sets per solution (`personas/<set>/set.yml`): the same persona can play a different role – with a different priority – in several solutions; lint rules for focus run per set
 - Factoid pipeline: research material as `factoids/<study>/*.factoids.md` (participant codes only, never names); `factoids` places participants on the behaviour variables and flags thin variables and outliers, `skeleton` pre-fills a persona from chosen participants (medians, evidence, quotes, evidence level)
+- Collapse probe: `probe build` turns the personas of a set into test questions for a model of your choice, `probe evaluate` measures whether the simulated personas stay distinguishable (traffic light per pair, `must_not` and unknowns check) – and says what lexical similarity cannot show
 - Claude skill `persona-kit` that derives personas from interviews, support logs and workshop notes – counting via `factoids`/`skeleton`, interpretation backed by factoid IDs
 
 ### Demo
@@ -74,6 +75,11 @@ personakit retire personas/old-persona.persona.md -m "replaced after new intervi
 # from research material to a skeleton
 personakit factoids factoids/beispiel
 personakit skeleton factoids/beispiel -p p1,p3,p4,p6,p8 --id parents-draft -a "Newly arrived parents learning the school system from scratch"
+
+# collapse probe: do simulated personas stay distinguishable?
+personakit probe build personas/elternkommunikation-schuleintritt -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml
+#   … run the plan against a model of your choice, fill answers.json …
+personakit probe evaluate probe.json answers.json -k probe-keywords.yml -o probe-report.md
 ```
 
 The example personas in [`personas/`](personas/) are **synthetic** (German, school-administration context) and do not document any real research.
@@ -99,6 +105,8 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 | `retire <file>` | Set status to `retired` with a changelog note |
 | `factoids <folder>` | Check a study folder of `*.factoids.md`: participant × variable matrix, distribution, thin variables (F010), outliers (F011); `--json` |
 | `skeleton <folder> -p … --id … -a …` | Persona skeleton from chosen participants: behaviour variables (medians), evidence, quotes, evidence level and a `## Herleitung` section with factoid IDs |
+| `probe build <paths>` | Collapse probe plan: the simulate prompt and 6–10 test questions per persona (scenario, jobs, pains, unknowns, end goals), every question asked to every persona; deterministic, no model call; templates for answers and keywords |
+| `probe evaluate <plan> <answers>` | Markdown report with a traffic light per persona pair (TF-IDF cosine of the answers to the same question, standard library only), `must_not` check via configurable keywords, unknowns left open or not, limits of the method; `--json`, `--strict` |
 
 ## Persona as input for other solutions
 
@@ -111,6 +119,7 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 | Notion database «Personas» | `render -f notion`: one page per persona, `ID` as the key for updates; `--target api` for the Notion API, `--target mcp` for the Notion MCP tools ([`docs/FORMAT.md`](docs/FORMAT.md#notion-export-render--f-notion), German) |
 | Wiki | `render -f md` / `-f card` |
 | Team gallery, offline | `render -f html` |
+| Check whether simulated personas stay distinguishable | `probe build` → model of your choice → `probe evaluate` ([`docs/PROBE.md`](docs/PROBE.md)) |
 
 The prompt export carries the persona's guardrails: one concrete individual instead of an average, no invented facts, open questions stay open, proto status is marked as a hypothesis.
 
@@ -129,7 +138,7 @@ report = lint_workspace(["personas"])        # exactly what `personakit lint per
 
 ## Configuration
 
-No configuration files beyond the optional `set.yml` per set and `variables.yml` per factoid study. The schemas live in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`, `factoids.schema.json`, `variables.schema.json`), the template in `src/personakit/templates/persona.template.md`.
+No configuration files beyond the optional `set.yml` per set and `variables.yml` per factoid study. The schemas live in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`, `factoids.schema.json`, `variables.schema.json`, plus `probe*.schema.json` for the collapse probe's plan, answers and keywords), the template in `src/personakit/templates/persona.template.md`.
 
 ## Project Structure
 
@@ -146,12 +155,13 @@ personakit/
 │   ├── journeys.py       # cross-lint against journeykit journeys (K000–K004)
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
 │   ├── notion.py         # Notion export: API blocks and Notion Markdown (no network calls)
-│   ├── schema/           # persona, set, factoids, variables (JSON Schema)
+│   ├── probe.py          # collapse probe: test questions, TF-IDF similarity per pair, report
+│   ├── schema/           # persona, set, factoids, variables, probe (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # four synthetic example personas in two sets (set.yml)
 ├── factoids/beispiel/    # synthetic example study (real study folders are git-ignored)
 ├── skills/persona-kit/   # Claude skill + elicitation guide
-├── docs/                 # METHOD.md, FORMAT.md, JOURNEYKIT.md, demo.png
+├── docs/                 # METHOD.md, FORMAT.md, JOURNEYKIT.md, PROBE.md, demo.png
 ├── scripts/              # validate_repo.py (repo structure check)
 └── tests/
 ```

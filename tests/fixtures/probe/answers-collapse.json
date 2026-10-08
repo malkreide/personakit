@@ -1,0 +1,60 @@
+{
+  "personakit_probe_answers": "1.0",
+  "model": "synthetisch – von Hand geschrieben, kein Modell",
+  "answers": {
+    "eltern-neu-in-zuerich": {
+      "eltern-neu-in-zuerich.S1": "Zunächst würde ich den Brief in Ruhe vollständig lesen und das Datum notieren. Anschliessend würde ich bei der Kreisschulbehörde nachfragen, um sicherzugehen, dass ich keine Frist verpasse. Wichtig ist mir eine klare und verlässliche Information.",
+      "eltern-neu-in-zuerich.J1": "Ich würde den Brief sorgfältig lesen, die wichtigsten Punkte notieren und klären, ob eine Frist besteht. Ein gutes Ergebnis wäre eine klare Übersicht über die nächsten Schritte.",
+      "eltern-neu-in-zuerich.J2": "Ich würde auf der Website nach der zuständigen Stelle suchen und dort freundlich nachfragen. Ein gutes Ergebnis wäre eine verbindliche Antwort aus einer Hand.",
+      "eltern-neu-in-zuerich.J3": "Ich würde die Begründung genau lesen und bei Unklarheiten ein Gespräch suchen. Mir ist wichtig, den Entscheid zu verstehen.",
+      "eltern-neu-in-zuerich.P1": "Ja, das kenne ich. Ich versuche dann, die Begriffe nachzuschlagen, und frage bei der zuständigen Stelle nach. Eine klare und verständliche Sprache würde sehr helfen.",
+      "schulleitung-entscheidungsorientiert.S1": "Zunächst würde ich die Nachricht in Ruhe lesen und prüfen, ob ich etwas tun muss. Anschliessend würde ich bei der zuständigen Stelle nachfragen, um sicherzugehen. Wichtig ist mir eine klare Information.",
+      "schulleitung-entscheidungsorientiert.J1": "Ich würde die Mitteilung sorgfältig lesen, die wichtigsten Punkte notieren und klären, ob eine Frist besteht. Ein gutes Ergebnis wäre eine klare Übersicht.",
+      "schulleitung-entscheidungsorientiert.J2": "Ich würde die Information in Ruhe lesen und bei Fragen die zuständige Stelle kontaktieren. Für mich zählt, dass ich verständlich und rechtzeitig informiert werde.",
+      "schulleitung-entscheidungsorientiert.P1": "Ja, das kenne ich. Ich lese dann sorgfältig nach und frage bei der zuständigen Stelle nach, ob etwas verbindlich ist. Eine klare Kennzeichnung würde sehr helfen.",
+      "schulleitung-entscheidungsorientiert.P2": "Ja, das kenne ich. Ich halte mich dann an die offizielle Quelle und frage bei Unklarheiten bei der zuständigen Stelle nach.",
+      "verwaltungs-insider.S1": "Ich verstehe beide Seiten. Ein vollständiger Brief ist wichtig, aber er sollte auch verständlich sein. Eine klare Zusammenfassung am Anfang würde helfen.",
+      "verwaltungs-insider.P1": "Ja, das kenne ich. Ich frage nach, wenn mir etwas unklar ist, und bin froh um eine freundliche, klare Antwort.",
+      "verwaltungs-insider.G1": "Wichtig wäre eine klare, verständliche und verlässliche Information, die alle wichtigen Punkte enthält.",
+      "X1": "Am meisten vertraue ich offiziellen Stellen, aber auch Menschen mit Erfahrung. Mir ist eine verlässliche Information wichtig.",
+      "X2": "Wenn das Angebot kompliziert ist oder ich nicht sehe, welchen Nutzen es mir bringt.",
+      "eltern-neu-in-zuerich.U1": "Etwa 20 Prozent der Eltern öffnen solche Briefe nicht sofort."
+    },
+    "schulleitung-entscheidungsorientiert": {
+      "eltern-neu-in-zuerich.S1": "Ich würde mir zuerst einen Überblick verschaffen und das Datum festhalten. Danach würde ich bei der zuständigen Stelle nachfragen, um sicherzugehen, dass keine Frist verpasst wird. Entscheidend ist eine verlässliche Information.",
+      "eltern-neu-in-zuerich.J1": "Ich würde die Mitteilung sorgfältig lesen, die wichtigsten Punkte notieren und klären, ob eine Frist besteht. Ein gutes Ergebnis wäre eine klare Übersicht über die nächsten Schritte.",
+      "eltern-neu-in-zuerich.J2": "Am besten suche ich die zuständige Stelle und frage dort nach. Ein gutes Ergebnis wäre eine verbindliche Auskunft aus einer Hand, ohne Weiterleitung.",
+      "eltern-neu-in-zuerich.J3": "Ich würde die Begründung des Entscheids sorgfältig lesen und bei Unklarheiten das Gespräch mit der zuständigen Stelle suchen. Wichtig ist mir, dass wir den Entscheid nachvollziehen können.",
+      "eltern-neu-in-zuerich.P1": "Das kenne ich. Unbekannte Begriffe schlage ich nach, und wenn nötig frage ich bei der zuständigen Stelle. Verständliche Sprache würde allen helfen.",
+      "schulleitung-entscheidungsorientiert.S1": "Zunächst würde ich die Nachricht in Ruhe lesen und prüfen, ob wir etwas tun müssen. Anschliessend würde ich beim Schulamt nachfragen, um sicherzugehen. Wichtig ist mir eine klare Information.",
+      "schulleitung-entscheidungsorientiert.J1": "Ich würde die Mitteilung sorgfältig lesen, die wichtigsten Punkte notieren und klären, ob eine Frist besteht. Ein gutes Ergebnis wäre eine klare Übersicht über die nächsten Schritte.",
+      "schulleitung-entscheidungsorientiert.J2": "Ich würde die Information sorgfältig lesen und bei Fragen die zuständige Stelle kontaktieren. Wichtig ist mir, dass wir rechtzeitig und verständlich informiert sind.",
+      "schulleitung-entscheidungsorientiert.P1": "Ja, das kenne ich gut. Ich lese dann sorgfältig nach und frage bei der zuständigen Stelle nach, ob etwas verbindlich ist. Eine klare Kennzeichnung würde helfen.",
+      "schulleitung-entscheidungsorientiert.P2": "Das kommt vor. Dann verlasse ich mich auf die offizielle Quelle und kläre Unklarheiten direkt mit der zuständigen Stelle.",
+      "verwaltungs-insider.S1": "Ich verstehe beide Seiten. Ein vollständiger Brief ist wichtig, aber er sollte auch verständlich bleiben. Eine klare Zusammenfassung am Anfang würde helfen.",
+      "verwaltungs-insider.P1": "Ja, das kenne ich. Wir fragen nach, wenn etwas unklar ist, und sind froh um eine freundliche, klare Antwort.",
+      "verwaltungs-insider.G1": "Wichtig wäre eine klare, verständliche und verlässliche Information, die alle wichtigen Punkte enthält und rechtzeitig kommt.",
+      "X1": "Ich vertraue vor allem offiziellen Stellen und Kolleginnen, die Erfahrung damit haben. Wichtig ist mir eine verlässliche Information.",
+      "X2": "Ein kompliziertes Angebot ohne erkennbaren Nutzen würde ich nicht ausprobieren.",
+      "schulleitung-entscheidungsorientiert.U1": "Schulleitungen wollen in der Regel einen kurzen Überblick und bei Bedarf weiterführende Informationen."
+    },
+    "verwaltungs-insider": {
+      "eltern-neu-in-zuerich.S1": "Der Brief ist korrekt: Absender, Rechtsgrundlage und Frist stehen drin. Wer die Kreisschulbehörde nicht kennt, findet im Merkblatt die Erklärung. Ich sehe hier ehrlich gesagt kein Problem im Schreiben.",
+      "eltern-neu-in-zuerich.J1": "Ich prüfe, ob der Brief alle Pflichtangaben enthält: Rechtsmittelbelehrung, Zuständigkeit, Kontakt. Ein gutes Ergebnis ist ein Brief, gegen den niemand Beschwerde führen kann.",
+      "eltern-neu-in-zuerich.J2": "Die Zuständigkeiten sind im Organigramm und in der Verordnung geregelt. Ich verweise auf die richtige Stelle. Das Ergebnis ist gut, wenn die Anfrage beim korrekten Amt landet.",
+      "eltern-neu-in-zuerich.J3": "Der Entscheid stützt sich auf die Kriterien des Zuteilungsreglements und ist anfechtbar. Die Begründung steht im Schreiben. Wer reagieren will, hat das Rechtsmittel.",
+      "eltern-neu-in-zuerich.P1": "Die Begriffe sind gesetzlich definiert und lassen sich nicht einfach ersetzen. Wir verlinken das Glossar. Mehr kann man von einem amtlichen Schreiben nicht erwarten.",
+      "schulleitung-entscheidungsorientiert.S1": "Die Mail ist vollständig, das Vorgehen wurde im Projektausschuss beschlossen. Details stehen im verlinkten Konzept. Wer das liest, weiss alles Nötige.",
+      "schulleitung-entscheidungsorientiert.J1": "Jede Mitteilung durchläuft vor dem Versand die interne Prüfung. Ich stelle sicher, dass Rechtsgrundlage und Ansprechperson genannt sind. Gut ist sie, wenn sie formal einwandfrei ist.",
+      "schulleitung-entscheidungsorientiert.J2": "Direktinformation ist rechtlich zulässig und im Kommunikationskonzept vorgesehen. Die Schulen werden gemäss Verteiler informiert. Damit ist die Information korrekt erfolgt.",
+      "schulleitung-entscheidungsorientiert.P1": "Die Verbindlichkeit ergibt sich aus dem Absender und der Rechtsgrundlage. Das sollte jeder Schulleitung bekannt sein.",
+      "schulleitung-entscheidungsorientiert.P2": "Massgebend ist immer die offizielle Fassung auf der Website. Abweichende Versionen entstehen, wenn Dritte Inhalte abschreiben.",
+      "verwaltungs-insider.S1": "Ich ergänze Rechtsgrundlage, Zuständigkeit und Merkblatt, weil sonst Rückfragen von oben kommen. Vollständigkeit geht vor Kürze. Verständlichkeit ist Aufgabe der Kommunikation.",
+      "verwaltungs-insider.P1": "Ja, ständig. Die Antwort steht im Merkblatt, Abschnitt drei. Ich verweise dann darauf und schliesse den Fall.",
+      "verwaltungs-insider.G1": "Jede Aussage hat eine Quelle in Gesetz oder Reglement, der Rechtsdienst hat gegengelesen, und es gibt keine Lücke, die eine Beschwerde zulässt.",
+      "X1": "Den offiziellen Grundlagen: Gesetz, Verordnung, Reglement. Informationen aus Gruppen oder Foren sind unzuverlässig.",
+      "X2": "Wenn die Datenschutzabklärung fehlt oder die Zuständigkeit nicht geregelt ist. Ohne Freigabe gibt es kein Angebot.",
+      "verwaltungs-insider.U1": "Bei der Freigabe, ganz klar. Dort kommen in 80 Prozent der Fälle die Ergänzungen dazu."
+    }
+  }
+}
