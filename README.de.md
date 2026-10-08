@@ -26,6 +26,7 @@ Das Format kodiert Methodik, nicht Layout: Verhalten vor Demografie (Cooper), Zi
 - 45 Lint-Regeln für Methodik (Evidenz-Hygiene, JTBD-Form, Guardrails, Lebenszyklus, genau eine primäre Persona pro Set, Verweise auf [journeykit](https://github.com/malkreide/journeykit)-Journeys)
 - Sets pro Lösung (`personas/<set>/set.yml`): Dieselbe Persona kann in mehreren Lösungen eine andere Rolle – mit anderer Priorität – spielen; die Fokus-Regeln des Linters laufen pro Set
 - Factoid-Pipeline: Erhebungsmaterial als `factoids/<studie>/*.factoids.md` (nur Teilnehmer-Codes, nie Namen); `factoids` verortet die Teilnehmenden auf den Verhaltensvariablen und meldet dünne Variablen und Ausreisser, `skeleton` füllt aus gewählten Teilnehmenden ein Persona-Skelett vor (Mediane, Evidenz, Zitate, Evidenzniveau)
+- Collapse-Probe: `probe build` macht aus den Personas eines Sets Prüffragen für ein Modell nach Wahl, `probe evaluate` misst, ob die simulierten Personas unterscheidbar bleiben (Ampel pro Paar, Prüfung von `must_not` und Unknowns) – und sagt, was lexikalische Ähnlichkeit nicht zeigen kann
 - Claude-Skill `persona-kit`, der Personas aus Interviews, Support-Logs und Workshop-Notizen ableitet – zählen über `factoids`/`skeleton`, deuten mit Verweis auf Factoid-IDs
 
 ### Demo
@@ -74,6 +75,11 @@ personakit retire personas/alte-persona.persona.md -m "Durch neue Interviews ers
 # Vom Erhebungsmaterial zum Skelett
 personakit factoids factoids/beispiel
 personakit skeleton factoids/beispiel -p p1,p3,p4,p6,p8 --id eltern-entwurf -a "Neu zugezogene Eltern, die das Schulsystem von null kennenlernen"
+
+# Collapse-Probe: Bleiben simulierte Personas unterscheidbar?
+personakit probe build personas/elternkommunikation-schuleintritt -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml
+#   … Plan gegen ein Modell nach Wahl laufen lassen, answers.json füllen …
+personakit probe evaluate probe.json answers.json -k probe-keywords.yml -o probe-bericht.md
 ```
 
 Die Beispiel-Personas in [`personas/`](personas/) sind **synthetisch** (Kontext Schulverwaltung) und dokumentieren keine reale Erhebung.
@@ -99,6 +105,8 @@ Zählen ist Werkzeug, Deuten nicht. Ein Studienordner `factoids/<studie>/` enth�
 | `retire <datei>` | Status auf `retired` setzen, mit Changelog-Notiz |
 | `factoids <ordner>` | Studienordner mit `*.factoids.md` prüfen: Matrix Teilnehmer × Variable, Verteilung, dünne Variablen (F010), Ausreisser (F011); `--json` |
 | `skeleton <ordner> -p … --id … -a …` | Persona-Skelett aus gewählten Teilnehmenden: Verhaltensvariablen (Median), Evidenz, Zitate, Evidenzniveau und Abschnitt `## Herleitung` mit Factoid-IDs |
+| `probe build <pfade>` | Plan der Collapse-Probe: Simulate-Prompt und 6–10 Prüffragen pro Persona (Szenario, Jobs, Schmerzpunkte, Unknowns, Endziele), jede Frage an alle Personas; deterministisch, ohne Modellaufruf; Vorlagen für Antworten und Schlüsselwörter |
+| `probe evaluate <plan> <antworten>` | Markdown-Bericht mit Ampel pro Persona-Paar (TF-IDF-Kosinus der Antworten auf dieselbe Frage, nur Standardbibliothek), `must_not`-Prüfung über konfigurierbare Schlüsselwörter, Unknowns offen gelassen oder nicht, Grenzen der Methode; `--json`, `--strict` |
 
 ## Persona als Input für andere Lösungen
 
@@ -111,6 +119,7 @@ Zählen ist Werkzeug, Deuten nicht. Ein Studienordner `factoids/<studie>/` enth�
 | Notion-Datenbank «Personas» | `render -f notion`: eine Seite pro Persona, `ID` als Schlüssel zum Aktualisieren; `--target api` für die Notion-API, `--target mcp` für die Notion-MCP-Tools ([`docs/FORMAT.md`](docs/FORMAT.md#notion-export-render--f-notion)) |
 | Wiki | `render -f md` / `-f card` |
 | Team-Galerie, offline | `render -f html` |
+| Prüfen, ob simulierte Personas unterscheidbar bleiben | `probe build` → Modell nach Wahl → `probe evaluate` ([`docs/PROBE.md`](docs/PROBE.md)) |
 
 Der Prompt-Export trägt die Guardrails der Persona mit: eine konkrete Einzelperson statt Durchschnitt, keine erfundenen Fakten, offene Fragen bleiben offen, Proto-Status wird als Hypothese markiert.
 
@@ -129,7 +138,7 @@ report = lint_workspace(["personas"])        # genau das, was `personakit lint p
 
 ## Konfiguration
 
-Keine Konfigurationsdateien ausser der optionalen `set.yml` pro Set und `variables.yml` pro Factoid-Studie. Die Schemas liegen in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`, `factoids.schema.json`, `variables.schema.json`), die Vorlage in `src/personakit/templates/persona.template.md`.
+Keine Konfigurationsdateien ausser der optionalen `set.yml` pro Set und `variables.yml` pro Factoid-Studie. Die Schemas liegen in `src/personakit/schema/` (`persona.schema.json`, `set.schema.json`, `factoids.schema.json`, `variables.schema.json`, dazu `probe*.schema.json` für Plan, Antworten und Schlüsselwörter der Collapse-Probe), die Vorlage in `src/personakit/templates/persona.template.md`.
 
 ## Projektstruktur
 
@@ -146,12 +155,13 @@ personakit/
 │   ├── journeys.py       # Cross-Lint gegen journeykit-Journeys (K000–K004)
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
 │   ├── notion.py         # Notion-Export: API-Blöcke und Notion-Markdown (ohne Netzwerkaufrufe)
-│   ├── schema/           # Persona, Set, Factoids, Variablen (JSON Schema)
+│   ├── probe.py          # Collapse-Probe: Prüffragen, TF-IDF-Ähnlichkeit pro Paar, Bericht
+│   ├── schema/           # Persona, Set, Factoids, Variablen, Probe (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # vier synthetische Beispiel-Personas in zwei Sets (set.yml)
 ├── factoids/beispiel/    # synthetische Beispielstudie (reale Studienordner ignoriert Git)
 ├── skills/persona-kit/   # Claude-Skill + Erhebungsleitfaden
-├── docs/                 # METHOD.md, FORMAT.md, JOURNEYKIT.md, demo.png
+├── docs/                 # METHOD.md, FORMAT.md, JOURNEYKIT.md, PROBE.md, demo.png
 ├── scripts/              # validate_repo.py (Repo-Strukturprüfung)
 └── tests/
 ```

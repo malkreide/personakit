@@ -7,6 +7,7 @@ import datetime as _dt
 import json
 import re
 import sys
+from collections import Counter
 from importlib import resources
 from pathlib import Path
 
@@ -18,8 +19,12 @@ from .factoids import analyse_study, build_skeleton, load_study, render_report, 
 from .factoids import sort_findings as sort_factoid_findings
 from .lint import ERROR, WARN, Finding, sort_findings
 from .model import SUFFIX, Persona, PersonaError, find_persona_files, today, write_text
+from .probe import answers_template, build_plan, evaluate, keywords_template, load_answers, load_keywords, load_plan
+from .probe import render_report as render_probe_report
+from .probe import report_json as probe_report_json
+from .probe import runs as probe_runs
 from .render import SET_FORMATS, SINGLE_FORMATS, render, render_list, render_set
-from .sets import Group, load_workspace
+from .sets import Group, group_personas, load_workspace
 from .validate import load_schema, validate
 
 
@@ -251,6 +256,86 @@ def cmd_render(a: argparse.Namespace) -> int:
     return 0
 
 
+def _write_new(path: str, text: str, force: bool) -> None:
+    """Templates the user fills in by hand: never overwrite one silently."""
+    target = Path(path)
+    if target.exists() and not force:
+        raise UsageError(f"{target} existiert bereits – nicht überschrieben (--force zum Überschreiben)")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    write_text(target, text)
+    print(f"→ {target}", file=sys.stderr)
+
+
+def cmd_probe_build(a: argparse.Namespace) -> int:
+    _, groups = load_workspace(a.paths)
+    _warn_unresolved(groups)
+    chosen = group_personas([g for g in groups if not g.is_loose])
+    # A set folder means "this set"; a persona without set joins only when its file is named explicitly
+    # (or when no set is involved at all, e.g. a folder of loose personas).
+    explicit = {Path(x).resolve() for x in a.paths if Path(x).is_file()}
+    skipped: list[str] = []
+    for g in groups:
+        if not g.is_loose:
+            continue
+        for m in g.members:
+            p = m.persona
+            if len(groups) == 1 or (p.path is not None and p.path.resolve() in explicit):
+                chosen.append(p)
+            else:
+                skipped.append(p.id)
+    if skipped:
+        print(
+            f"Hinweis: ohne Set unter den Pfaden, nicht im Plan: {', '.join(skipped)} (Datei direkt angeben, um sie einzuschliessen)",
+            file=sys.stderr,
+        )
+    retired = [p.id for p in chosen if p.data.get("status") == "retired"]
+    if retired:
+        print(f"Hinweis: im Ruhestand, nicht im Plan: {', '.join(retired)}", file=sys.stderr)
+    chosen = [p for p in chosen if p.id not in retired]
+    if len(chosen) < 2:
+        raise UsageError(
+            f"Die Probe vergleicht Personas paarweise und braucht mindestens zwei (gefunden: {len(chosen)}); "
+            "ein Set oder mehrere Persona-Dateien angeben"
+        )
+    if a.samples < 1:
+        raise UsageError("--samples muss mindestens 1 sein")
+    sets = [g.id for g in groups if not g.is_loose and any(m.persona.id in {p.id for p in chosen} for m in g.members)]
+    plan = build_plan(chosen, sets=sets, questions=a.questions, samples=a.samples)
+    if a.answers_template:
+        _write_new(a.answers_template, json.dumps(answers_template(plan), ensure_ascii=False, indent=2) + "\n", a.force)
+    if a.keywords_template:
+        _write_new(a.keywords_template, keywords_template(plan), a.force)
+    _out(json.dumps(plan, ensure_ascii=False, indent=2) + "\n", a.output)
+    print(
+        f"— {len(plan['personas'])} Personas, {len(plan['questions'])} Fragen, {probe_runs(plan)} Durchläufe "
+        f"(Plan {plan['plan_id']})",
+        file=sys.stderr,
+    )
+    return 0
+
+
+def cmd_probe_evaluate(a: argparse.Namespace) -> int:
+    if not 0 < a.warn <= a.alarm <= 1:
+        raise UsageError(f"Schwellen ungültig: es muss 0 < --warn ({a.warn}) ≤ --alarm ({a.alarm}) ≤ 1 gelten")
+    plan = load_plan(a.plan)
+    answers = load_answers(a.answers)
+    keywords = load_keywords(a.keywords) if a.keywords else None
+    result = evaluate(plan, answers, keywords, warn=a.warn, alarm=a.alarm)
+    if a.json:
+        _out(json.dumps(probe_report_json(result), ensure_ascii=False, indent=2) + "\n", a.output)
+    else:
+        _out(render_probe_report(result, Path(a.plan).name, Path(a.answers).name), a.output)
+    lights = Counter(p.light for p in result.pairs)
+    n_warn = sum(1 for f in result.findings if f.level == WARN)
+    print(
+        f"— {len(result.pairs)} Paare: {lights['red']} rot, {lights['yellow']} gelb, {lights['green']} grün"
+        + (f", {lights['none']} ohne Daten" if lights["none"] else "")
+        + f"; {n_warn} Warnungen",
+        file=sys.stderr,
+    )
+    return 1 if a.strict and n_warn else 0
+
+
 def cmd_list(a: argparse.Namespace) -> int:
     personas, groups = load_workspace(a.paths)
     _warn_unresolved(groups)
@@ -370,6 +455,46 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("paths", nargs="+")
     s.add_argument("--output", "-o", default=None)
     s.set_defaults(func=cmd_list)
+
+    s = sub.add_parser(
+        "probe", help="Collapse-Probe: Prüffragen für simulierte Personas erzeugen und Antworten auswerten"
+    )
+    probe = s.add_subparsers(dest="probe_cmd", required=True)
+    s = probe.add_parser(
+        "build", help="Plan mit Simulate-Prompts und 6–10 Prüffragen pro Persona (deterministisch, ohne Modell)"
+    )
+    s.add_argument(
+        "paths", nargs="+", help="Set-Ordner, personas/ oder einzelne Persona-Dateien (mindestens zwei Personas)"
+    )
+    s.add_argument(
+        "--questions",
+        "-n",
+        type=int,
+        default=8,
+        choices=range(6, 11),
+        metavar="6-10",
+        help="Fragen pro Persona (Default: 8)",
+    )
+    s.add_argument(
+        "--samples", type=int, default=1, help="Empfohlene Durchgänge pro Frage; ab 2 wird die Varianz gemessen"
+    )
+    s.add_argument("--output", "-o", default=None, help="Plan als Datei (sonst stdout)")
+    s.add_argument("--answers-template", metavar="DATEI", help="Leere answers.json zum Füllen anlegen")
+    s.add_argument(
+        "--keywords-template", metavar="DATEI", help="Schlüsselwort-Vorlage für die must_not-Prüfung anlegen"
+    )
+    s.add_argument("--force", action="store_true", help="Bestehende Vorlagen überschreiben")
+    s.set_defaults(func=cmd_probe_build)
+    s = probe.add_parser("evaluate", help="Antworten auswerten: Ähnlichkeit je Persona-Paar, must_not, Unknowns")
+    s.add_argument("plan", help="probe.json aus probe build")
+    s.add_argument("answers", help="answers.json mit den Modellantworten")
+    s.add_argument("--keywords", "-k", metavar="DATEI", help="Schlüsselwörter je must_not-Regel (YAML)")
+    s.add_argument("--warn", type=float, default=0.30, help="Ø Ähnlichkeit ab der ein Paar gelb wird (Default: 0.30)")
+    s.add_argument("--alarm", type=float, default=0.50, help="Ähnlichkeit ab der ein Paar rot wird (Default: 0.50)")
+    s.add_argument("--json", action="store_true", help="Ergebnis als JSON statt Markdown")
+    s.add_argument("--strict", action="store_true", help="Exit-Code 1 bei Warnungen (rotes Paar, must_not-Treffer …)")
+    s.add_argument("--output", "-o", default=None, help="Bericht als Datei (sonst stdout)")
+    s.set_defaults(func=cmd_probe_evaluate)
 
     s = sub.add_parser("bump", help="Version erhöhen und Changelog-Eintrag schreiben")
     s.add_argument("path")

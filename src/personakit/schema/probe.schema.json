@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/malkreide/personakit/schema/probe.schema.json",
+  "title": "personakit Probe-Plan",
+  "description": "Plan der Collapse-Probe (personakit probe build): Simulate-Prompts und Prüffragen, die gegen ein Modell laufen. Siehe docs/PROBE.md.",
+  "type": "object",
+  "required": ["personakit_probe", "plan_id", "personas", "questions"],
+  "properties": {
+    "personakit_probe": {"type": "string", "const": "1.0", "description": "Format-Version des Plans."},
+    "generator": {"type": "string"},
+    "plan_id": {"type": "string", "minLength": 1, "description": "Hash über Personas und Fragen; answers.json nennt ihn, damit evaluate veraltete Antworten erkennt."},
+    "samples": {"type": "integer", "minimum": 1, "description": "Empfohlene Durchgänge pro Persona und Frage."},
+    "sets": {"type": "array", "items": {"type": "string"}},
+    "instructions": {"type": "string"},
+    "personas": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "prompt", "must_not", "unknowns"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "version": {"type": "string"},
+          "archetype": {"type": "string"},
+          "priority": {"type": "string"},
+          "evidence_level": {"type": "string"},
+          "prompt": {"type": "string", "minLength": 1},
+          "must_not": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "rule"],
+              "properties": {"id": {"type": "string", "pattern": "^N[0-9]+$"}, "rule": {"type": "string"}}
+            }
+          },
+          "unknowns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "text"],
+              "properties": {"id": {"type": "string", "pattern": "^U[0-9]+$"}, "text": {"type": "string"}}
+            }
+          }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "ref", "text", "ask"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "origin": {"type": ["string", "null"]},
+          "kind": {"enum": ["scenario", "job", "unknown", "pain", "goal", "generic"]},
+          "ref": {"type": "string", "minLength": 1},
+          "text": {"type": "string", "minLength": 1},
+          "ask": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

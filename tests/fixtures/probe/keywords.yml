@@ -1,0 +1,11 @@
+# Synthetisches Beispiel für probe evaluate --keywords (passt zu den Beispiel-Personas).
+personakit_probe_keywords: "1.0"
+must_not:
+  eltern-neu-in-zuerich:
+    N1: [Kreisschulbehörde, Schulpflege]
+    N2: [Tagesstruktur, Einschulung, Zuteilungsreglement]
+  schulleitung-entscheidungsorientiert:
+    N1: [spannend, freue mich, tolle Neuerung]
+    N2: [Projektausschuss, Projektstand]
+  verwaltungs-insider:
+    N1: []

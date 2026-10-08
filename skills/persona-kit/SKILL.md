@@ -1,6 +1,6 @@
 ---
 name: persona-kit
-description: Erstellt, prüft, aktualisiert und exportiert evidenzbasierte Personas im personakit-Format (*.persona.md mit YAML-Frontmatter, JTBD-Block, Evidenz, Simulationsregeln). Verwenden, wenn der User (1) eine Persona aus Interviews, Support-Logs, Umfragen, Workshops oder Annahmen ableiten will – auch Factoids extrahieren, Teilnehmende auf Verhaltensvariablen verorten oder ein Persona-Skelett aus Factoids erzeugen –, (2) bestehende Personas anpassen, versionieren, reviewen oder in den Ruhestand versetzen will, (3) Personas als Markdown, JSON, YAML, Prompt-Block, Karte, Matrix oder HTML-Galerie exportieren oder in eine Notion-Datenbank publizieren will, (4) eine Persona als Voreinstellung für Content, Chat-Assistenten, User Journeys (journeykit) oder synthetische Gegenproben braucht, oder (5) Begriffe wie «Persona», «Archetyp», «Zielgruppe», «Jobs-to-be-Done», «Job Story», «Factoid», «Verhaltensvariable», «synthetischer Nutzer» im Kontext einer Lösung verwendet.
+description: Erstellt, prüft, aktualisiert und exportiert evidenzbasierte Personas im personakit-Format (*.persona.md mit YAML-Frontmatter, JTBD-Block, Evidenz, Simulationsregeln). Verwenden, wenn der User (1) eine Persona aus Interviews, Support-Logs, Umfragen, Workshops oder Annahmen ableiten will – auch Factoids extrahieren, Teilnehmende auf Verhaltensvariablen verorten oder ein Persona-Skelett aus Factoids erzeugen –, (2) bestehende Personas anpassen, versionieren, reviewen oder in den Ruhestand versetzen will, (3) Personas als Markdown, JSON, YAML, Prompt-Block, Karte, Matrix oder HTML-Galerie exportieren oder in eine Notion-Datenbank publizieren will, (4) eine Persona als Voreinstellung für Content, Chat-Assistenten, User Journeys (journeykit) oder synthetische Gegenproben braucht – auch prüfen will, ob simulierte Personas unterscheidbar bleiben (Collapse-Probe) –, oder (5) Begriffe wie «Persona», «Archetyp», «Zielgruppe», «Jobs-to-be-Done», «Job Story», «Factoid», «Verhaltensvariable», «synthetischer Nutzer», «Persona Collapse» im Kontext einer Lösung verwendet.
 ---
 
 # persona-kit
@@ -21,6 +21,8 @@ personakit bump <datei> -p minor -m "…" [--status active --evidence-level qual
 personakit retire <datei> -m "…"
 personakit factoids factoids/<studie> [--json]      # Verortung, dünne Variablen, Ausreisser
 personakit skeleton factoids/<studie> -p p1,p3,p7 --id <id> -a "<Archetyp>" [-d personas/<set>]
+personakit probe build personas/<set> -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml
+personakit probe evaluate probe.json answers.json -k probe-keywords.yml [-o bericht.md]
 ```
 
 Ohne installiertes Paket: `python -m personakit.cli …` mit `PYTHONPATH=src`.
@@ -64,8 +66,19 @@ Ohne Material (nur Annahmen) entfallen Schritte 1–4: `personakit new` anlegen,
 | Notion-Datenbank «Personas» | `render -f notion --target mcp` | Ablauf «Nach Notion publizieren» unten |
 | Wiki-Seite | `render -f md` oder `-f card` | Karte für Übersichten, md für Detailseiten |
 | Team-Galerie | `render personas -f html -o personas.html` | Single-File, offline |
+| Prüfen, ob die simulierten Personas unterscheidbar bleiben | `probe build` → Modell → `probe evaluate` | Ablauf «Collapse-Probe» unten |
 
 Wenn mehrere Personas als Voreinstellung gleichzeitig nötig sind, immer die primäre zuerst und die negative als Gegenprobe («Würde der Verwaltungs-Insider das durchwinken? Dann nochmals gegen die primäre Persona prüfen»).
+
+## Ablauf: Collapse-Probe
+
+Prüft, ob ein Modell die Personas eines Sets im simulate-Modus auseinanderhält (`docs/METHOD.md` 1.6, Format: `docs/FORMAT.md` → Collapse-Probe). Das Werkzeug erzeugt Fragen und misst, die Skill führt aus und deutet.
+
+1. **Plan erzeugen:** `personakit probe build personas/<set> -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml` (mit `--samples 3`, wenn auch die Varianz geprüft werden soll). Bestehende Vorlagen werden nicht überschrieben.
+2. **Schlüsselwörter setzen:** In `probe-keywords.yml` pro `must_not`-Regel die Wörter eintragen, an denen ein Verstoss sichtbar würde (Fachbegriffe, die die Persona nicht kennt, Begeisterungsfloskeln, Innensicht-Vokabular). Mit dem User abstimmen; Regeln, die sich nicht an Wörtern zeigen, leer lassen – sie erscheinen als «nicht geprüft».
+3. **Ausführen:** Pro Persona, Frage und Durchgang ein **neues** Gespräch ohne Vorgeschichte: Systemprompt `personas[].prompt`, Nutzernachricht `questions[].text`, nur für die Personas in `ask`. Antworten unverändert in `answers.json`, `model` mit Modell und Temperatur füllen. Nie mehrere Personas oder Fragen in einem Gespräch – das erzeugt den Collapse, den die Probe messen soll. Wer das Modell wählt, entscheidet der User; die Skill selbst ist dafür kein neutrales Modell, wenn sie die Personas mitgeschrieben hat – das im Bericht erwähnen.
+4. **Auswerten:** `personakit probe evaluate probe.json answers.json -k probe-keywords.yml -o bericht.md`. Rote Paare: die ähnlichsten Antworten lesen und entscheiden, ob es echter Collapse ist oder geteiltes Fachvokabular. Gegenmittel liegen in den Personas, nicht im Bericht: schärfere `simulation.voice` und `must_not`, konkretere `variance`, Szenario mit mehr Eigenheit. Danach Plan neu erzeugen und mit demselben Modell vergleichen.
+5. **Grenzen nennen:** Jede Zusammenfassung für den User sagt, dass die Ähnlichkeit lexikalisch ist (Paraphrasen bleiben unentdeckt), dass Schwellen Faustwerte sind und dass Unterscheidbarkeit nicht heisst, dass die Personas reale Nutzende treffen.
 
 ## Ablauf: Nach Notion publizieren
 

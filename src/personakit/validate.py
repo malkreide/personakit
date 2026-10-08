@@ -1,4 +1,4 @@
-"""JSON-Schema validation of persona frontmatter, set files and factoid files."""
+"""JSON-Schema validation of persona frontmatter, set files, factoid files and probe files."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def load_set_schema() -> dict[str, Any]:
     return _read_schema("set.schema.json")
 
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=8)
 def _named_validator(name: str) -> Draft202012Validator:
     return Draft202012Validator(_read_schema(name), format_checker=FormatChecker())
 
@@ -68,3 +68,18 @@ def validate_factoids(data: dict[str, Any]) -> list[str]:
 def validate_variables(data: dict[str, Any]) -> list[str]:
     """Schema violations of a plain ``variables.yml`` mapping (empty = valid)."""
     return _messages(_named_validator("variables.schema.json"), data)
+
+
+def validate_probe_plan(data: Any) -> list[str]:
+    """Schema violations of a probe plan (``probe build``) (empty = valid)."""
+    return _messages(_named_validator("probe.schema.json"), data)
+
+
+def validate_probe_answers(data: Any) -> list[str]:
+    """Schema violations of an answers file for ``probe evaluate`` (empty = valid)."""
+    return _messages(_named_validator("probe-answers.schema.json"), data)
+
+
+def validate_probe_keywords(data: Any) -> list[str]:
+    """Schema violations of a keyword file for ``probe evaluate --keywords`` (empty = valid)."""
+    return _messages(_named_validator("probe-keywords.schema.json"), data)

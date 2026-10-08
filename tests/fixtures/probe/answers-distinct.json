@@ -1,0 +1,60 @@
+{
+  "personakit_probe_answers": "1.0",
+  "model": "synthetisch – von Hand geschrieben, kein Modell",
+  "answers": {
+    "eltern-neu-in-zuerich": {
+      "eltern-neu-in-zuerich.S1": "Ich mache wieder ein Foto und frage in der WhatsApp-Gruppe. Wenn zwei Leute etwas anderes sagen, weiss ich nicht, wem ich glauben soll. Ich will nur wissen: muss ich etwas tun? Sorry, mein Deutsch ist nicht so gut für solche Briefe.",
+      "eltern-neu-in-zuerich.J1": "Ich übersetze ihn mit dem Handy, Satz für Satz. Dann schaue ich, ob irgendwo ein Datum ist. Gut wäre, wenn oben steht: Das musst du machen, bis dann. Dann bin ich ruhig.",
+      "eltern-neu-in-zuerich.J2": "Ehrlich, dann warte ich oft einfach. Oder ich frage eine Kollegin bei der Arbeit, sie hat zwei Kinder. Am liebsten hätte ich eine Nummer, wo jemand freundlich sagt: ich kläre das für Sie.",
+      "eltern-neu-in-zuerich.J3": "Ich verstehe nicht genau, warum diese Schule. Der Weg ist weit für mein Kind. Kann ich das ändern? Ich habe Angst, dass Fragen schlecht ankommt.",
+      "eltern-neu-in-zuerich.P1": "Ja, total. Tagesstruktur, Einschulung – ich google jedes Wort. Manchmal hilft meine Nachbarin. Ich fühle mich dann klein.",
+      "schulleitung-entscheidungsorientiert.S1": "Das kenne ich nicht, ich bin keine Schulleiterin. Aber wenn die Schule informiert wird, ist das gut für uns Eltern, oder? Ich hoffe, die Lehrerin weiss dann auch Bescheid.",
+      "schulleitung-entscheidungsorientiert.J1": "Ich weiss nicht, was eine Mitteilung ist. Ein Brief? Dann mache ich ein Foto und übersetze. Gut wäre, wenn es kurz ist.",
+      "schulleitung-entscheidungsorientiert.J2": "Das finde ich gut. Dann bekomme ich die Info direkt und muss nicht warten. Aber bitte in einfacher Sprache, sonst verstehe ich es wieder nicht.",
+      "schulleitung-entscheidungsorientiert.P1": "Rundschreiben bekomme ich nicht, glaube ich. Nur Briefe. Und dort weiss ich auch nie, ob es Pflicht ist.",
+      "schulleitung-entscheidungsorientiert.P2": "Ja! In der Gruppe sagt jemand das, die Website sagt etwas anderes. Ich weiss dann nicht, was stimmt. Meistens glaube ich der Gruppe.",
+      "verwaltungs-insider.S1": "Ein Absatz mehr ist für mich schwierig. Ich lese dann gar nicht weiter. Kurz wäre besser.",
+      "verwaltungs-insider.P1": "Ich frage, weil ich unsicher bin, nicht weil ich nicht lese. Manchmal steht es schon da, aber ich verstehe es nicht.",
+      "verwaltungs-insider.G1": "Für mich ist richtig, wenn ich es verstehe und weiss, was ich machen muss. Das Gesetz kenne ich nicht.",
+      "X1": "Meiner Kollegin und der WhatsApp-Gruppe. Den Behörden schon auch, aber ich verstehe sie nicht immer.",
+      "X2": "Wenn ich ein Konto machen muss oder es nur auf Deutsch geht. Dann lasse ich es.",
+      "eltern-neu-in-zuerich.U1": "Das weiss ich nicht. Ich öffne alle Briefe, aber ich kenne Leute, die Angst vor Post vom Amt haben."
+    },
+    "schulleitung-entscheidungsorientiert": {
+      "eltern-neu-in-zuerich.S1": "Ich lese den Brief einmal ganz durch und markiere das Datum. Ist es eine Frist, kommt sie in den Kalender und ich erledige es diese Woche. Ist es nur ein Termin zur Kenntnis, lege ich ihn ab. Dafür brauche ich keine Gruppe.",
+      "eltern-neu-in-zuerich.J1": "Ich prüfe Absender und Verbindlichkeit, dann delegiere ich ans Sekretariat oder an die Stufenleitung. Gut ist es, wenn ich in einer Minute weiss, wer was bis wann macht.",
+      "eltern-neu-in-zuerich.J2": "Dann rufe ich direkt jemanden an, den ich im Schulamt kenne. Das geht schneller als jede Website. Gut ist, wenn ich danach eine verbindliche Antwort schriftlich habe.",
+      "eltern-neu-in-zuerich.J3": "Für mich heisst das vor allem Klassenplanung. Ich schaue, wie viele Kinder kommen, und bespreche mit dem Team die Einteilung. Gut ist eine frühe, definitive Liste.",
+      "eltern-neu-in-zuerich.P1": "Mir geht es weniger um Begriffe als um Verbindlichkeit. Ich kenne die Abläufe, aber ich will sofort sehen, ob ich handeln muss.",
+      "schulleitung-entscheidungsorientiert.S1": "Ich lese nur die Betreffzeile und den ersten Absatz. Wenn unklar ist, ob wir etwas tun müssen, schiebe ich die Mail in den Ordner «Klären» und frage beim Schulamt nach. Elternanfragen kommen sowieso zuerst zu uns.",
+      "schulleitung-entscheidungsorientiert.J1": "Verbindlich oder nicht, Frist ja oder nein, wer bei uns zuständig ist. Dann leite ich weiter mit einer Zeile Auftrag. Gutes Ergebnis: erledigt, ohne dass ich es nochmals anfassen muss.",
+      "schulleitung-entscheidungsorientiert.J2": "Dann will ich den Text vorher sehen, sonst stehen morgen Eltern im Büro und ich weiss von nichts. Ich brauche eine Kurzfassung fürs Team und zwei Sätze für die Elternanfragen.",
+      "schulleitung-entscheidungsorientiert.P1": "Jede Woche. Ich lese dann nur noch, was fett ist. Wenn nichts fett ist, bleibt es liegen, bis jemand nachfragt.",
+      "schulleitung-entscheidungsorientiert.P2": "Dann gilt für mich die Version mit dem spätesten Datum, und ich frage einmal schriftlich nach. Drei Versionen kosten mich jedes Mal eine halbe Stunde.",
+      "verwaltungs-insider.S1": "Der Brief wird länger, und am Ende rufen die Eltern bei uns an. Ich hätte lieber einen kurzen Brief und einen Link für Details.",
+      "verwaltungs-insider.P1": "Das passiert, wenn die Antwort im Anhang auf Seite vier steht. Wir schreiben unseren Eltern deshalb eine Zusammenfassung.",
+      "verwaltungs-insider.G1": "Korrekt reicht mir nicht. Ich brauche umsetzbar: wer, was, bis wann. Der Rest kann im Anhang stehen.",
+      "X1": "Meiner Stellvertretung und zwei Kolleginnen aus anderen Schulen. Dem Schulamt, wenn es schriftlich und verbindlich ist.",
+      "X2": "Wenn es nur eine weitere Plattform mit Login ist und mir keine Zeit spart. Davon haben wir genug.",
+      "schulleitung-entscheidungsorientiert.U1": "Kommt darauf an. Meistens reicht mir die Kurzfassung, Konzepte lese ich nur, wenn ein Elternabend ansteht."
+    },
+    "verwaltungs-insider": {
+      "eltern-neu-in-zuerich.S1": "Der Brief ist korrekt: Absender, Rechtsgrundlage und Frist stehen drin. Wer die Kreisschulbehörde nicht kennt, findet im Merkblatt die Erklärung. Ich sehe hier ehrlich gesagt kein Problem im Schreiben.",
+      "eltern-neu-in-zuerich.J1": "Ich prüfe, ob der Brief alle Pflichtangaben enthält: Rechtsmittelbelehrung, Zuständigkeit, Kontakt. Ein gutes Ergebnis ist ein Brief, gegen den niemand Beschwerde führen kann.",
+      "eltern-neu-in-zuerich.J2": "Die Zuständigkeiten sind im Organigramm und in der Verordnung geregelt. Ich verweise auf die richtige Stelle. Das Ergebnis ist gut, wenn die Anfrage beim korrekten Amt landet.",
+      "eltern-neu-in-zuerich.J3": "Der Entscheid stützt sich auf die Kriterien des Zuteilungsreglements und ist anfechtbar. Die Begründung steht im Schreiben. Wer reagieren will, hat das Rechtsmittel.",
+      "eltern-neu-in-zuerich.P1": "Die Begriffe sind gesetzlich definiert und lassen sich nicht einfach ersetzen. Wir verlinken das Glossar. Mehr kann man von einem amtlichen Schreiben nicht erwarten.",
+      "schulleitung-entscheidungsorientiert.S1": "Die Mail ist vollständig, das Vorgehen wurde im Projektausschuss beschlossen. Details stehen im verlinkten Konzept. Wer das liest, weiss alles Nötige.",
+      "schulleitung-entscheidungsorientiert.J1": "Jede Mitteilung durchläuft vor dem Versand die interne Prüfung. Ich stelle sicher, dass Rechtsgrundlage und Ansprechperson genannt sind. Gut ist sie, wenn sie formal einwandfrei ist.",
+      "schulleitung-entscheidungsorientiert.J2": "Direktinformation ist rechtlich zulässig und im Kommunikationskonzept vorgesehen. Die Schulen werden gemäss Verteiler informiert. Damit ist die Information korrekt erfolgt.",
+      "schulleitung-entscheidungsorientiert.P1": "Die Verbindlichkeit ergibt sich aus dem Absender und der Rechtsgrundlage. Das sollte jeder Schulleitung bekannt sein.",
+      "schulleitung-entscheidungsorientiert.P2": "Massgebend ist immer die offizielle Fassung auf der Website. Abweichende Versionen entstehen, wenn Dritte Inhalte abschreiben.",
+      "verwaltungs-insider.S1": "Ich ergänze Rechtsgrundlage, Zuständigkeit und Merkblatt, weil sonst Rückfragen von oben kommen. Vollständigkeit geht vor Kürze. Verständlichkeit ist Aufgabe der Kommunikation.",
+      "verwaltungs-insider.P1": "Ja, ständig. Die Antwort steht im Merkblatt, Abschnitt drei. Ich verweise dann darauf und schliesse den Fall.",
+      "verwaltungs-insider.G1": "Jede Aussage hat eine Quelle in Gesetz oder Reglement, der Rechtsdienst hat gegengelesen, und es gibt keine Lücke, die eine Beschwerde zulässt.",
+      "X1": "Den offiziellen Grundlagen: Gesetz, Verordnung, Reglement. Informationen aus Gruppen oder Foren sind unzuverlässig.",
+      "X2": "Wenn die Datenschutzabklärung fehlt oder die Zuständigkeit nicht geregelt ist. Ohne Freigabe gibt es kein Angebot.",
+      "verwaltungs-insider.U1": "Bei der Freigabe, ganz klar. Dort kommen in 80 Prozent der Fälle die Ergänzungen dazu."
+    }
+  }
+}

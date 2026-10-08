@@ -347,3 +347,118 @@ Alles andere – Archetyp-Formulierung, `context`, `goals`, `pains`, `jobs`, `an
 | F011 | INFO | Teilnehmer liegt auf mindestens zwei Variablen ≥ 2 Punkte von **allen** anderen entfernt – Kandidat für eine eigene Persona oder für `simulation.variance` |
 
 F011 prüft wörtlich «von allen anderen»: Zwei Teilnehmende, die gemeinsam abseits liegen, bilden eine Häufung, keinen Ausreisser – sie zeigt die Verteilung, nicht dieser Befund. Die Schwellen (≥ 2 Punkte auf ≥ 2 Variablen) sind dieselben wie die Abgrenzungsregel für Personas im Erhebungsleitfaden; die 5 für `qualitative` folgt NN/g (`docs/METHOD.md`, 1.3).
+
+## Collapse-Probe (`probe`)
+
+Die Probe misst, ob simulierte Personas unterscheidbar bleiben (Persona Collapse, `docs/METHOD.md` 1.6). personakit erzeugt Fragen und wertet Antworten aus; das Modell, das antwortet, wählt und betreibt der Mensch. Begründung und Abwägungen: [`PROBE.md`](PROBE.md).
+
+```bash
+personakit probe build personas/<set> -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml
+#   … Plan gegen ein Modell laufen lassen, answers.json füllen …
+personakit probe evaluate probe.json answers.json -k probe-keywords.yml -o bericht.md
+```
+
+### `probe build <pfade>`
+
+| Option | Bedeutung |
+|---|---|
+| `-n`, `--questions` | Fragen pro Persona, 6–10 (Default 8) |
+| `--samples` | Empfohlene Durchgänge pro Frage (Default 1); ab 2 misst `evaluate` Trennung und Varianz |
+| `-o` | Plan als Datei, sonst stdout |
+| `--answers-template` | Leere `answers.json` mit allen Persona-/Fragen-Kombinationen |
+| `--keywords-template` | `probe-keywords.yml` mit einer leeren Liste pro `must_not`-Regel, Regeltext als Kommentar |
+| `--force` | Bestehende Vorlagen überschreiben (sonst Abbruch mit Exit 2, damit eine gefüllte Datei nie verloren geht) |
+
+Personas: bei einem Set-Ordner die Set-Mitglieder; Personas ohne Set nur, wenn ihre Datei ausdrücklich genannt ist (oder kein Set beteiligt ist). `retired` wird übersprungen, mindestens zwei Personas sind nötig.
+
+Fragen pro Persona, in dieser Reihenfolge bis zur gewünschten Zahl:
+
+| Ref | Quelle | Frage (gekürzt) | An |
+|---|---|---|---|
+| `S1` | erster Absatz von `## Szenario`, ganze Sätze bis 360 Zeichen | «Stell dir diese Situation vor: «…» Was tust du jetzt – und warum?» | alle |
+| `J…` | `jobs[]` (höchstens 3): nur der «Wenn …»-Teil der Job Story | «Die Situation: «Wenn … …» Was tust du dann …?» | alle |
+| `U1` | erstes `unknowns[]` | «Eine Frage zu dir und Leuten in deiner Lage: «…» Was sagst du dazu?» | nur die eigene Persona |
+| `P1`–`P3` | `pains[]` | «Jemand in deiner Lage sagt: «…» Kennst du das? Wie gehst du damit um?» | alle |
+| `U2…` | weitere `unknowns[]` | wie `U1` | nur die eigene Persona |
+| `G…` | `goals.end[]` | «Was müsste passieren, damit für dich gilt: «…»?» | alle |
+| `X1`–`X4` | allgemein, für alle gleich | z. B. «Wem vertraust du bei solchen Fragen am meisten – und wem nicht?» | alle, einmal im Plan |
+
+Fragen-ID: `<persona-id>.<Ref>`, allgemeine Fragen `X1`–`X4`. Der Plan (`probe.json`, Schema `schema/probe.schema.json`) enthält `plan_id` (Hash über Personas und Fragen), `samples`, `sets`, `instructions`, `personas[]` (`id`, `version`, `archetype`, `priority`, `evidence_level`, `prompt` = `render -f prompt -m simulate`, `must_not[]` mit `N1…`, `unknowns[]` mit `U1…`) und `questions[]` (`id`, `origin`, `kind`, `ref`, `text`, `ask`).
+
+**Ausführen:** pro Persona, Frage und Durchgang ein neues Gespräch ohne Vorgeschichte, Systemprompt = `personas[].prompt`, Nutzernachricht = `questions[].text`, nur für die Personas in `ask`.
+
+### `answers.json`
+
+```json
+{
+  "personakit_probe_answers": "1.0",
+  "plan_id": "3f9a1c0b7e21",
+  "model": "Modell, Temperatur, Datum",
+  "answers": {
+    "eltern-neu-in-zuerich": {
+      "eltern-neu-in-zuerich.J1": "Antwort",
+      "X1": ["Durchgang 1", "Durchgang 2"]
+    }
+  }
+}
+```
+
+Schema `schema/probe-answers.schema.json`. `plan_id` und `model` sind optional, aber empfohlen. Pro Persona und Frage ein String oder eine Liste von Durchgängen; leere Strings zählen als fehlend.
+
+### `probe-keywords.yml` (optional)
+
+```yaml
+personakit_probe_keywords: "1.0"
+must_not:
+  eltern-neu-in-zuerich:
+    N1: [Kreisschulbehörde, Schulpflege]   # Regel N1 aus probe.json
+    N2: [Tagesstruktur, Einschulung]
+open_markers: [weiss nicht, keine ahnung, vielleicht]   # optional: ersetzt die Standardliste
+```
+
+Schema `schema/probe-keywords.schema.json`. Schlüsselwörter treffen am Wortanfang, Gross-/Kleinschreibung egal (`Kreisschulbehörde` trifft `Kreisschulbehörden`).
+
+### `probe evaluate <plan> <answers>`
+
+| Option | Bedeutung |
+|---|---|
+| `-k`, `--keywords` | Schlüsselwort-Datei; ohne sie gelten alle `must_not`-Regeln als «nicht geprüft» |
+| `--warn`, `--alarm` | Schwellen für die Ampel (Default 0.30 und 0.50; `0 < warn ≤ alarm ≤ 1`) |
+| `--json` | Ergebnis als JSON (`pairs`, `variance`, `must_not`, `unknowns`, `findings`, `limits`) |
+| `--strict` | Exit 1 bei jeder Warnung |
+| `-o` | Bericht als Datei, sonst stdout |
+
+Der Markdown-Bericht enthält: Ampel pro Persona-Paar (Ø und maximale Ähnlichkeit, Anteil der Fragen ≥ Alarm, gemeinsame Fragen, Trennung), die ähnlichsten Antworten der auffälligen Paare mit den Wörtern, die die Ähnlichkeit tragen, die `must_not`-Prüfung pro Regel mit Treffern, die Unknown-Prüfung, bei mehreren Durchgängen die Varianz je Persona, die Befunde, die **Grenzen der Methode** und die Parameter.
+
+**Ähnlichkeit:** TF-IDF-Kosinus (`1 + ln tf`, geglättete IDF über alle Antworten des Laufs) auf Buchstabenwörtern ab drei Zeichen, Füllwörter entfernt, Endungen grob gekürzt, ohne die Wörter der Frage. Pro Frage und Paar das Mittel über alle Kombinationen der Durchgänge; **Trennung** = Ø(Ähnlichkeit der eigenen Durchgänge beider Personas) − Ähnlichkeit zwischen ihnen, nur über Fragen mit mindestens zwei Durchgängen je Persona.
+
+| Ampel | Bedingung (eine genügt) |
+|---|---|
+| 🔴 rot | Ø ≥ Alarm · mindestens die Hälfte der gemeinsamen Fragen ≥ Alarm · Trennung ≤ 0 und Ø ≥ Warnung |
+| 🟡 gelb | Ø ≥ Warnung · mindestens ein Viertel der gemeinsamen Fragen ≥ Alarm · Trennung ≤ 0 |
+| 🟢 grün | sonst |
+| ⚪ keine Daten | keine gemeinsam beantwortete Frage |
+
+**Unknowns:** Eine Antwort auf eine Unknown-Frage ist *offen*, wenn sie einen Unsicherheitsmarker enthält; ohne Marker *nicht erkennbar offen*; ohne Marker, aber mit Zahl oder «Prozent» eine *konkrete Angabe ohne Vorbehalt*. Bei mehreren Durchgängen zählt der ungünstigste.
+
+Exit-Codes: 0 nach der Auswertung, mit `--strict` 1 bei mindestens einer Warnung, 2 bei unlesbaren oder ungültigen Dateien, fehlenden Pfaden und ungültigen Schwellen.
+
+### Probe-Befunde
+
+| Code | Stufe | Regel |
+|---|---|---|
+| Q001 | WARN | `plan_id` der Antworten ≠ `plan_id` des Plans (Personas oder Fragen seit dem Lauf geändert) |
+| Q002 | WARN | Antworten fehlen (pro Persona, mit Fragen-IDs) |
+| Q003 | INFO | Antworten zu Personas oder Fragen, die der Plan nicht kennt oder der Persona nicht stellt – ignoriert |
+| Q004 | WARN | Leere Antwort, oder Antwort ohne eigene Wörter (nur Füllwörter und Wörter der Frage) – nicht verglichen |
+| Q005 | INFO | `must_not`-Regel ohne Schlüsselwörter – nicht geprüft |
+| Q006 | WARN | Schlüsselwörter für eine unbekannte Persona oder Regel – nicht geprüft |
+| Q010 | WARN | Persona-Paar rot: Collapse-Verdacht |
+| Q011 | INFO | Persona-Paar gelb: prüfen |
+| Q012 | WARN | Schlüsselwort einer `must_not`-Regel in einer Antwort der Persona |
+| Q013 | WARN | Unknown mit konkreter Angabe ohne Vorbehalt beantwortet |
+| Q014 | INFO | Unknown nicht erkennbar als offen behandelt |
+| Q015 | INFO | Durchgänge einer Persona fast gleich (Ø ≥ 0.80): Varianz kollabiert |
+| Q016 | INFO | Weniger als 3 gemeinsame Fragen – Ampel wenig belastbar |
+
+Alle Q-Befunde gehen auf `docs/METHOD.md` 1.6 zurück: Collapse (Q010/Q011), kollabierte Varianz (Q015), erfundene Fakten statt offener Fragen (Q013/Q014), Verletzung der Simulationsregeln (Q012). Q001–Q006 und Q016 sichern ab, dass fehlende oder unpassende Daten nicht still als Ergebnis zählen.
