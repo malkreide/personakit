@@ -1,4 +1,4 @@
-"""Renderers: one persona → md | card | json | yaml | prompt; personas grouped by set → matrix | html | bundle."""
+"""Renderers: one persona → md | card | json | yaml | prompt; personas grouped by set → matrix | html | bundle | notion."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from .model import Persona
 from .sets import Group, Member, build_groups, group_personas
 
 SINGLE_FORMATS = ("md", "card", "json", "yaml", "prompt")
-SET_FORMATS = ("matrix", "html", "bundle")
+SET_FORMATS = ("matrix", "html", "bundle", "notion")
 
 _LABEL = {
     "primary": "Primär",
@@ -452,6 +452,10 @@ def render_set(personas: list[Persona], fmt: str, groups: list[Group] | None = N
             )
             + "\n"
         )
+    if fmt == "notion":
+        from .notion import render_notion  # notion builds on the labels here; import late to avoid a cycle
+
+        return render_notion(groups, target=opts.get("target") or "api")
     raise ValueError(f"Unbekanntes Set-Format: {fmt}")
 
 

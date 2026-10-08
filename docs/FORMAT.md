@@ -94,9 +94,68 @@ Regeln:
 - **Wirksame Priorität** = `priority` in `set.yml`, sonst `priority` der Persona-Datei.
 - **Loses Set:** Personas, die keine `set.yml` nennt, bilden ein loses Set. Ein Repo ohne `set.yml` verhält sich wie vor der Einführung von Sets.
 - **Auflösung:** Mitglieder, die nicht unter den übergebenen Pfaden liegen, werden unter dem Elternordner des Set-Ordners gesucht (`<id>.persona.md`). Ein Set-Ordner lässt sich deshalb auch allein linten oder rendern.
-- `list`, `render -f matrix|html` gruppieren nach Set; `render -f bundle` enthält `sets` (Metadaten und `personas: [{id, priority}]` mit wirksamer Priorität) und `personas` (jede Persona einmal, mit ihrem Default).
+- `list`, `render -f matrix|html` gruppieren nach Set; `render -f notion` schreibt eine Seite pro Persona mit allen ihren Sets (siehe [Notion-Export](#notion-export-render--f-notion)); `render -f bundle` enthält `sets` (Metadaten und `personas: [{id, priority}]` mit wirksamer Priorität) und `personas` (jede Persona einmal, mit ihrem Default).
 
 Die Persona-Datei bleibt unverändert bei `personakit: "1.0"`; Sets sind eine reine Ergänzung, eine Migration ist nicht nötig. Wer Sets einführen will, legt einen Unterordner mit `set.yml` an und verschiebt die Dateien dorthin (Git: `git mv`).
+
+## Notion-Export (`render -f notion`)
+
+`personakit render <pfade> -f notion [--target api|mcp] [-o datei.json]` schreibt JSON für eine Notion-Datenbank «Personas». Der Renderer macht keine Netzwerkaufrufe; das Schreiben nach Notion übernimmt ein Skript (REST-API) oder die Skill `persona-kit` (Notion-MCP-Tools, Schritt «Nach Notion publizieren»).
+
+```json
+{
+  "generator": "personakit 0.2.0",
+  "target": "api",
+  "database": { "title": […], "properties": {…} },
+  "pages": [ { "properties": {…}, "children": […] } ]
+}
+```
+
+- **Eine Seite pro Persona-`id`**, auch wenn die Persona in mehreren Sets steht. `ID` ist der Schlüssel zum Aktualisieren: Gibt es in der Datenbank schon eine Seite mit derselben `ID`, wird sie überschrieben, nicht dupliziert.
+- **Die Datei bleibt die Quelle.** Die Seite endet mit dem Hinweis, aus welcher Datei sie erzeugt wurde; Änderungen in Notion gehen beim nächsten Export verloren.
+- Exportiert werden die Personas der übergebenen Pfade, gruppiert nach Set wie bei `bundle`. Ein einzelner Set-Ordner lässt sich allein exportieren.
+
+### Datenbank «Personas»
+
+Die Datenbank muss diese Properties mit genau diesen Namen und Typen haben (weitere Properties stören nicht):
+
+| Property | Typ | Inhalt |
+|---|---|---|
+| `Name` | Title | `name – archetype`, ohne `name` nur der Archetyp |
+| `ID` | Text (`rich_text`) | Persona-`id`, Schlüssel für das Aktualisieren |
+| `Archetyp` | Text | `archetype` |
+| `Set` | Multi-select | Set-`id`s, in denen die Persona steht; leer für Personas ohne Set |
+| `Priorität` | Select | `Primär` · `Sekundär` · `Ergänzend` · `Negativ (nicht bauen für)` – der Default aus der Persona-Datei |
+| `Status` | Select | `Entwurf` · `Aktiv` · `Ruhestand` |
+| `Evidenz` | Select | `Proto (Annahmen)` · `Qualitativ` · `Statistisch` |
+| `Version` | Text | SemVer als Text, z. B. `1.1.0` (kein Number: `1.10.0` wäre sonst `1.1`) |
+| `Review bis` | Date | `review_by`; leer, wenn nicht gesetzt |
+| `Tags` | Multi-select | `tags` |
+
+Select statt Notions Typ «Status», weil sich dessen Optionen über die API nicht anlegen lassen. `Priorität` ist bewusst der Default aus der Persona-Datei: Eine Seite pro Persona kann nur eine Priorität tragen, und eine Priorität, die davon abhängt, welches Set zuletzt exportiert wurde, würde bei jedem Export kippen. Die Priorität pro Set steht auf der Seite unter «Rolle in Sets», mit Hinweis, wo sie vom Default abweicht. Notion lehnt Kommas in Select-Optionen ab; der Export ersetzt sie durch `;` und kürzt Optionen auf 100 Zeichen.
+
+`database` im Export beschreibt diese Datenbank zum Anlegen: bei `api` als `title` und `properties` mit den Select-Optionen und Farben (API-Version `2022-06-28`; ab `2025-09-03` gehören die `properties` unter `initial_data_source`), bei `mcp` als `schema` (`CREATE TABLE …`) für das MCP-Tool `notion-create-database`. Die Optionen von `Set` und `Tags` sind die des Exports; neue Werte legt Notion beim Schreiben einer Seite selbst an.
+
+### Seiteninhalt
+
+Dieselben Abschnitte wie `render -f md`, leere fallen weg: Tagline als Zitat, Bereich/Gilt für/Pflege, «Rolle in Sets», Relevante Fakten, Kontext, Verhalten (Verhaltensvariablen als Tabelle `Variable | 1 | Ausprägung | 5`, Muster als Aufzählung), Ziele, Schmerzpunkte, Jobs-to-be-Done (je Job eine Überschrift, Kräfte und Ergebnisse als Aufzählung), Tut nicht, Zitate als Zitat-Blöcke, die Body-Abschnitte (Absätze, Listen, `###`-Überschriften und Pipe-Tabellen werden zu Blöcken, `**fett**` bleibt fett, übriges Markdown bleibt Text), Prompt-Einsatz, Evidenz (Quellen und Annahmen je in einem Toggle, «Offen» sichtbar), Verknüpfungen, Änderungen.
+
+### Ziele `api` und `mcp`
+
+| | `--target api` (Default) | `--target mcp` |
+|---|---|---|
+| Für | Notion-REST-API, `POST /v1/pages` | Notion-MCP-Tools `notion-create-pages`, `notion-update-page` |
+| `pages[]` | `properties` (Property-Objekte) und `children` (Block-Objekte) | `properties` (flache Werte) und `content` (Notion-Markdown) |
+| `parent` | ergänzt der Aufrufer: `{"database_id": …}` bzw. `{"data_source_id": …}` | im Tool-Aufruf: `parent: {"data_source_id": …}` |
+| `ID` | `"ID": {"rich_text": […]}` | `"userDefined:ID": "…"` (das MCP-Tool verlangt das Präfix für Properties namens `id`) |
+| `Review bis` | `{"date": {"start": "2027-04-06"}}` oder `{"date": null}` | `"date:Review bis:start"`, `"date:Review bis:is_datetime": 0` |
+| Select, Multi-select | `{"select": {"name": …}}`, `{"multi_select": [{"name": …}]}` | Text bzw. Liste von Texten |
+
+Beide Ziele kommen aus denselben Blöcken; `content` ist die Markdown-Fassung von `children`.
+
+**Grenzen der Notion-API**, die der Export einhält: Text wird nach 2000 Zeichen (UTF-16-Einheiten, wie Notion zählt) auf mehrere Rich-Text-Objekte verteilt, nie mitten in einem Zeichen. Ein `children`-Array hat höchstens 100 Blöcke: Toggles und Tabellen mit mehr Einträgen werden geteilt («Quellen (1/2)», Tabellen mit wiederholter Kopfzeile). Hat eine Seite mehr als 100 Blöcke, stehen die ersten 100 in `children`, der Rest in `append` – Stapel zu höchstens 100 für `PATCH /v1/blocks/{page_id}/children` nach dem Anlegen; `append` fehlt, wenn alles in `children` passt, und gehört nicht in den Body von `POST /v1/pages`. Verschachtelt wird höchstens zwei Ebenen tief, wie es die API pro Anfrage erlaubt.
+
+**Escaping.** `api`: Text steht unverändert im JSON (JSON-Escaping genügt), Steuerzeichen ausser Zeilenumbruch und Tab werden entfernt, `\r\n` wird zu `\n`. `mcp`: in Text und Text-Properties wird jedes der Zeichen `` \ * ~ ` $ [ ] < > { } | ^ `` mit `\` maskiert, wie es die Notion-Markdown-Spezifikation verlangt; ein Zeilenumbruch wird zu `<br>`, damit ein Block ein Block bleibt; Text, der am Zeilenanfang als Block gelesen würde (`# `, `- `, `1. `, `---`), bekommt ein `\` davor. Select-Werte werden nicht maskiert.
 
 ## Lint-Regeln
 

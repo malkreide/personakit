@@ -10,7 +10,7 @@
 
 ## Übersicht
 
-Viele Lösungen – Content-Generatoren, Chat-Assistenten, User-Journey-Werkzeuge, Priorisierungen – brauchen eine Persona als Input. Meist liegt sie als Folie oder Poster vor: nicht maschinenlesbar, nicht versioniert, nicht überprüfbar. personakit macht aus einer Persona eine **Quelldatei**: `<id>.persona.md` mit schema-validiertem YAML-Frontmatter und Markdown-Body (Szenario, Narrativ). Alles andere – Markdown, Karte, JSON, YAML, Prompt-Block, Vergleichsmatrix, HTML-Galerie – wird daraus gerendert.
+Viele Lösungen – Content-Generatoren, Chat-Assistenten, User-Journey-Werkzeuge, Priorisierungen – brauchen eine Persona als Input. Meist liegt sie als Folie oder Poster vor: nicht maschinenlesbar, nicht versioniert, nicht überprüfbar. personakit macht aus einer Persona eine **Quelldatei**: `<id>.persona.md` mit schema-validiertem YAML-Frontmatter und Markdown-Body (Szenario, Narrativ). Alles andere – Markdown, Karte, JSON, YAML, Prompt-Block, Vergleichsmatrix, HTML-Galerie, Notion-Seiten – wird daraus gerendert.
 
 Das Format kodiert Methodik, nicht Layout: Verhalten vor Demografie (Cooper), Ziele als Erlebnis-, End- und Lebensziele, Jobs als Job Stories mit Wechselkräften, sichtbares Evidenzniveau, Lebenszyklus mit Review-Datum und Guardrails gegen den Varianz-Kollaps synthetischer Nutzer. Hintergrund und Designentscheide: [`docs/METHOD.md`](docs/METHOD.md). Feldreferenz und Lint-Codes: [`docs/FORMAT.md`](docs/FORMAT.md).
 
@@ -22,7 +22,7 @@ Das Format kodiert Methodik, nicht Layout: Verhalten vor Demografie (Cooper), Zi
 - Sichtbares Evidenzniveau (`proto` · `qualitative` · `statistical`) mit Quellen, Annahmen und offenen Fragen
 - Lebenszyklus: SemVer, Status, Review-Datum, Changelog – `bump` und `retire` pflegen das mit sauberen Git-Diffs
 - `simulation`-Block (Stimme, Muss, Darf nicht, Varianz), den der Prompt-Export im Modus `simulate` oder `audience` injiziert
-- Exporte: Markdown, Karte, JSON, YAML, Prompt-Block, Vergleichsmatrix, HTML-Galerie als Single-File, JSON-Bundle
+- Exporte: Markdown, Karte, JSON, YAML, Prompt-Block, Vergleichsmatrix, HTML-Galerie als Single-File, JSON-Bundle, Notion-Seiten (API oder MCP)
 - 45 Lint-Regeln für Methodik (Evidenz-Hygiene, JTBD-Form, Guardrails, Lebenszyklus, genau eine primäre Persona pro Set, Verweise auf [journeykit](https://github.com/malkreide/journeykit)-Journeys)
 - Sets pro Lösung (`personas/<set>/set.yml`): Dieselbe Persona kann in mehreren Lösungen eine andere Rolle – mit anderer Priorität – spielen; die Fokus-Regeln des Linters laufen pro Set
 - Factoid-Pipeline: Erhebungsmaterial als `factoids/<studie>/*.factoids.md` (nur Teilnehmer-Codes, nie Namen); `factoids` verortet die Teilnehmenden auf den Verhaltensvariablen und meldet dünne Variablen und Ausreisser, `skeleton` füllt aus gewählten Teilnehmenden ein Persona-Skelett vor (Mediane, Evidenz, Zitate, Evidenzniveau)
@@ -65,6 +65,7 @@ personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zueri
 personakit render personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -f prompt -m simulate   # synthetische Gegenprobe
 personakit render personas -f html -o personas.html
 personakit render personas -f bundle -o personas.json
+personakit render personas -f notion -o notion.json   # Seiten für eine Notion-Datenbank «Personas»
 
 # Pflegen
 personakit bump personas/elternkommunikation-schuleintritt/eltern-neu-in-zuerich.persona.md -p minor -m "J3 ergänzt" --review-days 180
@@ -92,7 +93,7 @@ Zählen ist Werkzeug, Deuten nicht. Ein Studienordner `factoids/<studie>/` enth�
 | `new <id> -a …` | Persona-Datei aus der kommentierten Vorlage anlegen; der Archetyp ist Pflicht (fehlt er, wird nachgefragt) |
 | `validate <pfade>` | Frontmatter gegen das JSON-Schema prüfen |
 | `lint <pfade>` | Schema plus 45 Methodik-Regeln; Exit-Code 1 bei Fehlern (`--strict` auch bei Warnungen), `--json` für CI und andere Werkzeuge, `--journeys <pfad>` prüft die Verweise auf journeykit-Journeys in beide Richtungen |
-| `render <pfade> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (pro Persona) oder `matrix`, `html`, `bundle` (nach Set gruppiert) |
+| `render <pfade> -f …` | `md`, `card`, `json`, `yaml`, `prompt` (pro Persona) oder `matrix`, `html`, `bundle`, `notion` (nach Set gruppiert; `notion --target api\|mcp`) |
 | `list <pfade>` | Übersichtstabelle pro Set (Priorität im Set, Status, Evidenz, Version, Review-Datum) |
 | `bump <datei>` | Version erhöhen, Changelog-Eintrag schreiben, optional Status, Evidenzniveau und Review-Datum setzen |
 | `retire <datei>` | Status auf `retired` setzen, mit Changelog-Notiz |
@@ -107,7 +108,8 @@ Zählen ist Werkzeug, Deuten nicht. Ein Studienordner `factoids/<studie>/` enth�
 | Entwurf gegen eine Persona testen, Interview üben | `render -f prompt -m simulate` |
 | User Journeys ([journeykit](https://github.com/malkreide/journeykit)) | `render -f json` / `-f bundle`; `persona.id` der Journey ist die Persona-`id`, `lint --journeys` prüft beide Richtungen ([`docs/JOURNEYKIT.md`](docs/JOURNEYKIT.md)) |
 | Priorisierung | `render -f matrix` (ODI-Opportunity-Score) |
-| Notion, Wiki | `render -f md` / `-f card` |
+| Notion-Datenbank «Personas» | `render -f notion`: eine Seite pro Persona, `ID` als Schlüssel zum Aktualisieren; `--target api` für die Notion-API, `--target mcp` für die Notion-MCP-Tools ([`docs/FORMAT.md`](docs/FORMAT.md#notion-export-render--f-notion)) |
+| Wiki | `render -f md` / `-f card` |
 | Team-Galerie, offline | `render -f html` |
 
 Der Prompt-Export trägt die Guardrails der Persona mit: eine konkrete Einzelperson statt Durchschnitt, keine erfundenen Fakten, offene Fragen bleiben offen, Proto-Status wird als Hypothese markiert.
@@ -143,6 +145,7 @@ personakit/
 │   ├── lint.py           # Methodik-Regeln
 │   ├── journeys.py       # Cross-Lint gegen journeykit-Journeys (K000–K004)
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
+│   ├── notion.py         # Notion-Export: API-Blöcke und Notion-Markdown (ohne Netzwerkaufrufe)
 │   ├── schema/           # Persona, Set, Factoids, Variablen (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # vier synthetische Beispiel-Personas in zwei Sets (set.yml)

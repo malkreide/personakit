@@ -224,7 +224,7 @@ def cmd_render(a: argparse.Namespace) -> int:
     if fmt in SET_FORMATS:
         personas, groups = load_workspace(a.paths)
         _warn_unresolved(groups)
-        _out(render_set(personas, fmt, groups=groups, title=a.title), a.output)
+        _out(render_set(personas, fmt, groups=groups, title=a.title, target=a.target), a.output)
         return 0
     files = find_persona_files(a.paths)
     if len(files) == 1:
@@ -350,12 +350,19 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(func=cmd_lint)
 
     s = sub.add_parser(
-        "render", help="Exportieren: md|card|json|yaml|prompt (einzeln) oder matrix|html|bundle (nach Set gruppiert)"
+        "render",
+        help="Exportieren: md|card|json|yaml|prompt (einzeln) oder matrix|html|bundle|notion (nach Set gruppiert)",
     )
     s.add_argument("paths", nargs="+")
     s.add_argument("--format", "-f", choices=SINGLE_FORMATS + SET_FORMATS, default="md")
     s.add_argument("--mode", "-m", choices=["simulate", "audience"], default="simulate", help="Nur für prompt")
     s.add_argument("--title", default=None, help="Nur für html")
+    s.add_argument(
+        "--target",
+        choices=["api", "mcp"],
+        default="api",
+        help="Nur für notion: api = Blöcke für die Notion-API, mcp = Notion-Markdown für die Notion-MCP-Tools",
+    )
     s.add_argument("--output", "-o", default=None, help="Datei (einzeln/Set) oder Ordner (mehrere Einzel-Exporte)")
     s.set_defaults(func=cmd_render)
 
