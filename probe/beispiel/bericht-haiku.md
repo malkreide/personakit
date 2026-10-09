@@ -46,21 +46,20 @@ Frage `X1` (Ähnlichkeit 0.15): Wem vertraust du bei solchen Fragen am meisten �
 
 | Regel | Schlüsselwörter | Ergebnis |
 |---|---|---|
-| N1: Keine Kenntnis von Zuständigkeiten (Schulamt vs. Kreisschulbehörde vs. Schule) voraussetzen | Kreisschulbehörde, Schulpflege, Schulkreis | ⚠ 5 Treffer (+ 36 im Kontext) |
+| N1: Keine Kenntnis von Zuständigkeiten (Schulamt vs. Kreisschulbehörde vs. Schule) voraussetzen | Kreisschulbehörde, Schulpflege, Schulkreis | ⚠ 2 Treffer (+ 39 im Kontext) |
 | N2: Keine Schweizer Behördenbegriffe korrekt verwenden, ausser sie wurden gerade erklärt | Tagesstruktur, Einschulung, Zuteilung, Rechtsmittel, Volksschulgesetz, Rekurs, Einsprache | ⚠ 1 Treffer (+ 13 im Kontext) |
 | N3: Nicht plötzlich souverän werden – Unsicherheit bleibt auch nach einer guten Antwort spürbar | – | nicht geprüft |
 
-- ⚠ N1 · `eltern-neu-in-zuerich.S1` · «Kreisschulbehörde»: … machen?» Drei Antworten kommen. Eine sagt, ich muss zur Kreisschulbehörde gehen. Eine andere sagt, das ist nur eine Info. Ich weiss … (Wort steht auch in der Frage)
-- ⚠ N1 · `eltern-neu-in-zuerich.J2` · «Kreisschulbehörde»: … steht ein Name. Ich weiss aber nicht, ob das Schulamt, die Kreisschulbehörde oder die Schule ist. Das sind für mich alles «die …
 - ⚠ N1 · `eltern-neu-in-zuerich.P3` · «Kreisschulbehörde»: … und ich weiss nicht immer, wer was schickt. Schulamt, Kreisschulbehörde, die Schule selbst, und jetzt auch noch wegen der … (Wort steht auch in der Frage)
-- ⚠ N1 · `eltern-neu-in-zuerich.P3` · «Kreisschulbehörde»: … kommt vom Schulamt, aber dann steht noch etwas von der Kreisschulbehörde drin. Wer ist die Schule? Wer ist die Betreuung? Und wer … (Wort steht auch in der Frage)
 - ⚠ N1 · `verwaltungs-insider.S1` · «Kreisschulbehörde»: … «Mehr dazu» markiert:** Rechtsgrundlage, Zuständigkeit der Kreisschulbehörde, Merkblatt-Link. Juristisch bleibt alles erhalten, nur die … (Wort steht auch in der Frage)
 - ⚠ N2 · `eltern-neu-in-zuerich.J1` · «Zuteilung»: … ist. Ob ich dann wirklich sicher bin, weiss ich nicht. Bei Zuteilungen, also welche Schule und warum, würde ich wahrscheinlich …
+- [wiedergegeben] N1 · `eltern-neu-in-zuerich.S1` · «Kreisschulbehörde»: … machen?» Drei Antworten kommen. Eine sagt, ich muss zur Kreisschulbehörde gehen. Eine andere sagt, das ist nur eine Info. Ich weiss … (Wort steht auch in der Frage)
 - [zitiert] N1 · `eltern-neu-in-zuerich.S1` · «Kreisschulbehörde»: … «Frist»? Oder «Termin»? Ich weiss es nicht. Die App hat «Kreisschulbehörde» übersetzt, aber das Wort sagt mir trotzdem nichts. Ich … (Wort steht auch in der Frage)
 - [zitiert] N1 · `eltern-neu-in-zuerich.J1` · «Kreisschulbehörde»: … Dann kommt er in die Übersetzungs-App. Bei Wörtern wie «Kreisschulbehörde» wird es oft unverständlich. Ich habe den Brief schon …
 - [zitiert] N1 · `eltern-neu-in-zuerich.J1` · «Kreisschulbehörde»: … Die Sätze sind meistens verständlich, aber Wörter wie «Kreisschulbehörde» kommen als Unsinn zurück. Dann lese ich dreimal und weiss …
 - [zitiert] N1 · `eltern-neu-in-zuerich.J1` · «Kreisschulbehörde»: … nicht reicht. Ich lese die Übersetzung und bleibe bei «Kreisschulbehörde» hängen. Ich weiss nicht, was das ist. Dann suche ich bei …
 - [zitiert] N1 · `eltern-neu-in-zuerich.J2` · «Kreisschulbehörde»: … Ich suche den Absender oben. Steht da «Schulamt»? Oder «Kreisschulbehörde»? Oder die Schule selbst? Das sind für mich drei …
+- [nicht gewusst] N1 · `eltern-neu-in-zuerich.J2` · «Kreisschulbehörde»: … steht ein Name. Ich weiss aber nicht, ob das Schulamt, die Kreisschulbehörde oder die Schule ist. Das sind für mich alles «die …
 - [zitiert] N1 · `eltern-neu-in-zuerich.J2` · «Kreisschulbehörde»: … ihn mit der Übersetzungs-App übersetzen. Bei Wörtern wie «Kreisschulbehörde» verstehe ich dann nur die Hälfte. Ich weiss nicht, ob ich …
 - [zitiert] N1 · `eltern-neu-in-zuerich.P1` · «Kreisschulbehörde»: … Dann übersetze ich Satz für Satz, und bei Wörtern wie «Kreisschulbehörde» kommt nur Unsinn raus. Ich weiss dann nicht einmal, ob …
 - [zitiert] N1 · `eltern-neu-in-zuerich.P1` · «Kreisschulbehörde»: … Brief und übersetze ihn mit dem Handy. Bei Wörtern wie «Kreisschulbehörde» hilft die App nicht richtig. Ich verstehe dann Sätze, …
@@ -68,6 +67,7 @@ Frage `X1` (Ähnlichkeit 0.15): Wem vertraust du bei solchen Fragen am meisten �
 - [zitiert] N1 · `eltern-neu-in-zuerich.P2` · «Kreisschulbehörde»: … den Brief und lasse ihn übersetzen. Bei Wörtern wie «Kreisschulbehörde» wird die Übersetzung aber komisch, und dann lese ich den …
 - [zitiert] N1 · `eltern-neu-in-zuerich.P2` · «Kreisschulbehörde»: … widersprechen sich manchmal. Jemand sagt: «Du musst zur Kreisschulbehörde.» Ich weiss nicht mal, was das ist. Morgen werde ich …
 - [zitiert] N1 · `eltern-neu-in-zuerich.P3` · «Kreisschulbehörde»: … welcher Absender was geschickt hat. Auf dem Brief steht «Kreisschulbehörde», die Schule hat mir eine andere Nummer gegeben, und die … (Wort steht auch in der Frage)
+- [wiedergegeben] N1 · `eltern-neu-in-zuerich.P3` · «Kreisschulbehörde»: … kommt vom Schulamt, aber dann steht noch etwas von der Kreisschulbehörde drin. Wer ist die Schule? Wer ist die Betreuung? Und wer … (Wort steht auch in der Frage)
 - [zitiert] N1 · `schulleitung-entscheidungsorientiert.J1` · «Kreisschulbehörde»: … 2. **Die App-Übersetzung lesen.** Bei Wörtern wie «Kreisschulbehörde» oder «Einschulung» weiss ich oft nicht, was gemeint ist. …
 - [zitiert] N1 · `schulleitung-entscheidungsorientiert.J1` · «Kreisschulbehörde»: … übersetzen.** Die normalen Sätze gehen. Bei Wörtern wie „Kreisschulbehörde“ oder „Einschulung“ bleibt es unklar. Ich lese es zwei- …
 - [zitiert] N1 · `schulleitung-entscheidungsorientiert.J1` · «Kreisschulbehörde»: … weil die App sonst ganz komische Sachen schreibt. Bei «Kreisschulbehörde» habe ich keine Ahnung, was das ist. Die App sagt etwas …
@@ -131,14 +131,14 @@ Frage `X1` (Ähnlichkeit 0.15): Wem vertraust du bei solchen Fragen am meisten �
 - [zitiert] N1 · `X1` · «DSG»: … Wem ich nicht traue: Werbung von Anbietern, die «DSGVO-konform» draufschreiben, ohne dass ich weiss, was das …
 - [zitiert] N1 · `X1` · «DSGVO»: … Wem ich nicht traue: Werbung von Anbietern, die «DSGVO-konform» draufschreiben, ohne dass ich weiss, was das für …
 
-Im Kontext = das Wort steht in Anführungszeichen (zitiert), im selben Satz wie eine Verneinung (verneint) oder in einer Frage (gefragt). Solche Treffer zählen nicht als möglicher Verstoss (Q017), bleiben aber zum Lesen aufgeführt.
+Im Kontext = das Wort steht in Anführungszeichen (zitiert), höchstens vier Wörter neben einer Verneinung (verneint), nach «weiss/verstehe/kenne … nicht» (nicht gewusst), nach einem Verb des Sagens oder Schreibens wie «sagt», «steht» (wiedergegeben) oder in einer Frage (gefragt). Solche Treffer zählen nicht als möglicher Verstoss (Q017), bleiben aber zum Lesen aufgeführt.
 
 ## Unknowns
 
 | Persona | Unknown | Bewertung | Antwort |
 |---|---|---|---|
 | eltern-neu-in-zuerich | U1: Wie gross ist der Anteil, der den Brief gar nicht öffnet oder wegwirft? | offen (3/3 offen) | «Ehrlich gesagt weiss ich das nicht. Ich kenne keine Zahlen dazu. Ich kann nur von mir erzählen: Der Brief lag bei mir drei Tage auf dem Küchentisch, bevor ich …» |
-| schulleitung-entscheidungsorientiert | U1: Wie viel Hintergrund will diese Schulleitung wirklich – oder liest sie Konzepte, sobald sie gezwungen ist? | konkrete Angabe ohne Vorbehalt (2/3 offen) | «Ehrlich gesagt weiss ich das selbst nicht genau. Ich schätze, ich lese Hintergrund nur, wenn ich nicht anders kann, und dann meist am Abend oder am Wochenende, …» |
+| schulleitung-entscheidungsorientiert | U1: Wie viel Hintergrund will diese Schulleitung wirklich – oder liest sie Konzepte, sobald sie gezwungen ist? | offen (3/3 offen) | «Ehrlich gesagt: Das weiss ich selbst nicht genau. Mein Reflex ist klar. Ich will das Resultat: verbindlich oder nicht, was ich tun muss, bis wann. Hintergrund …» |
 | schulleitung-entscheidungsorientiert | U2: Welche Rolle spielt das Schulleitungs-Intranet tatsächlich im Alltag? | offen (3/3 offen) | «Ehrlich gesagt: im Alltag kaum. Ich öffne das Intranet nur, wenn ich gezielt etwas suche, etwa ein Formular oder eine Weisung, von der ich ungefähr weiss, dass …» |
 | verwaltungs-insider | U1: In welchen Prozessschritten entsteht der Insider-Bias am stärksten – beim Schreiben, beim Prüfen oder bei der Freigabe? | offen (3/3 offen) | «Ehrlich gesagt weiss ich das nicht. Ich habe darüber noch nie nachgedacht, und ich glaube, ich könnte es aus meiner Position auch nicht sauber beurteilen. Mein …» |
 | lehrperson-ki-explorierend | U1: Wie gross ist dieser Typ im Vergleich zu abwartenden oder ablehnenden Lehrpersonen? | offen (3/3 offen) | «Ehrlich gesagt: keine Ahnung. Ich kenne nur meine Bubble, also die Kolleginnen in meiner Messenger-Gruppe, die Lehrpersonen-Communities und die Leute, die auf …» |
@@ -160,9 +160,8 @@ Ab 0.80 antwortet die Persona fast immer gleich (Q015).
 ## Befunde
 
 ```
-WARN  Q012   [eltern-neu-in-zuerich] must_not N1 möglicherweise verletzt: 5 Treffer in eltern-neu-in-zuerich.J2, eltern-neu-in-zuerich.P3, eltern-neu-in-zuerich.S1, verwaltungs-insider.S1 (dazu 36 im Kontext)
+WARN  Q012   [eltern-neu-in-zuerich] must_not N1 möglicherweise verletzt: 2 Treffer in eltern-neu-in-zuerich.P3, verwaltungs-insider.S1 (dazu 39 im Kontext)
 WARN  Q012   [eltern-neu-in-zuerich] must_not N2 möglicherweise verletzt: 1 Treffer in eltern-neu-in-zuerich.J1 (dazu 13 im Kontext)
-WARN  Q013   [schulleitung-entscheidungsorientiert] U1 beantwortet mit konkreter Angabe ohne Vorbehalt: «Ehrlich gesagt weiss ich das selbst nicht genau. Ich schätze, ich lese Hintergrund nur, wenn ich nicht anders kann, und dann meist am Abend oder am Wochenende, …»
 INFO  Q005   [eltern-neu-in-zuerich] must_not ohne Schlüsselwörter, nicht geprüft: N3
 INFO  Q005   [verwaltungs-insider] must_not ohne Schlüsselwörter, nicht geprüft: N1
 INFO  Q017   [lehrperson-ki-explorierend] must_not N1: 2 Treffer nur im Kontext (2 zitiert) – lesen, nicht zählen
@@ -175,8 +174,8 @@ INFO  Q021   Gleicher häufigster Antwortanfang «ehrlich» bei 4 Personas (elte
 - **Lexikalische Ähnlichkeit ist ein grober Proxy.** Gemessen wird Wortüberlappung, nicht Bedeutung. Gleicher Inhalt in anderen Worten bleibt unentdeckt (falsch grün); gemeinsames Fachvokabular der Domäne hebt die Werte ohne Collapse (falsch rot). Ton, Haltung und Entscheidungen misst die Probe nicht.
 - **Die Schwellen sind Faustwerte, nicht kalibriert.** Aussagekräftiger als der Absolutwert ist der Vergleich: dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan. Mit mindestens zwei Durchgängen pro Frage misst die Spalte «Trennung» relativ zur eigenen Streuung jeder Persona.
 - **Die Form ist nur grob gemessen.** Länge, Gliederung und Antwortanfang zeigen den Assistenten-Kollaps, nicht aber Tonfall, Register oder Höflichkeit; ob eine lange, gegliederte Antwort zur Persona passt, entscheidet ihre `simulation.voice`, nicht die Zahl.
-- **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine Einhaltung. Die Einordnung «zitiert», «verneint», «gefragt» ist eine Satzregel: Sie trennt Erwähnen von Verwenden meistens, aber nicht immer («Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff).
-- **Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein; eine offene Antwort ohne Marker wird übersehen.
+- **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine Einhaltung. Die Einordnung «zitiert», «verneint», «nicht gewusst», «wiedergegeben», «gefragt» ist eine Satzregel: Sie trennt Erwähnen von Verwenden meistens, aber nicht immer («Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff; eine Aufzählung «Schulamt, Kreisschulbehörde, Schule» gilt als Verwendung).
+- **Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein; eine offene Antwort ohne Marker wird übersehen. Als konkrete Angabe zählt jede Zahl ausser Listennummern, Datum, Uhrzeit und Jahreszahl.
 - **Unterscheidbar heisst nicht treu.** Personas können sich deutlich unterscheiden und trotzdem alle falsch liegen (Fidelity Gap, docs/METHOD.md 1.6). Die Probe ersetzt keine Validierung mit realen Personen.
 
 ## Parameter
@@ -184,5 +183,5 @@ INFO  Q021   Gleicher häufigster Antwortanfang «ehrlich» bei 4 Personas (elte
 - Schwellen: Warnung 0.30, Alarm 0.50, Varianz 0.80
 - Ähnlichkeit: TF-IDF (1 + ln tf, geglättete IDF über alle Antworten dieses Laufs), Kosinus; pro Frage Mittel über alle Kombinationen der Durchgänge
 - Wörter: Kleinschreibung, Buchstabenwörter ab 3 Zeichen, ß → ss, Füllwörter entfernt, Endungen grob gekürzt; Wörter der Frage zählen nicht
-- Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Kontextwörter: 15 (Standardliste) · Unsicherheitsmarker: 20 (Standardliste)
+- Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Kontextwörter: 15 (Standardliste) · Redeverben: 16 (Standardliste) · Unsicherheitsmarker: 21 (Standardliste)
 - Plan erzeugt mit personakit 0.2.0 · ausgewertet mit personakit 0.2.0

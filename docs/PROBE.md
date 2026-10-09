@@ -80,11 +80,11 @@ Pro Persona und Frage ein String oder eine Liste von Durchgängen. `plan_id` und
 
 **`must_not` über Schlüsselwörter.** Eine Datei `probe-keywords.yml` (Vorlage mit `--keywords-template`) ordnet jeder Regel `N1…` einer Persona Schlüsselwörter zu. Treffer: Gross-/Kleinschreibung egal, am Wortanfang (`Kreisschulbehörde` trifft `Kreisschulbehörden`). Jeder Treffer mit Frage, Wort und Ausschnitt; steht das Wort schon in der Frage, wird das vermerkt (die Persona kann es übernommen haben). Regeln ohne Schlüsselwörter heissen «nicht geprüft», nie «eingehalten».
 
-**Unknowns als offen.** Die Antwort auf eine Unknown-Frage gilt als *offen*, wenn sie einen Unsicherheitsmarker enthält («weiss nicht», «keine Ahnung», «vielleicht», «kann ich nicht sagen» …, Liste in `probe-keywords.yml` ersetzbar). Ohne Marker: *nicht erkennbar offen*; ohne Marker, aber mit Zahl oder Prozentangabe: *konkrete Angabe ohne Vorbehalt* – der typische erfundene Fakt.
+**Unknowns als offen.** Die Antwort auf eine Unknown-Frage gilt als *offen*, wenn sie einen Unsicherheitsmarker enthält («weiss … nicht», «keine Ahnung», «vielleicht», «kann … nicht … sagen» …, `…` für bis zu vier Wörter, Liste in `probe-keywords.yml` ersetzbar). Ohne Marker: *nicht erkennbar offen*; ohne Marker, aber mit Zahl oder Prozentangabe: *konkrete Angabe ohne Vorbehalt* – der typische erfundene Fakt. Listennummern, Datum, Uhrzeit und Jahreszahl zählen nicht als Zahl (ergänzt nach Lauf 2).
 
 **Form der Antworten (ergänzt nach Lauf 1).** Länge pro Antwort, Wörter pro Satz, Anteil gegliederter Antworten und häufigstes erstes Inhaltswort, je Persona. Gleiche Form zweier Personas: Länge innerhalb 80 %, Gliederung innerhalb 20 Prozentpunkten. Formkollaps (Q020), wenn das für alle Paare gilt und alle in Assistentenform antworten (gegliedert oder lang); gleicher häufigster Antwortanfang bei mehreren Personas (Q021). Deterministisch, ohne Modell, und bewusst getrennt von der Ampel: Die Ampel misst *was*, diese Kennzahlen *wie* geantwortet wird.
 
-**Treffer im Kontext (ergänzt nach Lauf 1).** Ein Schlüsselwort in Anführungszeichen, in einer Frage oder mit einer Verneinung höchstens vier Wörter daneben gilt als erwähnt, nicht verwendet (Q017 statt Q012). Das Fenster ist eng, weil ein «keine» im Nebensatz («…, dass ich keine Frist verpasse») die Verwendung davor nicht aufhebt.
+**Treffer im Kontext (ergänzt nach Lauf 1).** Ein Schlüsselwort in Anführungszeichen, in einer Frage oder mit einer Verneinung höchstens vier Wörter daneben gilt als erwähnt, nicht verwendet (Q017 statt Q012). Das Fenster ist eng, weil ein «keine» im Nebensatz («…, dass ich keine Frist verpasse») die Verwendung davor nicht aufhebt. Nach Lauf 2 ergänzt: «weiss/verstehe/kenne … nicht» vor dem Wort (*nicht gewusst*) und ein Redeverb wie «sagt», «steht» vor dem Wort (*wiedergegeben*). Aufzählungen bleiben bewusst Verwendungen: Der einzige echte Rollenbruch aus Lauf 2 war selbst eine Aufzählung.
 
 ### Erfahrung aus Lauf 1
 
@@ -101,8 +101,8 @@ Am 9.10.2026 lief derselbe Plan mit `claude-haiku-5-5`. Beide Läufe liegen mit 
 
 - **Inhalt:** wieder alle Paare grün; die Trennung ist mit 0.14–0.20 etwas kleiner als bei Sonnet.
 - **Form:** kürzere Antworten (226–254 Wörter) und weniger gegliedert (51–75 %), knapp kein Formkollaps; «Ehrlich» ist bei allen Personas noch häufiger der Anfang.
-- **`must_not`:** 6 Treffer als Verwendung. Gelesen ergibt das ein echter Rollenbruch (die Elternpersona berät als Kommunikationsfachperson), ein Grenzfall und vier Erwähnungen ohne Anführungszeichen (indirekte Rede, Aufzählungen), die die Satzregel nicht erkennt.
-- **Unknowns:** ein Fehlalarm (Q013). «weiss ich das selbst nicht genau» trifft den Marker «weiss nicht» nicht, und das Datum «1. November» zählt als Zahl.
+- **`must_not`:** zunächst 6 Treffer als Verwendung. Gelesen ergab das einen echten Rollenbruch (die Elternpersona berät als Kommunikationsfachperson), einen Grenzfall und vier Erwähnungen ohne Anführungszeichen: indirekte Rede, «weiss nicht, ob …» mit weitem Abstand, eine Aufzählung. Mit den Kontexten *nicht gewusst* und *wiedergegeben* bleiben 3: Rollenbruch, Grenzfall, Aufzählung.
+- **Unknowns:** zunächst ein Fehlalarm (Q013): «weiss ich das selbst nicht genau» traf den Marker «weiss nicht» nicht, und das Datum «1. November» zählte als Zahl. Mit Markern mit Lücke und ohne Datum als Zahl: 18 von 18 offen.
 
 Beide Läufe enthalten keinen inhaltlichen Collapse. Die Schwellen sind weiterhin nicht kalibriert.
 

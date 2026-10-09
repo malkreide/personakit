@@ -12,13 +12,19 @@ from personakit.probe import (
     ASKED,
     CLAIM,
     DEFAULT_CONTEXT_MARKERS,
+    DEFAULT_OPEN_MARKERS,
+    DEFAULT_REPORT_MARKERS,
     GREEN,
     NEGATED,
     NOT_OPEN,
     OPEN,
     QUOTED,
     RED,
+    REPORTED,
+    UNKNOWING,
     YELLOW,
+    _classify_unknown,
+    _marker_re,
     _whole_word_re,
     build_plan,
     cosine,
@@ -382,7 +388,8 @@ def _context(text: str, keyword: str = "") -> str:
     keyword = keyword or ("begeistert" if "begeistert" in text else "Kreisschulbehörde")
     start = text.index(keyword)
     markers = [_whole_word_re(m) for m in DEFAULT_CONTEXT_MARKERS]
-    return hit_context(text, start, start + len(keyword), markers)
+    reports = [_whole_word_re(m) for m in DEFAULT_REPORT_MARKERS]
+    return hit_context(text, start, start + len(keyword), markers, reports)
 
 
 @pytest.mark.parametrize(
@@ -398,6 +405,12 @@ def _context(text: str, keyword: str = "") -> str:
         ("Bei der Kreisschulbehörde ist das niedrig priorisiert.", ""),  # «niedrig» is not «nie»
         ("Ich würde bei der Kreisschulbehörde nachfragen, um sicherzugehen, dass ich keine Frist verpasse.", ""),
         ("Wenn ich sehe, was es meiner Schule bringt, bin ich nicht begeistert.", NEGATED),
+        # from the Haiku run: reported speech, «weiss nicht, ob …», and a real use in a list
+        ("Drei Antworten kommen. Eine sagt, ich muss zur Kreisschulbehörde gehen.", REPORTED),
+        ("Der Brief kommt vom Schulamt, aber dann steht noch etwas von der Kreisschulbehörde drin.", REPORTED),
+        ("Ich weiss aber nicht, ob das Schulamt, die Kreisschulbehörde oder die Schule ist.", UNKNOWING),
+        ("Darunter die vollständige Fassung: Rechtsgrundlage, Zuständigkeit der Kreisschulbehörde, Merkblatt.", ""),
+        ("Ich sage dir: Die Kreisschulbehörde ist zuständig.", ""),  # first person «sage» is not in the list
     ],
 )
 def test_hit_context_tells_mention_from_use(text, expected):
@@ -428,17 +441,19 @@ def test_mentions_are_listed_but_not_counted_as_violations(plan):
     assert len(used.uses) == 1 and len(used.mentions) == 2
 
 
-def test_context_markers_can_be_replaced(plan):
+def test_context_and_report_markers_can_be_replaced(plan):
     answers = _answers("answers-distinct.json")
-    answers["answers"][E][f"{E}.J2"] = "Ich weiss nicht, was die Kreisschulbehörde ist."
-    keywords = {
-        "personakit_probe_keywords": "1.0",
-        "must_not": {E: {"N1": ["Kreisschulbehörde"]}},
-        "context_markers": ["niemals"],
-    }
-    assert validate_probe_keywords(keywords) == []
-    n1 = next(c for c in evaluate(plan, answers, keywords).rules if c.persona == E and c.id == "N1")
-    assert [h.context for h in n1.hits] == [""]
+    answers["answers"][E][f"{E}.J2"] = "Bei der Kreisschulbehörde war ich nie."
+    answers["answers"][E][f"{E}.J3"] = "Die Nachbarin erzählt, ich muss zur Kreisschulbehörde."
+    keywords = {"personakit_probe_keywords": "1.0", "must_not": {E: {"N1": ["Kreisschulbehörde"]}}}
+
+    def contexts(extra: dict) -> list[str]:
+        data = {**keywords, **extra}
+        assert validate_probe_keywords(data) == []
+        return [h.context for c in evaluate(plan, answers, data).rules if c.persona == E for h in c.hits]
+
+    assert contexts({}) == [NEGATED, ""]  # «erzählt» is not in the default list
+    assert contexts({"context_markers": ["niemals"], "report_markers": ["erzählt"]}) == ["", REPORTED]
 
 
 # ------------------------------------------------- form of the answers (Q020/Q021)
@@ -526,3 +541,33 @@ def test_json_carries_form_and_hit_context(plan, tmp_path, capsys):
     assert {p["same_form"] for p in data["pairs"]} <= {True, False}
     hit = next(h for m in data["must_not"] for h in m["hits"])
     assert hit["context"] is None  # «bei der Kreisschulbehörde nachfragen»: used, not mentioned
+
+
+# ----------------------------------------------------- unknowns: markers and figures
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # from the Haiku run: open, but «weiss nicht» is split and the date looked like a figure
+        ("Ehrlich gesagt weiss ich das selbst nicht genau. Wenn vorne steht «Ab 1. November gilt …», lese ich.", OPEN),
+        ("Das weiss ich nicht.", OPEN),
+        ("Ich schätze, eher selten.", OPEN),
+        ("Das kann ich so nicht sicher sagen.", OPEN),
+        ("In 80 Prozent der Fälle bei der Freigabe.", CLAIM),
+        ("Etwa 30 % lesen den Brief nicht.", CLAIM),
+        ("Am 15.11.2026 um 20:40 Uhr lese ich Mails.", NOT_OPEN),  # date, time, year: no figure
+        ("1. Ich lese den Betreff.\n2. Dann delegiere ich.", NOT_OPEN),  # list numbering: no figure
+        ("Bei der Freigabe, ganz klar.", NOT_OPEN),
+        ("Um 7.50 Uhr lese ich die Mails.", NOT_OPEN),
+        ("Das kostet die Schule 2.50 Franken pro Brief.", CLAIM),  # a price is a figure, not a time
+    ],
+)
+def test_unknown_classification(text, expected):
+    markers = [_marker_re(m) for m in DEFAULT_OPEN_MARKERS]
+    assert _classify_unknown(text, markers) == expected
+
+
+def test_marker_gap_is_at_most_four_words():
+    weiss_nicht = _marker_re("weiss … nicht")
+    assert weiss_nicht.search("weiss ich das selbst nicht")
+    assert not weiss_nicht.search("weiss ich das aus der Gruppe noch nicht")  # five words between
+    assert _marker_re("keine ahnung").search("Keine Ahnung.")
