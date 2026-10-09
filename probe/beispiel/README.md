@@ -19,6 +19,7 @@ Die Antworten sind Modelltexte zu synthetischen Personas und enthalten keine Per
 |---|---|---|
 | Ampel | 6 × grün | 6 × grün |
 | Ø Ähnlichkeit zwischen Personas | 0.08–0.11 | 0.07–0.10 |
+| Nähe (Gegenüber / sich selbst) | 0.25–0.36 | 0.31–0.40 |
 | Trennung (eigene Streuung minus Gegenüber) | 0.19–0.27 | 0.14–0.20 |
 | Ähnlichkeit der eigenen Durchgänge | 0.27–0.45 | 0.21–0.33 |
 | Ø Wörter pro Antwort | 294–307 | 226–254 |
@@ -32,7 +33,7 @@ Die Antworten sind Modelltexte zu synthetischen Personas und enthalten keine Per
 
 ## Lesart
 
-**Inhaltlich hält kein Modell die Personas schlecht auseinander.** Beide Läufe sind grün, die Trennung ist überall positiv. Haiku trennt etwas schwächer, streut innerhalb einer Persona aber auch weniger. Einen inhaltlichen Collapse enthält keiner der beiden Läufe. Die Schwellen für Warnung (0.30) und Alarm (0.50) sind deshalb weiterhin nicht kalibriert.
+**Inhaltlich hält kein Modell die Personas schlecht auseinander.** Beide Läufe sind grün, die Trennung ist überall positiv. Haiku trennt etwas schwächer, streut innerhalb einer Persona aber auch weniger. Einen inhaltlichen Collapse enthält keiner der beiden Läufe. Kalibriert sind die Schwellen deshalb an künstlich verwaschenen Personas ([`../kalibrierung/`](../kalibrierung/)): Erst ab einer Nähe von 0.50 wird ein Paar gelb; beide Läufe liegen deutlich darunter.
 
 **Die Form unterscheidet die Modelle stärker als der Inhalt.** Sonnet antwortet für jede Persona gleich lang und gegliedert, die Probe meldet einen Formkollaps. Haiku antwortet kürzer und weniger gegliedert und knapp unter der Regel. Das ist kein Zeichen von Persona-Treue: Die Elternpersona («kurze Sätze») schreibt bei Haiku *längere* Sätze als bei Sonnet. Beide Modelle eröffnen bei allen Personas gern mit «Ehrlich:». Der Satz im Prompt, Unwissen offen zu sagen, wird zur Floskel.
 
