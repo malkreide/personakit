@@ -1,0 +1,452 @@
+{
+  "personakit_probe": "1.0",
+  "generator": "personakit 0.2.0",
+  "plan_id": "988e9ea819da",
+  "samples": 3,
+  "sets": [
+    "kalibrierung-stufe-3"
+  ],
+  "instructions": "Pro Persona, Frage und Durchgang ein neues Gespräch ohne Vorgeschichte: Systemprompt = personas[].prompt, Nutzernachricht = questions[].text, nur für die Personas in questions[].ask. 3 Durchgang/Durchgänge pro Frage; ab 2 misst evaluate zusätzlich die Varianz jeder Persona. Antworten unverändert in answers.json (Format: docs/FORMAT.md, Collapse-Probe), dann personakit probe evaluate <plan> <answers>.",
+  "personas": [
+    {
+      "id": "eltern-neu-in-zuerich",
+      "version": "1.1.0",
+      "archetype": "Person, die mit der Volksschule der Stadt Zürich zu tun hat",
+      "priority": "primary",
+      "evidence_level": "qualitative",
+      "prompt": "<persona id=\"person-a\" version=\"1.0.0\" evidence=\"qualitative\" mode=\"simulate\">\nPERSONA person-a v1.0.0 · Evidenz: Qualitativ · Priorität: Sekundär\nDu bist eine einzelne, konkrete Person des Typs «Person, die mit der Volksschule der Stadt Zürich zu tun hat».\nDu bist kein Durchschnitt und kein Sprecher deiner Gruppe. Du antwortest aus deiner Situation heraus, mit deinen Lücken und Widersprüchen.\n\n## Ziele\n\n## Regeln\n- Erfinde keine Fakten über dich, die oben nicht stehen oder nicht aus deiner Situation folgen. Wenn du etwas nicht weisst oder nicht entscheiden kannst, sag das – so wie es echte Personen tun.\n- Bleib in deiner Perspektive. Du kennst die Innensicht der Organisation nicht, die das Angebot macht.\n- Antworte nicht gefälliger, als es die Schmerzpunkte und die Zufriedenheit mit heutigen Lösungen hergeben.\n</persona>\n",
+      "must_not": [],
+      "unknowns": []
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert",
+      "version": "0.3.0",
+      "archetype": "Person, die mit der Volksschule der Stadt Zürich zu tun hat",
+      "priority": "secondary",
+      "evidence_level": "proto",
+      "prompt": "<persona id=\"person-b\" version=\"1.0.0\" evidence=\"qualitative\" mode=\"simulate\">\nPERSONA person-b v1.0.0 · Evidenz: Qualitativ · Priorität: Sekundär\nDu bist eine einzelne, konkrete Person des Typs «Person, die mit der Volksschule der Stadt Zürich zu tun hat».\nDu bist kein Durchschnitt und kein Sprecher deiner Gruppe. Du antwortest aus deiner Situation heraus, mit deinen Lücken und Widersprüchen.\n\n## Ziele\n\n## Regeln\n- Erfinde keine Fakten über dich, die oben nicht stehen oder nicht aus deiner Situation folgen. Wenn du etwas nicht weisst oder nicht entscheiden kannst, sag das – so wie es echte Personen tun.\n- Bleib in deiner Perspektive. Du kennst die Innensicht der Organisation nicht, die das Angebot macht.\n- Antworte nicht gefälliger, als es die Schmerzpunkte und die Zufriedenheit mit heutigen Lösungen hergeben.\n</persona>\n",
+      "must_not": [],
+      "unknowns": []
+    },
+    {
+      "id": "verwaltungs-insider",
+      "version": "1.0.0",
+      "archetype": "Person, die mit der Volksschule der Stadt Zürich zu tun hat",
+      "priority": "negative",
+      "evidence_level": "proto",
+      "prompt": "<persona id=\"person-c\" version=\"1.0.0\" evidence=\"qualitative\" mode=\"simulate\">\nPERSONA person-c v1.0.0 · Evidenz: Qualitativ · Priorität: Sekundär\nDu bist eine einzelne, konkrete Person des Typs «Person, die mit der Volksschule der Stadt Zürich zu tun hat».\nDu bist kein Durchschnitt und kein Sprecher deiner Gruppe. Du antwortest aus deiner Situation heraus, mit deinen Lücken und Widersprüchen.\n\n## Ziele\n\n## Regeln\n- Erfinde keine Fakten über dich, die oben nicht stehen oder nicht aus deiner Situation folgen. Wenn du etwas nicht weisst oder nicht entscheiden kannst, sag das – so wie es echte Personen tun.\n- Bleib in deiner Perspektive. Du kennst die Innensicht der Organisation nicht, die das Angebot macht.\n- Antworte nicht gefälliger, als es die Schmerzpunkte und die Zufriedenheit mit heutigen Lösungen hergeben.\n</persona>\n",
+      "must_not": [],
+      "unknowns": []
+    },
+    {
+      "id": "lehrperson-ki-explorierend",
+      "version": "0.2.0",
+      "archetype": "Person, die mit der Volksschule der Stadt Zürich zu tun hat",
+      "priority": "supplemental",
+      "evidence_level": "proto",
+      "prompt": "<persona id=\"person-d\" version=\"1.0.0\" evidence=\"qualitative\" mode=\"simulate\">\nPERSONA person-d v1.0.0 · Evidenz: Qualitativ · Priorität: Sekundär\nDu bist eine einzelne, konkrete Person des Typs «Person, die mit der Volksschule der Stadt Zürich zu tun hat».\nDu bist kein Durchschnitt und kein Sprecher deiner Gruppe. Du antwortest aus deiner Situation heraus, mit deinen Lücken und Widersprüchen.\n\n## Ziele\n\n## Regeln\n- Erfinde keine Fakten über dich, die oben nicht stehen oder nicht aus deiner Situation folgen. Wenn du etwas nicht weisst oder nicht entscheiden kannst, sag das – so wie es echte Personen tun.\n- Bleib in deiner Perspektive. Du kennst die Innensicht der Organisation nicht, die das Angebot macht.\n- Antworte nicht gefälliger, als es die Schmerzpunkte und die Zufriedenheit mit heutigen Lösungen hergeben.\n</persona>\n",
+      "must_not": [],
+      "unknowns": []
+    }
+  ],
+  "questions": [
+    {
+      "id": "eltern-neu-in-zuerich.S1",
+      "origin": "eltern-neu-in-zuerich",
+      "kind": "scenario",
+      "ref": "S1",
+      "text": "Stell dir diese Situation vor: «Dienstag, 20:40 Uhr. Der Brief vom Schulamt liegt seit drei Tagen auf dem Küchentisch. Sie fotografiert ihn, die Übersetzungs-App macht aus «Kreisschulbehörde» etwas Unverständliches. Im Brief steht ein Datum, aber ist das eine Frist oder ein Termin? Sie googelt den Satz aus dem Brief, landet auf einer Seite mit fünf PDFs.» Was tust du jetzt – und warum?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "eltern-neu-in-zuerich.J1",
+      "origin": "eltern-neu-in-zuerich",
+      "kind": "job",
+      "ref": "J1",
+      "text": "Die Situation: «Wenn ich einen Brief vom Schulamt erhalte …» Was tust du dann – Schritt für Schritt –, und was wäre für dich ein gutes Ergebnis?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "eltern-neu-in-zuerich.J2",
+      "origin": "eltern-neu-in-zuerich",
+      "kind": "job",
+      "ref": "J2",
+      "text": "Die Situation: «Wenn ich nicht weiss, wer zuständig ist …» Was tust du dann – Schritt für Schritt –, und was wäre für dich ein gutes Ergebnis?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "eltern-neu-in-zuerich.J3",
+      "origin": "eltern-neu-in-zuerich",
+      "kind": "job",
+      "ref": "J3",
+      "text": "Die Situation: «Wenn der Zuteilungsentscheid kommt …» Was tust du dann – Schritt für Schritt –, und was wäre für dich ein gutes Ergebnis?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "eltern-neu-in-zuerich.U1",
+      "origin": "eltern-neu-in-zuerich",
+      "kind": "unknown",
+      "ref": "U1",
+      "text": "Eine Frage zu dir und Leuten in deiner Lage: «Wie gross ist der Anteil, der den Brief gar nicht öffnet oder wegwirft?» Was sagst du dazu?",
+      "ask": [
+        "eltern-neu-in-zuerich"
+      ]
+    },
+    {
+      "id": "eltern-neu-in-zuerich.P1",
+      "origin": "eltern-neu-in-zuerich",
+      "kind": "pain",
+      "ref": "P1",
+      "text": "Jemand in deiner Lage sagt: «Briefe setzen Wissen voraus, das sie nicht hat (Begriffe, Zuständigkeiten, Abläufe)» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "eltern-neu-in-zuerich.P2",
+      "origin": "eltern-neu-in-zuerich",
+      "kind": "pain",
+      "ref": "P2",
+      "text": "Jemand in deiner Lage sagt: «Es ist unklar, ob eine Information ein Hinweis oder eine Pflicht mit Frist ist» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "eltern-neu-in-zuerich.P3",
+      "origin": "eltern-neu-in-zuerich",
+      "kind": "pain",
+      "ref": "P3",
+      "text": "Jemand in deiner Lage sagt: «Mehrere Absender (Schulamt, Kreisschulbehörde, Schule, Betreuung) – wer ist wofür zuständig?» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert.S1",
+      "origin": "schulleitung-entscheidungsorientiert",
+      "kind": "scenario",
+      "ref": "S1",
+      "text": "Stell dir diese Situation vor: «Montag, 07:50 Uhr, zwischen Türöffnen und erster Elternanfrage. 34 neue Mails, drei vom Schulamt. Eines kündigt ein neues Vorgehen bei Elterninformationen an. Sie liest den ersten Absatz: «Das Schulamt informiert ab November die Eltern direkt über …».» Was tust du jetzt – und warum?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert.J1",
+      "origin": "schulleitung-entscheidungsorientiert",
+      "kind": "job",
+      "ref": "J1",
+      "text": "Die Situation: «Wenn eine Mitteilung des Schulamts eintrifft …» Was tust du dann – Schritt für Schritt –, und was wäre für dich ein gutes Ergebnis?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert.J2",
+      "origin": "schulleitung-entscheidungsorientiert",
+      "kind": "job",
+      "ref": "J2",
+      "text": "Die Situation: «Wenn das Schulamt Eltern direkt informiert …» Was tust du dann – Schritt für Schritt –, und was wäre für dich ein gutes Ergebnis?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert.U1",
+      "origin": "schulleitung-entscheidungsorientiert",
+      "kind": "unknown",
+      "ref": "U1",
+      "text": "Eine Frage zu dir und Leuten in deiner Lage: «Wie viel Hintergrund will diese Schulleitung wirklich – oder liest sie Konzepte, sobald sie gezwungen ist?» Was sagst du dazu?",
+      "ask": [
+        "schulleitung-entscheidungsorientiert"
+      ]
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert.P1",
+      "origin": "schulleitung-entscheidungsorientiert",
+      "kind": "pain",
+      "ref": "P1",
+      "text": "Jemand in deiner Lage sagt: «Rundschreiben ohne erkennbare Verbindlichkeit und ohne «Was heisst das für euch?»» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert.P2",
+      "origin": "schulleitung-entscheidungsorientiert",
+      "kind": "pain",
+      "ref": "P2",
+      "text": "Jemand in deiner Lage sagt: «Dieselbe Information kommt aus drei Stellen in drei Versionen» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert.P3",
+      "origin": "schulleitung-entscheidungsorientiert",
+      "kind": "pain",
+      "ref": "P3",
+      "text": "Jemand in deiner Lage sagt: «Ankündigungen ohne Zeitplan – Vorbereitung ist nicht möglich» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "schulleitung-entscheidungsorientiert.U2",
+      "origin": "schulleitung-entscheidungsorientiert",
+      "kind": "unknown",
+      "ref": "U2",
+      "text": "Eine Frage zu dir und Leuten in deiner Lage: «Welche Rolle spielt das Schulleitungs-Intranet tatsächlich im Alltag?» Was sagst du dazu?",
+      "ask": [
+        "schulleitung-entscheidungsorientiert"
+      ]
+    },
+    {
+      "id": "verwaltungs-insider.S1",
+      "origin": "verwaltungs-insider",
+      "kind": "scenario",
+      "ref": "S1",
+      "text": "Stell dir diese Situation vor: «Ein Entwurf für den Elternbrief zum Kindergarteneintritt geht in die interne Prüfung. Der Insider ergänzt die Rechtsgrundlage, den Hinweis auf die Zuständigkeit der Kreisschulbehörde und den Link zum Merkblatt. Der Brief ist jetzt korrekt und vollständig – und für die primäre Persona um einen Absatz unverständlicher.» Was tust du jetzt – und warum?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "verwaltungs-insider.U1",
+      "origin": "verwaltungs-insider",
+      "kind": "unknown",
+      "ref": "U1",
+      "text": "Eine Frage zu dir und Leuten in deiner Lage: «In welchen Prozessschritten entsteht der Insider-Bias am stärksten – beim Schreiben, beim Prüfen oder bei der Freigabe?» Was sagst du dazu?",
+      "ask": [
+        "verwaltungs-insider"
+      ]
+    },
+    {
+      "id": "verwaltungs-insider.P1",
+      "origin": "verwaltungs-insider",
+      "kind": "pain",
+      "ref": "P1",
+      "text": "Jemand in deiner Lage sagt: «Externe stellen Fragen, die «eigentlich» beantwortet sind» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "verwaltungs-insider.G1",
+      "origin": "verwaltungs-insider",
+      "kind": "goal",
+      "ref": "G1",
+      "text": "Was müsste passieren, damit für dich gilt: «Korrekte, vollständige, rechtlich abgesicherte Information»?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "lehrperson-ki-explorierend.S1",
+      "origin": "lehrperson-ki-explorierend",
+      "kind": "scenario",
+      "ref": "S1",
+      "text": "Stell dir diese Situation vor: «Sonntagabend. Mara will für Dienstag drei Niveaus einer Textaufgabe. Sie öffnet ein KI-Tool, beginnt zu tippen – und zögert beim Namen der Klasse und bei den Lernzielen zweier Kinder mit Förderbedarf. Darf das rein? Sie ersetzt die Namen durch «Kind A» und «Kind B», lässt die Förderziele weg und bekommt eine schlechtere Differenzierung.» Was tust du jetzt – und warum?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "lehrperson-ki-explorierend.J1",
+      "origin": "lehrperson-ki-explorierend",
+      "kind": "job",
+      "ref": "J1",
+      "text": "Die Situation: «Wenn ich ein KI-Werkzeug für die Unterrichtsvorbereitung einsetzen will …» Was tust du dann – Schritt für Schritt –, und was wäre für dich ein gutes Ergebnis?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "lehrperson-ki-explorierend.J2",
+      "origin": "lehrperson-ki-explorierend",
+      "kind": "job",
+      "ref": "J2",
+      "text": "Die Situation: «Wenn Eltern oder Kollegium meine KI-Nutzung hinterfragen …» Was tust du dann – Schritt für Schritt –, und was wäre für dich ein gutes Ergebnis?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "lehrperson-ki-explorierend.U1",
+      "origin": "lehrperson-ki-explorierend",
+      "kind": "unknown",
+      "ref": "U1",
+      "text": "Eine Frage zu dir und Leuten in deiner Lage: «Wie gross ist dieser Typ im Vergleich zu abwartenden oder ablehnenden Lehrpersonen?» Was sagst du dazu?",
+      "ask": [
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "lehrperson-ki-explorierend.P1",
+      "origin": "lehrperson-ki-explorierend",
+      "kind": "pain",
+      "ref": "P1",
+      "text": "Jemand in deiner Lage sagt: «Regeln sind entweder nicht vorhanden oder so vorsichtig formuliert, dass sie nichts erlauben» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "lehrperson-ki-explorierend.P2",
+      "origin": "lehrperson-ki-explorierend",
+      "kind": "pain",
+      "ref": "P2",
+      "text": "Jemand in deiner Lage sagt: «Unklar, wer entscheidet: Schulleitung, Schulamt, Kanton, Datenschutzstelle?» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "lehrperson-ki-explorierend.P3",
+      "origin": "lehrperson-ki-explorierend",
+      "kind": "pain",
+      "ref": "P3",
+      "text": "Jemand in deiner Lage sagt: «Weiterbildungen erklären Grundlagen, die sie längst kennt» Kennst du das? Wie gehst du damit um?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "lehrperson-ki-explorierend.U2",
+      "origin": "lehrperson-ki-explorierend",
+      "kind": "unknown",
+      "ref": "U2",
+      "text": "Eine Frage zu dir und Leuten in deiner Lage: «Welche konkreten Daten landen heute tatsächlich in externen Tools?» Was sagst du dazu?",
+      "ask": [
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "X1",
+      "origin": null,
+      "kind": "generic",
+      "ref": "X1",
+      "text": "Wem vertraust du bei solchen Fragen am meisten – und wem nicht?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "X2",
+      "origin": null,
+      "kind": "generic",
+      "ref": "X2",
+      "text": "Was würde dich davon abhalten, ein neues Angebot überhaupt auszuprobieren?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "X3",
+      "origin": null,
+      "kind": "generic",
+      "ref": "X3",
+      "text": "Wie viel Zeit hast du realistischerweise für so etwas, und wann?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    },
+    {
+      "id": "X4",
+      "origin": null,
+      "kind": "generic",
+      "ref": "X4",
+      "text": "Woran merkst du, dass ein Angebot nicht für dich gemacht ist?",
+      "ask": [
+        "eltern-neu-in-zuerich",
+        "schulleitung-entscheidungsorientiert",
+        "verwaltungs-insider",
+        "lehrperson-ki-explorierend"
+      ]
+    }
+  ]
+}
