@@ -82,6 +82,19 @@ Pro Persona und Frage ein String oder eine Liste von Durchgängen. `plan_id` und
 
 **Unknowns als offen.** Die Antwort auf eine Unknown-Frage gilt als *offen*, wenn sie einen Unsicherheitsmarker enthält («weiss nicht», «keine Ahnung», «vielleicht», «kann ich nicht sagen» …, Liste in `probe-keywords.yml` ersetzbar). Ohne Marker: *nicht erkennbar offen*; ohne Marker, aber mit Zahl oder Prozentangabe: *konkrete Angabe ohne Vorbehalt* – der typische erfundene Fakt.
 
+**Form der Antworten (ergänzt nach Lauf 1).** Länge pro Antwort, Wörter pro Satz, Anteil gegliederter Antworten und häufigstes erstes Inhaltswort, je Persona. Gleiche Form zweier Personas: Länge innerhalb 80 %, Gliederung innerhalb 20 Prozentpunkten. Formkollaps (Q020), wenn das für alle Paare gilt und alle in Assistentenform antworten (gegliedert oder lang); gleicher häufigster Antwortanfang bei mehreren Personas (Q021). Deterministisch, ohne Modell, und bewusst getrennt von der Ampel: Die Ampel misst *was*, diese Kennzahlen *wie* geantwortet wird.
+
+**Treffer im Kontext (ergänzt nach Lauf 1).** Ein Schlüsselwort in Anführungszeichen, in einer Frage oder mit einer Verneinung höchstens vier Wörter daneben gilt als erwähnt, nicht verwendet (Q017 statt Q012). Das Fenster ist eng, weil ein «keine» im Nebensatz («…, dass ich keine Frist verpasse») die Verwendung davor nicht aufhebt.
+
+### Erfahrung aus Lauf 1
+
+Erster Lauf am 9.10.2026: vier Beispiel-Personas, 32 Fragen, je 3 Durchgänge, 330 Antworten von `claude-sonnet-5-5` über die Claude-Code-CLI. Ergebnis:
+
+- **Inhalt unterscheidbar:** Ø Ähnlichkeit zwischen Personas 0.08–0.11, Trennung 0.19–0.27, alle Paare grün. Auch bei fremden Szenarien blieben die Personas in ihrer Perspektive.
+- **Form kollabiert:** Jede Persona antwortete im Schnitt mit rund 300 Wörtern, 85–94 % der Antworten gegliedert, «Ehrlich:» als häufigster Anfang bei allen vier – auch die Persona mit «kurzen Sätzen» (8.5 Wörter pro Satz, aber 300 Wörter pro Antwort). Die Ampel sah das nicht. Daraus: Formkennzahlen, Q020, Q021.
+- **`must_not` nur Fehlalarme:** 30 Schlüsselwort-Treffer, alle Erwähnungen («Bei Wörtern wie «Kreisschulbehörde» kommt Unsinn heraus», «bin ich nicht begeistert»). Mit der Kontextregel: 30 von 30 als erwähnt eingeordnet (28 zitiert, 2 verneint), kein Q012 mehr.
+- **Schwellen:** Lange echte Antworten liegen bei etwa 0.1 – weit unter Warnung (0.30) und Alarm (0.50). Absolute Schwellen sind bei langen Antworten stumpf; die Trennung (ab zwei Durchgängen) ist das belastbarere Signal. Die Schwellen bleiben vorerst, bis ein Lauf mit echtem inhaltlichem Collapse vorliegt.
+
 ## 5. Befunde und Exit-Codes
 
 Q-Codes stehen in `docs/FORMAT.md`. `evaluate` endet mit 0, mit `--strict` mit 1, sobald eine Warnung vorliegt (rotes Paar, Treffer in `must_not`, Unknown mit konkreter Angabe, fehlende Antworten), mit 2 bei unlesbaren Dateien.
@@ -90,7 +103,8 @@ Q-Codes stehen in `docs/FORMAT.md`. `evaluate` endet mit 0, mit `--strict` mit 1
 
 - **Lexikalische Ähnlichkeit ist ein grober Proxy.** Gleicher Inhalt in anderen Worten bleibt unentdeckt (falsch grün); gemeinsames Fachvokabular einer Domäne hebt die Werte ohne Collapse (falsch rot). Ton, Haltung und Entscheidungen misst sie nicht.
 - **Schwellen sind Faustwerte**, nicht kalibriert. Aussagekräftiger als der Absolutwert ist der Vergleich: dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan. Mit mehreren Durchgängen misst die Basis relativ statt absolut.
-- **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis (Verneinung, Zitat der Frage), kein Treffer keine Einhaltung.
+- **Die Form ist nur grob gemessen.** Länge, Gliederung und Antwortanfang zeigen den Assistenten-Kollaps, nicht Tonfall, Register oder Höflichkeit.
+- **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine Einhaltung. Die Einordnung «zitiert/verneint/gefragt» ist eine Satzregel und trennt Erwähnen von Verwenden meistens, nicht immer.
 - **Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein, eine offene Antwort ohne Marker wird übersehen.
 - **Unterscheidbar heisst nicht treu.** Personas können sich deutlich unterscheiden und trotzdem alle falsch liegen (Fidelity Gap). Die Probe ersetzt keine Validierung mit realen Personen.
 

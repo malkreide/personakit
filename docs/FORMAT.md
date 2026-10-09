@@ -414,9 +414,10 @@ must_not:
     N1: [Kreisschulbehörde, Schulpflege]   # Regel N1 aus probe.json
     N2: [Tagesstruktur, Einschulung]
 open_markers: [weiss nicht, keine ahnung, vielleicht]   # optional: ersetzt die Standardliste
+context_markers: [nicht, kein, keine, nie]               # optional: ersetzt die Standardliste der Verneinungen
 ```
 
-Schema `schema/probe-keywords.schema.json`. Schlüsselwörter treffen am Wortanfang, Gross-/Kleinschreibung egal (`Kreisschulbehörde` trifft `Kreisschulbehörden`).
+Schema `schema/probe-keywords.schema.json`. Schlüsselwörter treffen am Wortanfang, Gross-/Kleinschreibung egal (`Kreisschulbehörde` trifft `Kreisschulbehörden`). Kontextwörter (Verneinungen) treffen nur ganze Wörter (`nie` trifft nicht `niedrig`); Standardliste: nicht, nichts, kein, keine, keinen, keinem, keiner, keines, nie, niemals, weder, ohne, unklar, unbekannt, unverständlich.
 
 ### `probe evaluate <plan> <answers>`
 
@@ -424,11 +425,11 @@ Schema `schema/probe-keywords.schema.json`. Schlüsselwörter treffen am Wortanf
 |---|---|
 | `-k`, `--keywords` | Schlüsselwort-Datei; ohne sie gelten alle `must_not`-Regeln als «nicht geprüft» |
 | `--warn`, `--alarm` | Schwellen für die Ampel (Default 0.30 und 0.50; `0 < warn ≤ alarm ≤ 1`) |
-| `--json` | Ergebnis als JSON (`pairs`, `variance`, `must_not`, `unknowns`, `findings`, `limits`) |
+| `--json` | Ergebnis als JSON (`pairs` mit `same_form`, `variance`, `form`, `form_collapse`, `must_not` mit `context` je Treffer, `unknowns`, `findings`, `limits`) |
 | `--strict` | Exit 1 bei jeder Warnung |
 | `-o` | Bericht als Datei, sonst stdout |
 
-Der Markdown-Bericht enthält: Ampel pro Persona-Paar (Ø und maximale Ähnlichkeit, Anteil der Fragen ≥ Alarm, gemeinsame Fragen, Trennung), die ähnlichsten Antworten der auffälligen Paare mit den Wörtern, die die Ähnlichkeit tragen, die `must_not`-Prüfung pro Regel mit Treffern, die Unknown-Prüfung, bei mehreren Durchgängen die Varianz je Persona, die Befunde, die **Grenzen der Methode** und die Parameter.
+Der Markdown-Bericht enthält: Ampel pro Persona-Paar (Ø und maximale Ähnlichkeit, Anteil der Fragen ≥ Alarm, gemeinsame Fragen, Trennung, Form gleich oder verschieden), die **Form der Antworten** je Persona, die ähnlichsten Antworten der auffälligen Paare mit den Wörtern, die die Ähnlichkeit tragen, die `must_not`-Prüfung pro Regel mit Treffern (Verwendungen und Erwähnungen getrennt), die Unknown-Prüfung, bei mehreren Durchgängen die Varianz je Persona, die Befunde, die **Grenzen der Methode** und die Parameter.
 
 **Ähnlichkeit:** TF-IDF-Kosinus (`1 + ln tf`, geglättete IDF über alle Antworten des Laufs) auf Buchstabenwörtern ab drei Zeichen, Füllwörter entfernt, Endungen grob gekürzt, ohne die Wörter der Frage. Pro Frage und Paar das Mittel über alle Kombinationen der Durchgänge; **Trennung** = Ø(Ähnlichkeit der eigenen Durchgänge beider Personas) − Ähnlichkeit zwischen ihnen, nur über Fragen mit mindestens zwei Durchgängen je Persona.
 
@@ -438,6 +439,19 @@ Der Markdown-Bericht enthält: Ampel pro Persona-Paar (Ø und maximale Ähnlichk
 | 🟡 gelb | Ø ≥ Warnung · mindestens ein Viertel der gemeinsamen Fragen ≥ Alarm · Trennung ≤ 0 |
 | 🟢 grün | sonst |
 | ⚪ keine Daten | keine gemeinsam beantwortete Frage |
+
+**Form der Antworten:** Die Ampel vergleicht Wörter; den Assistenten-Kollaps – alle Personas antworten gleich lang, gegliedert und mit denselben Floskeln, nur mit anderem Vokabular – sieht sie nicht. Deshalb misst `evaluate` je Persona über alle ihre Antworten:
+
+| Kennzahl | Messung |
+|---|---|
+| Ø Wörter | Wörter pro Antwort, ohne Markdown und Aufzählungszeichen |
+| Ø Wörter pro Satz | Sätze an `.`, `!`, `?`, `…` und Zeilenumbrüchen getrennt (ein Listenpunkt ist ein Satz) |
+| Mit Gliederung | Anteil der Antworten mit Überschrift (`#`), Aufzählung (`-`, `*`, `•`, `1.`) oder **fettem** Einstieg |
+| Häufigster Anfang | erstes Inhaltswort (ohne Füllwörter, ab 3 Zeichen) und sein Anteil, z. B. «ehrlich» bei «Ehrlich:», «Ehrlich gesagt» |
+
+Zwei Personas haben **gleiche Form**, wenn die kürzere Ø-Länge mindestens 80 % der längeren beträgt und der Anteil gegliederter Antworten höchstens 20 Prozentpunkte auseinanderliegt (Spalte «Form» in der Ampeltabelle; fliesst nicht in die Ampel ein). **Formkollaps** (Q020): alle Paare gleiche Form, und alle Personas antworten in Assistentenform (mindestens 50 % gegliedert oder Ø mindestens 150 Wörter). Kurze, ungegliederte Antworten gleicher Länge sind kein Formkollaps: So sprechen Menschen. Ob eine lange Antwort zur Persona passt, sagt ihre `simulation.voice`.
+
+**Treffer im Kontext:** Ein Schlüsselwort ist *erwähnt*, nicht *verwendet*, wenn es in Anführungszeichen steht (`«…»`, `„…“`, `“…”`, `"…"`, `‹…›` – *zitiert*), wenn höchstens vier Wörter davor oder danach im selben Satz ein Kontextwort steht (*verneint*: «Ich weiss nicht, was die Kreisschulbehörde ist») oder wenn der Satz mit `?` endet (*gefragt*). Erwähnungen zählen nicht als möglicher Verstoss (Q012), sondern als Q017, und stehen im Bericht mit `[zitiert]`, `[verneint]` oder `[gefragt]` zum Lesen. Grenze der Satzregel: «Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff und gilt trotzdem als verneint.
 
 **Unknowns:** Eine Antwort auf eine Unknown-Frage ist *offen*, wenn sie einen Unsicherheitsmarker enthält; ohne Marker *nicht erkennbar offen*; ohne Marker, aber mit Zahl oder «Prozent» eine *konkrete Angabe ohne Vorbehalt*. Bei mehreren Durchgängen zählt der ungünstigste.
 
@@ -455,10 +469,13 @@ Exit-Codes: 0 nach der Auswertung, mit `--strict` 1 bei mindestens einer Warnung
 | Q006 | WARN | Schlüsselwörter für eine unbekannte Persona oder Regel – nicht geprüft |
 | Q010 | WARN | Persona-Paar rot: Collapse-Verdacht |
 | Q011 | INFO | Persona-Paar gelb: prüfen |
-| Q012 | WARN | Schlüsselwort einer `must_not`-Regel in einer Antwort der Persona |
+| Q012 | WARN | Schlüsselwort einer `must_not`-Regel in einer Antwort der Persona verwendet (nicht nur erwähnt, siehe Q017) |
 | Q013 | WARN | Unknown mit konkreter Angabe ohne Vorbehalt beantwortet |
 | Q014 | INFO | Unknown nicht erkennbar als offen behandelt |
 | Q015 | INFO | Durchgänge einer Persona fast gleich (Ø ≥ 0.80): Varianz kollabiert |
 | Q016 | INFO | Weniger als 3 gemeinsame Fragen – Ampel wenig belastbar |
+| Q017 | INFO | Treffer einer `must_not`-Regel nur im Kontext (zitiert, verneint, gefragt) – lesen, nicht zählen |
+| Q020 | WARN | Formkollaps: alle Personas gleich lang und gleich gegliedert, in Assistentenform |
+| Q021 | INFO | Dasselbe Wort ist bei mindestens zwei Personas der häufigste Antwortanfang (je mindestens 10 %) |
 
-Alle Q-Befunde gehen auf `docs/METHOD.md` 1.6 zurück: Collapse (Q010/Q011), kollabierte Varianz (Q015), erfundene Fakten statt offener Fragen (Q013/Q014), Verletzung der Simulationsregeln (Q012). Q001–Q006 und Q016 sichern ab, dass fehlende oder unpassende Daten nicht still als Ergebnis zählen.
+Alle Q-Befunde gehen auf `docs/METHOD.md` 1.6 zurück: Collapse (Q010/Q011), Collapse der Form – «zu rational», Assistentenregister (Q020/Q021), kollabierte Varianz (Q015), erfundene Fakten statt offener Fragen (Q013/Q014), Verletzung der Simulationsregeln (Q012). Q001–Q006 und Q016 sichern ab, dass fehlende oder unpassende Daten nicht still als Ergebnis zählen.

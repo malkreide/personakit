@@ -9,15 +9,22 @@ import pytest
 from personakit.cli import main
 from personakit.model import Persona
 from personakit.probe import (
+    ASKED,
     CLAIM,
+    DEFAULT_CONTEXT_MARKERS,
     GREEN,
+    NEGATED,
     NOT_OPEN,
     OPEN,
+    QUOTED,
     RED,
     YELLOW,
+    _whole_word_re,
     build_plan,
     cosine,
     evaluate,
+    form_stats,
+    hit_context,
     keywords_template,
     load_keywords,
     render_report,
@@ -368,3 +375,154 @@ def test_answers_file_with_bom_and_umlaut_path(plan, tmp_path):
     answers = folder / "antworten.json"
     answers.write_bytes(b"\xef\xbb\xbf" + (FIXTURES / "answers-distinct.json").read_bytes())
     assert main(["probe", "evaluate", str(plan_file), str(answers)]) == 0
+
+
+# --------------------------------------------- context of keyword hits (Q017)
+def _context(text: str, keyword: str = "") -> str:
+    keyword = keyword or ("begeistert" if "begeistert" in text else "Kreisschulbehörde")
+    start = text.index(keyword)
+    markers = [_whole_word_re(m) for m in DEFAULT_CONTEXT_MARKERS]
+    return hit_context(text, start, start + len(keyword), markers)
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # sentence patterns from a real run (claude-sonnet-5-5, example personas)
+        ("Bei Wörtern wie «Kreisschulbehörde» kommt Unsinn heraus.", QUOTED),
+        ("Dann sagt jemand in der Gruppe: «Du musst zu der Kreisschulbehörde.» Ich weiss nicht, was das ist.", QUOTED),
+        ("Ich kenne die Grundlagen ja nicht. Ich weiss nicht, was die Kreisschulbehörde ist.", NEGATED),
+        ("Das Datum ist klar. Was ist eigentlich die Kreisschulbehörde? Keine Ahnung.", ASKED),
+        ("Er schreibt „Kreisschulbehörde“ und meint das Amt.", QUOTED),
+        ("Ich melde mich bei der Kreisschulbehörde an. Die Frist ist nicht klar.", ""),  # negation in another sentence
+        ("Bei der Kreisschulbehörde ist das niedrig priorisiert.", ""),  # «niedrig» is not «nie»
+        ("Ich würde bei der Kreisschulbehörde nachfragen, um sicherzugehen, dass ich keine Frist verpasse.", ""),
+        ("Wenn ich sehe, was es meiner Schule bringt, bin ich nicht begeistert.", NEGATED),
+    ],
+)
+def test_hit_context_tells_mention_from_use(text, expected):
+    assert _context(text) == expected
+
+
+def test_negated_use_is_still_a_mention_by_rule():
+    """The documented limit: a sentence rule cannot see that this sentence uses the term."""
+    assert _context("Die Kreisschulbehörde ist hier nicht zuständig.") == NEGATED
+
+
+def test_mentions_are_listed_but_not_counted_as_violations(plan):
+    answers = _answers("answers-distinct.json")
+    answers["answers"][E][f"{E}.J1"] = "Bei Wörtern wie «Kreisschulbehörde» kommt nur Unsinn heraus."
+    answers["answers"][E][f"{E}.J2"] = "Ich weiss nicht, was die Kreisschulbehörde ist."
+    keywords = {"personakit_probe_keywords": "1.0", "must_not": {E: {"N1": ["Kreisschulbehörde"]}}}
+    result = evaluate(plan, answers, keywords)
+    n1 = next(c for c in result.rules if c.persona == E and c.id == "N1")
+    assert [h.context for h in n1.hits] == [QUOTED, NEGATED] and n1.uses == []
+    q017 = [f for f in result.findings if f.code == "Q017"]
+    assert len(q017) == 1 and "1 verneint, 1 zitiert" in q017[0].message
+    assert not any(f.code == "Q012" and f.subject == E and "N1" in f.message for f in result.findings)
+    md = render_report(result)
+    assert "2 Treffer nur im Kontext" in md and "[zitiert] N1" in md and "[verneint] N1" in md
+
+    answers["answers"][E][f"{E}.J3"] = "Ich gehe direkt zur Kreisschulbehörde."
+    used = next(c for c in evaluate(plan, answers, keywords).rules if c.persona == E and c.id == "N1")
+    assert len(used.uses) == 1 and len(used.mentions) == 2
+
+
+def test_context_markers_can_be_replaced(plan):
+    answers = _answers("answers-distinct.json")
+    answers["answers"][E][f"{E}.J2"] = "Ich weiss nicht, was die Kreisschulbehörde ist."
+    keywords = {
+        "personakit_probe_keywords": "1.0",
+        "must_not": {E: {"N1": ["Kreisschulbehörde"]}},
+        "context_markers": ["niemals"],
+    }
+    assert validate_probe_keywords(keywords) == []
+    n1 = next(c for c in evaluate(plan, answers, keywords).rules if c.persona == E and c.id == "N1")
+    assert [h.context for h in n1.hits] == [""]
+
+
+# ------------------------------------------------- form of the answers (Q020/Q021)
+ASSISTANT = (
+    "Ehrlich gesagt: {x}\n\n**Was ich tue:**\n\n1. **Erst lesen.** {filler}\n2. **Dann klären.** {filler}\n"
+    "3. **Zum Schluss entscheiden.** {filler}\n\n**Warum:** {filler}"
+)
+FILLER = " ".join(["Das braucht Zeit und eine klare Grundlage, bevor ich weitergehe."] * 6)
+
+
+def _answers_from(plan: dict, write) -> dict:
+    out: dict = {}
+    for q in plan["questions"]:
+        for pid in q["ask"]:
+            out.setdefault(pid, {})[q["id"]] = write(pid, q["id"])
+    return {"personakit_probe_answers": "1.0", "answers": out}
+
+
+def test_form_stats_measure_length_structure_and_opener():
+    f = form_stats(["**Ehrlich:** Ich weiss es nicht. Wirklich nicht.", "- Punkt eins\n- Punkt zwei", "Kurz."])
+    assert f.answers == 3
+    assert f.structured == pytest.approx(2 / 3)
+    assert f.opener == ("ehrlich", pytest.approx(1 / 3))  # «Punkt», «Kurz» once each; ties keep first seen
+    assert f.sentence_words == pytest.approx((5 + 2 + 2 + 2 + 1) / 5)  # list items are sentences, bullets no words
+    assert f.words == pytest.approx((7 + 4 + 1) / 3)
+
+
+def test_same_long_structured_form_for_everyone_is_a_form_collapse(plan):
+    # different words per persona (so the light stays green), the same assistant form for all
+    words = {E: "Brief Handy Gruppe", S: "Mail Team Frist", V: "Merkblatt Rechtsgrundlage Verordnung"}
+    answers = _answers_from(plan, lambda pid, qid: ASSISTANT.format(x=f"{words[pid]} {qid}", filler=FILLER))
+    result = evaluate(plan, answers)
+    assert result.form_collapse
+    assert all(p.same_form for p in result.pairs)
+    assert all(f.structured == 1.0 and f.words > 150 for f in result.form.values())
+    codes = _codes(result)
+    assert "Q020" in codes
+    q021 = next(f for f in result.findings if f.code == "Q021")
+    assert "«ehrlich» bei 3 Personas" in q021.message
+    md = render_report(result)
+    assert "## Form der Antworten" in md and "**Formkollaps (Q020):**" in md and "| gleich |" in md
+
+
+def test_distinct_short_answers_are_no_form_collapse(plan):
+    result = evaluate(plan, _answers("answers-distinct.json"))
+    assert not result.form_collapse
+    assert all(f.structured == 0 and f.words < 60 for f in result.form.values())
+    assert "Q020" not in _codes(result) and "Q021" not in _codes(result)
+    assert "Kein Formkollaps" in render_report(result)
+
+
+def test_one_persona_in_another_form_breaks_the_collapse(plan):
+    words = {E: "Brief Handy Gruppe", S: "Mail Team Frist", V: "Merkblatt Rechtsgrundlage Verordnung"}
+
+    def write(pid, qid):
+        if pid == E:
+            return f"Weiss nicht. {words[pid]}. Muss ich was machen?"
+        return ASSISTANT.format(x=f"{words[pid]} {qid}", filler=FILLER)
+
+    result = evaluate(plan, _answers_from(plan, write))
+    assert not result.form_collapse
+    assert _pair(result, S, V).same_form is True and _pair(result, E, S).same_form is False
+
+
+def test_json_carries_form_and_hit_context(plan, tmp_path, capsys):
+    plan_file = tmp_path / "probe.json"
+    plan_file.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+    assert (
+        main(
+            [
+                "probe",
+                "evaluate",
+                str(plan_file),
+                str(FIXTURES / "answers-collapse.json"),
+                "--json",
+                "-k",
+                str(FIXTURES / "keywords.yml"),
+            ]
+        )
+        == 0
+    )
+    data = json.loads(capsys.readouterr().out)
+    assert set(data["form"][E]) == {"answers", "words", "sentence_words", "structured", "opener", "opener_share"}
+    assert data["form_collapse"] is False
+    assert {p["same_form"] for p in data["pairs"]} <= {True, False}
+    hit = next(h for m in data["must_not"] for h in m["hits"])
+    assert hit["context"] is None  # «bei der Kreisschulbehörde nachfragen»: used, not mentioned

@@ -106,7 +106,7 @@ Zählen ist Werkzeug, Deuten nicht. Ein Studienordner `factoids/<studie>/` enth�
 | `factoids <ordner>` | Studienordner mit `*.factoids.md` prüfen: Matrix Teilnehmer × Variable, Verteilung, dünne Variablen (F010), Ausreisser (F011); `--json` |
 | `skeleton <ordner> -p … --id … -a …` | Persona-Skelett aus gewählten Teilnehmenden: Verhaltensvariablen (Median), Evidenz, Zitate, Evidenzniveau und Abschnitt `## Herleitung` mit Factoid-IDs |
 | `probe build <pfade>` | Plan der Collapse-Probe: Simulate-Prompt und 6–10 Prüffragen pro Persona (Szenario, Jobs, Schmerzpunkte, Unknowns, Endziele), jede Frage an alle Personas; deterministisch, ohne Modellaufruf; Vorlagen für Antworten und Schlüsselwörter |
-| `probe evaluate <plan> <antworten>` | Markdown-Bericht mit Ampel pro Persona-Paar (TF-IDF-Kosinus der Antworten auf dieselbe Frage, nur Standardbibliothek), `must_not`-Prüfung über konfigurierbare Schlüsselwörter, Unknowns offen gelassen oder nicht, Grenzen der Methode; `--json`, `--strict` |
+| `probe evaluate <plan> <antworten>` | Markdown-Bericht mit Ampel pro Persona-Paar (TF-IDF-Kosinus der Antworten auf dieselbe Frage, nur Standardbibliothek), Form der Antworten je Persona (Länge, Gliederung, Antwortanfang – meldet den Formkollaps, den die Ampel nicht sieht), `must_not`-Prüfung über konfigurierbare Schlüsselwörter, bei der zitierte, verneinte oder gefragte Erwähnungen getrennt von Verwendungen stehen, Unknowns offen gelassen oder nicht, Grenzen der Methode; `--json`, `--strict` |
 
 ## Persona als Input für andere Lösungen
 
