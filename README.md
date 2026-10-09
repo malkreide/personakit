@@ -106,7 +106,7 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 | `factoids <folder>` | Check a study folder of `*.factoids.md`: participant × variable matrix, distribution, thin variables (F010), outliers (F011); `--json` |
 | `skeleton <folder> -p … --id … -a …` | Persona skeleton from chosen participants: behaviour variables (medians), evidence, quotes, evidence level and a `## Herleitung` section with factoid IDs |
 | `probe build <paths>` | Collapse probe plan: the simulate prompt and 6–10 test questions per persona (scenario, jobs, pains, unknowns, end goals), every question asked to every persona; deterministic, no model call; templates for answers and keywords |
-| `probe evaluate <plan> <answers>` | Markdown report with a traffic light per persona pair (TF-IDF cosine of the answers to the same question, standard library only), `must_not` check via configurable keywords, unknowns left open or not, limits of the method; `--json`, `--strict` |
+| `probe evaluate <plan> <answers>` | Markdown report with a traffic light per persona pair (TF-IDF cosine of the answers to the same question, standard library only), the form of the answers per persona (length, structure, opening word – flags a form collapse the traffic light cannot see), `must_not` check via configurable keywords with quoted, negated or asked mentions kept apart from uses, unknowns left open or not, limits of the method; `--json`, `--strict` |
 
 ## Persona as input for other solutions
 

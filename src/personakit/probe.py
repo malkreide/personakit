@@ -43,6 +43,11 @@ SHARE_RED = 0.5  # share of shared questions ≥ alarm → red
 SHARE_YELLOW = 0.25  # … → yellow
 VARIANCE_HIGH = 0.80  # mean similarity of a persona's own samples at or above → variance collapsed (Q015)
 MIN_SHARED = 3  # fewer shared questions → the light is shaky (Q016)
+FORM_LENGTH_RATIO = 0.8  # shorter / longer mean answer length at or above → same length
+FORM_STRUCTURE_DIFF = 0.2  # difference in the share of structured answers at or below → same structure
+FORM_ASSISTANT_STRUCTURED = 0.5  # form collapse needs assistant form: mostly structured …
+FORM_ASSISTANT_WORDS = 150  # … or long answers (Q020)
+OPENER_SHARE = 0.1  # the most common opening word of two or more personas, each at this share or more (Q021)
 EXCERPT_CHARS = 360
 
 RED, YELLOW, GREEN, NONE = "red", "yellow", "green", "none"
@@ -88,6 +93,27 @@ DEFAULT_OPEN_MARKERS = (
     "maybe",
 )
 
+# A keyword in the same sentence as one of these words is mentioned, not used (Q017). Whole words only.
+DEFAULT_CONTEXT_MARKERS = (
+    "nicht",
+    "nichts",
+    "kein",
+    "keine",
+    "keinen",
+    "keinem",
+    "keiner",
+    "keines",
+    "nie",
+    "niemals",
+    "weder",
+    "ohne",
+    "unklar",
+    "unbekannt",
+    "unverständlich",
+)
+QUOTED, NEGATED, ASKED = "quoted", "negated", "asked"
+CONTEXT_LABEL = {QUOTED: "zitiert", NEGATED: "verneint", ASKED: "gefragt"}
+
 _STOPWORDS = frozenset(
     """
     aber alle allem allen aller alles als also am an ander andere anderen anderer anderes auch auf aus
@@ -111,6 +137,12 @@ _JOB_SITUATION = re.compile(
     r"^\s*(wenn\b.+?),\s*(?:möchte|will|muss|brauche|wünsche|hätte)\b", re.IGNORECASE | re.DOTALL
 )
 _SENTENCE = re.compile(r"(?<=[.!?…])\s+")
+_QUOTED_SPAN = re.compile(r"«[^»]*»|„[^“”]*[“”]|“[^”]*”|\"[^\"\n]*\"|‹[^›]*›")
+_SENTENCE_END = ".!?\n"
+_STRUCTURE = re.compile(r"^\s*(?:#{1,6}\s|[-*•]\s|\d+[.)]\s)|\*\*[^*\n]+\*\*", re.MULTILINE)
+_MARKUP = re.compile(r"[*#_`>]+")
+_BULLET = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+", re.MULTILINE)
+NEGATION_WINDOW = 4  # words before or after a keyword in which a context marker counts (Q017)
 
 
 # =================================================================== build
@@ -405,6 +437,7 @@ class Pair:
     similarity: dict[str, float] = field(default_factory=dict)  # question id → mean cosine
     separation: float | None = None  # mean(own similarity) − similarity between, over questions with ≥ 2 samples each
     light: str = NONE
+    same_form: bool | None = None  # same length and structure (FormStats.same_form); None without answers
     top_terms: list[str] = field(default_factory=list)  # terms that carry the most similar question
 
     @property
@@ -439,6 +472,7 @@ class Hit:
     keyword: str
     snippet: str
     in_question: bool
+    context: str = ""  # "" = used; quoted | negated | asked = mentioned (Q017)
 
 
 @dataclass
@@ -452,6 +486,45 @@ class RuleCheck:
     @property
     def checked(self) -> bool:
         return bool(self.keywords)
+
+    @property
+    def uses(self) -> list[Hit]:
+        """Hits outside a quote, a negation or a question – the ones that may break the rule."""
+        return [h for h in self.hits if not h.context]
+
+    @property
+    def mentions(self) -> list[Hit]:
+        return [h for h in self.hits if h.context]
+
+
+@dataclass
+class FormStats:
+    """How a persona answers, independent of what it says: length, sentences, structure, opening word."""
+
+    answers: int
+    words: float  # mean words per answer
+    sentence_words: float  # mean words per sentence
+    structured: float  # share of answers with headings, lists or bold lead-ins
+    openers: Counter = field(default_factory=Counter)  # first content word → number of answers
+
+    @property
+    def opener(self) -> tuple[str, float] | None:
+        if not self.openers:
+            return None
+        word, n = self.openers.most_common(1)[0]
+        return word, n / self.answers
+
+    def same_form(self, other: FormStats) -> bool:
+        short, long = sorted((self.words, other.words))
+        return (
+            long > 0
+            and short / long >= FORM_LENGTH_RATIO
+            and abs(self.structured - other.structured) <= FORM_STRUCTURE_DIFF
+        )
+
+    @property
+    def assistant_form(self) -> bool:
+        return self.structured >= FORM_ASSISTANT_STRUCTURED or self.words >= FORM_ASSISTANT_WORDS
 
 
 @dataclass
@@ -482,6 +555,10 @@ class ProbeResult:
     alarm: float = ALARM_SIMILARITY
     open_markers: tuple[str, ...] = DEFAULT_OPEN_MARKERS
     markers_custom: bool = False
+    form: dict[str, FormStats] = field(default_factory=dict)
+    form_collapse: bool = False
+    context_markers: tuple[str, ...] = DEFAULT_CONTEXT_MARKERS
+    context_custom: bool = False
     answered: int = 0
     samples: int = 0
 
@@ -513,6 +590,57 @@ def _ss(text: str) -> str:
 
 def _word_re(word: str) -> re.Pattern[str]:
     return re.compile(r"(?<!\w)" + re.escape(_ss(word.strip())), re.IGNORECASE)
+
+
+def _whole_word_re(word: str) -> re.Pattern[str]:
+    return re.compile(r"(?<!\w)" + re.escape(_ss(word.strip())) + r"(?!\w)", re.IGNORECASE)
+
+
+def hit_context(text: str, start: int, end: int, markers: list[re.Pattern[str]]) -> str:
+    """Is the keyword at ``start:end`` mentioned rather than used? Quoted, negated or asked in its sentence."""
+    if any(m.start() < start and end <= m.end() for m in _QUOTED_SPAN.finditer(text)):
+        return QUOTED
+    left = max(text.rfind(c, 0, start) for c in _SENTENCE_END) + 1
+    ends = [i for c in _SENTENCE_END if (i := text.find(c, end)) != -1]
+    right = min(ends) + 1 if ends else len(text)
+    sentence = text[left:right]
+    # only a negation near the keyword: «…, dass ich keine Frist verpasse» does not negate an earlier clause
+    before = text[left:start].split()[-NEGATION_WINDOW:]
+    after = text[end:right].split()[:NEGATION_WINDOW]
+    near = " ".join(before + after)
+    if any(m.search(near) for m in markers):
+        return NEGATED
+    if sentence.rstrip().endswith("?"):
+        return ASKED
+    return ""
+
+
+def _opener(text: str) -> str | None:
+    """First content word of an answer («Ehrlich:», «**Ehrlich gesagt**» → ehrlich); None for stop words."""
+    words = _WORD.findall(_ss(_MARKUP.sub(" ", text)).lower())
+    if not words or len(words[0]) < 3 or words[0] in _STOPWORDS:
+        return None
+    return words[0]
+
+
+def _plain_lines(text: str) -> list[str]:
+    """Lines without bullets and Markdown markup – a list item counts as a sentence of its own."""
+    return [line for line in _MARKUP.sub(" ", _BULLET.sub("", text)).splitlines() if line.strip()]
+
+
+def form_stats(samples: list[str]) -> FormStats:
+    words = [sum(len(line.split()) for line in _plain_lines(s)) for s in samples]
+    sentences = [
+        len(x.split()) for s in samples for line in _plain_lines(s) for x in _SENTENCE.split(line) if x.strip()
+    ]
+    openers = Counter(o for s in samples if (o := _opener(s)))
+    return FormStats(
+        answers=len(samples),
+        words=_mean(words),
+        sentence_words=_mean(sentences) if sentences else 0.0,
+        structured=sum(1 for s in samples if _STRUCTURE.search(s)) / len(samples),
+        openers=openers,
+    )
 
 
 def _light(pair: Pair, warn: float, alarm: float) -> str:
@@ -633,6 +761,13 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
             return None
         return _mean([cosine(x, y) for x, y in combinations(vs, 2)])
 
+    # ---- form of the answers (what lexical similarity cannot see)
+    form: dict[str, FormStats] = {}
+    for pid in order:
+        own_samples = [s for qid in questions for s in texts.get((pid, qid), [])]
+        if own_samples:
+            form[pid] = form_stats(own_samples)
+
     # ---- pairs
     pairs: list[Pair] = []
     for a, b in combinations(order, 2):
@@ -649,6 +784,8 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
                 gaps.append((wa + wb) / 2 - between)
         pair.separation = _mean(gaps) if gaps else None
         pair.light = _light(pair, warn, alarm)
+        if a in form and b in form:
+            pair.same_form = form[a].same_form(form[b])
         top = pair.top_question
         if top:
             x, y = vectors[(a, top)][0], vectors[(b, top)][0]
@@ -697,7 +834,38 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
                 )
             )
 
+    form_pairs = [p for p in pairs if p.same_form is not None]
+    form_collapse = (
+        bool(form_pairs) and all(p.same_form for p in form_pairs) and all(f.assistant_form for f in form.values())
+    )
+    if form_collapse:
+        lengths = ", ".join(f"{pid} {f.words:.0f}" for pid, f in form.items())
+        findings.append(
+            ProbeFinding(
+                WARN,
+                "Q020",
+                f"Formkollaps: alle Personas antworten gleich lang (Ø Wörter: {lengths}) und gleich gegliedert "
+                f"({min(f.structured for f in form.values()):.0%}–{max(f.structured for f in form.values()):.0%} mit "
+                "Gliederung) – simulation.voice um Länge und Form ergänzen",
+            )
+        )
+    by_opener: dict[str, list[tuple[str, float]]] = {}
+    for pid, f in form.items():
+        if f.opener and f.opener[1] >= OPENER_SHARE:
+            by_opener.setdefault(f.opener[0], []).append((pid, f.opener[1]))
+    for word, who in sorted(by_opener.items()):
+        if len(who) >= 2:
+            shares = ", ".join(f"{pid} {share:.0%}" for pid, share in who)
+            findings.append(
+                ProbeFinding(
+                    INFO, "Q021", f"Gleicher häufigster Antwortanfang «{word}» bei {len(who)} Personas ({shares})"
+                )
+            )
+
     # ---- must_not
+    custom_context = keywords.get("context_markers")
+    context_markers = tuple(str(m) for m in custom_context) if custom_context else DEFAULT_CONTEXT_MARKERS
+    context_res = [_whole_word_re(m) for m in context_markers if m.strip()]
     configured = keywords.get("must_not") or {}
     for pid, rules in configured.items():
         if pid not in personas:
@@ -733,16 +901,28 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
                         m = _word_re(w).search(sample)
                         if m:
                             in_q = bool(_word_re(w).search(_ss(questions[qid]["text"])))
-                            check.hits.append(
-                                Hit(pid, r["id"], qid, w, _snippet(sample, m.start(), m.end(), 120), in_q)
-                            )
-            if check.hits:
-                where = sorted({h.question for h in check.hits})
+                            context = hit_context(sample, m.start(), m.end(), context_res)
+                            snippet = _snippet(sample, m.start(), m.end(), 120)
+                            check.hits.append(Hit(pid, r["id"], qid, w, snippet, in_q, context))
+            if check.uses:
+                where = sorted({h.question for h in check.uses})
+                also = f" (dazu {len(check.mentions)} im Kontext)" if check.mentions else ""
                 findings.append(
                     ProbeFinding(
                         WARN,
                         "Q012",
-                        f"must_not {r['id']} möglicherweise verletzt: {len(check.hits)} Treffer in {_ids(where)}",
+                        f"must_not {r['id']} möglicherweise verletzt: {len(check.uses)} Treffer in {_ids(where)}{also}",
+                        pid,
+                    )
+                )
+            elif check.mentions:
+                kinds = Counter(CONTEXT_LABEL[h.context] for h in check.mentions)
+                summary = ", ".join(f"{n} {label}" for label, n in sorted(kinds.items()))
+                findings.append(
+                    ProbeFinding(
+                        INFO,
+                        "Q017",
+                        f"must_not {r['id']}: {len(check.mentions)} Treffer nur im Kontext ({summary}) – lesen, nicht zählen",
                         pid,
                     )
                 )
@@ -795,6 +975,10 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
         alarm=alarm,
         open_markers=markers,
         markers_custom=bool(custom),
+        form=form,
+        form_collapse=form_collapse,
+        context_markers=context_markers,
+        context_custom=bool(custom_context),
         answered=len(texts),
         samples=sum(len(v) for v in texts.values()),
     )
@@ -808,8 +992,12 @@ LIMITS = (
     "**Die Schwellen sind Faustwerte, nicht kalibriert.** Aussagekräftiger als der Absolutwert ist der Vergleich: "
     "dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan. "
     "Mit mindestens zwei Durchgängen pro Frage misst die Spalte «Trennung» relativ zur eigenen Streuung jeder Persona.",
-    "**Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis (Verneinung, "
-    "Übernahme aus der Frage), kein Treffer keine Einhaltung.",
+    "**Die Form ist nur grob gemessen.** Länge, Gliederung und Antwortanfang zeigen den Assistenten-Kollaps, "
+    "nicht aber Tonfall, Register oder Höflichkeit; ob eine lange, gegliederte Antwort zur Persona passt, "
+    "entscheidet ihre `simulation.voice`, nicht die Zahl.",
+    "**Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine "
+    "Einhaltung. Die Einordnung «zitiert», «verneint», «gefragt» ist eine Satzregel: Sie trennt Erwähnen von "
+    "Verwenden meistens, aber nicht immer («Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff).",
     "**Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein; eine offene Antwort ohne Marker wird übersehen.",
     "**Unterscheidbar heisst nicht treu.** Personas können sich deutlich unterscheiden und trotzdem alle falsch liegen "
     "(Fidelity Gap, docs/METHOD.md 1.6). Die Probe ersetzt keine Validierung mit realen Personen.",
@@ -841,22 +1029,56 @@ def render_report(r: ProbeResult, plan_name: str = "", answers_name: str = "") -
         "",
         "## Ampel pro Persona-Paar",
         "",
-        f"| Paar | Ampel | Ø Ähnlichkeit | Max | Fragen ≥ {r.alarm:.2f} | Gemeinsame Fragen | Trennung |",
-        "|---|---|---:|---:|---:|---:|---:|",
+        f"| Paar | Ampel | Ø Ähnlichkeit | Max | Fragen ≥ {r.alarm:.2f} | Gemeinsame Fragen | Trennung | Form |",
+        "|---|---|---:|---:|---:|---:|---:|---|",
     ]
+    form_label = {True: "gleich", False: "verschieden", None: "–"}
     for p in r.pairs:
         high = f"{p.high(r.alarm)}/{p.shared}" if p.shared else "–"
         o.append(
-            f"| {p.label} | {LIGHT_LABEL[p.light]} | {_fmt(p.mean)} | {_fmt(p.max)} | {high} | {p.shared} | {_fmt(p.separation)} |"
+            f"| {p.label} | {LIGHT_LABEL[p.light]} | {_fmt(p.mean)} | {_fmt(p.max)} | {high} | {p.shared} "
+            f"| {_fmt(p.separation)} | {form_label[p.same_form]} |"
         )
     o += [
         "",
         f"🔴 rot: Ø ≥ {r.alarm:.2f}, mindestens die Hälfte der Fragen ≥ {r.alarm:.2f} oder Trennung ≤ 0 bei Ø ≥ {r.warn:.2f}. "
         f"🟡 gelb: Ø ≥ {r.warn:.2f}, mindestens ein Viertel der Fragen ≥ {r.alarm:.2f} oder Trennung ≤ 0. "
         "Trennung = eigene Streuung minus Ähnlichkeit zum Gegenüber (nur ab zwei Durchgängen pro Frage; ≤ 0 heisst: "
-        "die beiden sind einander so ähnlich wie sich selbst).",
+        "die beiden sind einander so ähnlich wie sich selbst). Form: siehe nächster Abschnitt; sie fliesst nicht "
+        "in die Ampel ein.",
         "",
     ]
+
+    if r.form:
+        o += [
+            "## Form der Antworten",
+            "",
+            "| Persona | Antworten | Ø Wörter | Ø Wörter pro Satz | Mit Gliederung | Häufigster Anfang |",
+            "|---|---:|---:|---:|---:|---|",
+        ]
+        for pid, f in r.form.items():
+            opener = f"«{f.opener[0]}» {f.opener[1]:.0%}" if f.opener else "–"
+            o.append(
+                f"| {pid} | {f.answers} | {f.words:.0f} | {f.sentence_words:.1f} | {f.structured:.0%} | {opener} |"
+            )
+        verdict = (
+            "**Formkollaps (Q020):** Alle Personas antworten gleich lang und gleich gegliedert, und zwar in "
+            "Assistentenform. Die Wortwahl unterscheidet sie, die Form nicht – das sieht die Ampel oben nicht."
+            if r.form_collapse
+            else "Kein Formkollaps: Mindestens zwei Personas unterscheiden sich in Länge oder Gliederung, "
+            "oder die Antworten sind kurz und ungegliedert."
+        )
+        o += [
+            "",
+            f"Gleiche Form = kürzere Ø-Länge mindestens {FORM_LENGTH_RATIO:.0%} der längeren und Anteil gegliederter "
+            f"Antworten höchstens {FORM_STRUCTURE_DIFF * 100:.0f} Prozentpunkte auseinander. Gliederung = Überschrift, "
+            f"Aufzählung oder **fetter** Einstieg. Formkollaps = alle Paare gleiche Form und alle Personas in "
+            f"Assistentenform (mindestens {FORM_ASSISTANT_STRUCTURED:.0%} gegliedert oder Ø mindestens "
+            f"{FORM_ASSISTANT_WORDS} Wörter).",
+            "",
+            verdict,
+            "",
+        ]
 
     shown = [p for p in r.pairs if p.light in (RED, YELLOW)] or [p for p in r.pairs if p.shared][:1]
     if shown:
@@ -884,16 +1106,31 @@ def render_report(r: ProbeResult, plan_name: str = "", answers_name: str = "") -
             continue
         o += [f"### {pid}", "", "| Regel | Schlüsselwörter | Ergebnis |", "|---|---|---|"]
         for c in checks:
-            result = "nicht geprüft" if not c.checked else (f"⚠ {len(c.hits)} Treffer" if c.hits else "kein Treffer")
+            if not c.checked:
+                result = "nicht geprüft"
+            elif c.uses:
+                result = f"⚠ {len(c.uses)} Treffer" + (f" (+ {len(c.mentions)} im Kontext)" if c.mentions else "")
+            elif c.mentions:
+                result = f"{len(c.mentions)} Treffer nur im Kontext"
+            else:
+                result = "kein Treffer"
             words = ", ".join(c.keywords) if c.keywords else "–"
             o.append(f"| {c.id}: {_cell(c.rule)} | {_cell(words)} | {result} |")
-        hits = [h for c in checks for h in c.hits]
+        hits = [h for c in checks for h in c.uses] + [h for c in checks for h in c.mentions]
         if hits:
             o.append("")
             for h in hits:
+                tag = f"[{CONTEXT_LABEL[h.context]}] " if h.context else "⚠ "
                 note = " (Wort steht auch in der Frage)" if h.in_question else ""
-                o.append(f"- {h.rule} · `{h.question}` · «{h.keyword}»: {h.snippet}{note}")
+                o.append(f"- {tag}{h.rule} · `{h.question}` · «{h.keyword}»: {h.snippet}{note}")
         o.append("")
+    if any(c.mentions for c in r.rules):
+        o += [
+            "Im Kontext = das Wort steht in Anführungszeichen (zitiert), im selben Satz wie eine Verneinung "
+            "(verneint) oder in einer Frage (gefragt). Solche Treffer zählen nicht als möglicher Verstoss (Q017), "
+            "bleiben aber zum Lesen aufgeführt.",
+            "",
+        ]
 
     o += ["## Unknowns", ""]
     if not r.unknowns:
@@ -939,7 +1176,9 @@ def render_report(r: ProbeResult, plan_name: str = "", answers_name: str = "") -
         "pro Frage Mittel über alle Kombinationen der Durchgänge",
         "- Wörter: Kleinschreibung, Buchstabenwörter ab 3 Zeichen, ß → ss, Füllwörter entfernt, "
         "Endungen grob gekürzt; Wörter der Frage zählen nicht",
-        f"- Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Unsicherheitsmarker: {len(r.open_markers)}"
+        f"- Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Kontextwörter: {len(r.context_markers)}"
+        + (" (eigene Liste)" if r.context_custom else " (Standardliste)")
+        + f" · Unsicherheitsmarker: {len(r.open_markers)}"
         + (" (eigene Liste)" if r.markers_custom else " (Standardliste)"),
         f"- Plan erzeugt mit {r.plan.get('generator') or 'unbekannt'} · ausgewertet mit personakit {__version__}",
         "",
@@ -963,12 +1202,25 @@ def report_json(r: ProbeResult) -> dict[str, Any]:
                 "high": p.high(r.alarm),
                 "shared": p.shared,
                 "separation": p.separation,
+                "same_form": p.same_form,
                 "similarity": p.similarity,
                 "top_terms": p.top_terms,
             }
             for p in r.pairs
         ],
         "variance": r.variance,
+        "form": {
+            pid: {
+                "answers": f.answers,
+                "words": f.words,
+                "sentence_words": f.sentence_words,
+                "structured": f.structured,
+                "opener": f.opener[0] if f.opener else None,
+                "opener_share": f.opener[1] if f.opener else None,
+            }
+            for pid, f in r.form.items()
+        },
+        "form_collapse": r.form_collapse,
         "must_not": [
             {
                 "persona": c.persona,
@@ -977,7 +1229,13 @@ def report_json(r: ProbeResult) -> dict[str, Any]:
                 "keywords": c.keywords,
                 "checked": c.checked,
                 "hits": [
-                    {"question": h.question, "keyword": h.keyword, "snippet": h.snippet, "in_question": h.in_question}
+                    {
+                        "question": h.question,
+                        "keyword": h.keyword,
+                        "snippet": h.snippet,
+                        "in_question": h.in_question,
+                        "context": h.context or None,
+                    }
                     for h in c.hits
                 ],
             }
