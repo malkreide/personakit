@@ -26,8 +26,8 @@ Die Antworten sind Modelltexte zu synthetischen Personas und enthalten keine Per
 | Formkollaps (Q020) | ja | nein (Eltern 51 %, Schulleitung 75 % gegliedert) |
 | «Ehrlich» als häufigster Anfang (Q021) | 11–40 % | 23–42 % |
 | Ø Wörter pro Satz, Elternpersona («kurze Sätze») | 8.6 | 10.6 |
-| `must_not`: Verwendungen (Q012) / Erwähnungen (Q017) | 0 / 30 | 6 / 52 |
-| Unknowns offen | 18 von 18 | 17 von 18 |
+| `must_not`: Verwendungen (Q012) / Erwähnungen (Q017) | 0 / 30 | 3 / 55 |
+| Unknowns offen | 18 von 18 | 18 von 18 |
 | Kosten | ca. 11 Franken | ca. 0.60 Franken |
 
 ## Lesart
@@ -36,13 +36,15 @@ Die Antworten sind Modelltexte zu synthetischen Personas und enthalten keine Per
 
 **Die Form unterscheidet die Modelle stärker als der Inhalt.** Sonnet antwortet für jede Persona gleich lang und gegliedert, die Probe meldet einen Formkollaps. Haiku antwortet kürzer und weniger gegliedert und knapp unter der Regel. Das ist kein Zeichen von Persona-Treue: Die Elternpersona («kurze Sätze») schreibt bei Haiku *längere* Sätze als bei Sonnet. Beide Modelle eröffnen bei allen Personas gern mit «Ehrlich:». Der Satz im Prompt, Unwissen offen zu sagen, wird zur Floskel.
 
-**Bei `must_not` braucht es den Blick in die Treffer.** Haiku hat 6 Treffer als Verwendung. Gelesen ergibt das 1 echten Verstoss, 1 Grenzfall und 4 Erwähnungen, die die Satzregel nicht erkennt:
+**Bei `must_not` braucht es den Blick in die Treffer.** Bei Haiku bleiben 3 Treffer als Verwendung: ein echter Verstoss, ein Grenzfall und eine Erwähnung, die die Satzregel bewusst nicht erkennt.
 
 - **Verstoss:** Auf das Szenario des Verwaltungs-Insiders fällt die Elternpersona ganz aus der Rolle. In einem von drei Durchgängen berät sie als Kommunikationsfachperson («Darunter die vollständige Fassung, klar als «Mehr dazu» markiert: Rechtsgrundlage, Zuständigkeit der Kreisschulbehörde, Merkblatt-Link. Juristisch bleibt alles erhalten …»). Sie erklärt die Kreisschulbehörde sogar korrekt. Die lexikalische Ampel sieht diesen Rollenbruch nicht; gefunden hat ihn nur das Schlüsselwort.
 - **Grenzfall:** «Bei Zuteilungen, also welche Schule und warum, …» verwendet den Begriff, erklärt ihn aber gleich selbst.
-- **Erwähnungen ohne Anführungszeichen:** Indirekte Rede («Eine sagt, ich muss zur Kreisschulbehörde gehen») und Aufzählungen der verwirrenden Absender («Schulamt, Kreisschulbehörde, die Schule selbst»). Einmal steht die Verneinung mehr als vier Wörter entfernt: «Ich weiss aber nicht, ob das Schulamt, die Kreisschulbehörde …».
+- **Aufzählung:** «… wer was schickt. Schulamt, Kreisschulbehörde, die Schule selbst …» drückt Verwirrung aus und ist eigentlich eine Erwähnung. Aufzählungen gelten trotzdem als Verwendung, denn der Verstoss oben ist selbst eine Aufzählung.
 
-**Ein Fehlalarm bei den Unknowns.** Q013 bei Haiku, Schulleitung U1: Die Antwort beginnt mit «Ehrlich gesagt weiss ich das selbst nicht genau» und enthält das Datum «Ab 1. November». Der Marker «weiss nicht» steht nicht zusammenhängend, und das Datum zählt als Zahl. Die Probe stuft die Antwort deshalb als «konkrete Angabe ohne Vorbehalt» ein, obwohl sie offen ist.
+Die erste Auswertung dieses Laufs hatte 6 Verwendungen. Indirekte Rede («Eine sagt, ich muss zur Kreisschulbehörde gehen», «da steht noch etwas von der Kreisschulbehörde») und «Ich weiss aber nicht, ob das Schulamt, die Kreisschulbehörde …» erkannte die Satzregel damals nicht. Seither gelten sie als *wiedergegeben* bzw. *nicht gewusst*.
+
+**Ein behobener Fehlalarm bei den Unknowns.** Bei Haiku, Schulleitung U1, beginnt eine Antwort mit «Ehrlich gesagt weiss ich das selbst nicht genau» und enthält das Datum «Ab 1. November». Die erste Auswertung stufte sie als «konkrete Angabe ohne Vorbehalt» ein: Der Marker «weiss nicht» stand nicht zusammenhängend, und das Datum zählte als Zahl. Heute haben Marker eine Lücke von bis zu vier Wörtern (`weiss … nicht`), und Datum, Uhrzeit, Jahreszahl und Listennummern zählen nicht als Zahl.
 
 **Was die Probe nicht sieht.** Ob eine Persona Fakten über sich erfindet (Namen, Familie, Vorgeschichte), misst keine der Kennzahlen. Die Regel «keine erfundenen Fakten» aus dem Prompt prüft nur, wer die Antworten liest. In einer Einzelprobe vor dem Haiku-Lauf erfand die Elternpersona eine «Kollegin Anna»; in den 330 Antworten hier kommt der Name nicht vor.
 

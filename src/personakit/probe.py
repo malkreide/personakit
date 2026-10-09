@@ -70,15 +70,17 @@ GENERIC_QUESTIONS = (
     "Woran merkst du, dass ein Angebot nicht für dich gemacht ist?",
 )
 
+# «…» in a marker stands for up to four words: «weiss … nicht» also hits «weiss ich das selbst nicht».
 DEFAULT_OPEN_MARKERS = (
-    "weiss nicht",
-    "weiss ich nicht",
-    "weiss es nicht",
+    "weiss … nicht",
     "keine ahnung",
     "nicht sicher",
+    "nicht genau",
     "unsicher",
-    "kann ich nicht sagen",
-    "kann ich nicht beurteilen",
+    "kann … nicht … sagen",
+    "kann … nicht … beurteilen",
+    "ich schätze",
+    "schätzungsweise",
     "schwer zu sagen",
     "kommt darauf an",
     "kommt drauf an",
@@ -111,8 +113,33 @@ DEFAULT_CONTEXT_MARKERS = (
     "unbekannt",
     "unverständlich",
 )
-QUOTED, NEGATED, ASKED = "quoted", "negated", "asked"
-CONTEXT_LABEL = {QUOTED: "zitiert", NEGATED: "verneint", ASKED: "gefragt"}
+# A verb of saying or writing before the keyword in its sentence: someone else's words (Q017). Whole words only.
+DEFAULT_REPORT_MARKERS = (
+    "sagt",
+    "sagte",
+    "sagen",
+    "meint",
+    "meinte",
+    "meinen",
+    "schreibt",
+    "schrieb",
+    "schreiben",
+    "steht",
+    "stand",
+    "stehen",
+    "heisst es",
+    "hiess es",
+    "hört man",
+    "liest man",
+)
+QUOTED, NEGATED, UNKNOWING, REPORTED, ASKED = "quoted", "negated", "unknowing", "reported", "asked"
+CONTEXT_LABEL = {
+    QUOTED: "zitiert",
+    NEGATED: "verneint",
+    UNKNOWING: "nicht gewusst",
+    REPORTED: "wiedergegeben",
+    ASKED: "gefragt",
+}
 
 _STOPWORDS = frozenset(
     """
@@ -133,6 +160,20 @@ _STOPWORDS = frozenset(
 _SUFFIXES = ("ungen", "innen", "ung", "en", "er", "es", "em", "e", "n", "s")
 _WORD = re.compile(r"[^\W\d_]+")
 _NUMBER = re.compile(r"\d|\bprozent\b|\bpercent\b", re.IGNORECASE)
+# Numbers that are no claim about the unknown: list numbering, dates, times of day, years.
+_NOT_A_FIGURE = re.compile(
+    r"^\s*\d+[.)]\s"
+    r"|\b\d{1,2}\.\s?(?:jan|feb|mär|apr|mai|jun|jul|aug|sep|okt|nov|dez)\w*"
+    r"|\b\d{1,2}\.\d{1,2}\.(?:\d{2,4})?"
+    r"|\b\d{1,2}:\d{2}\b|\b\d{1,2}(?:\.\d{2})?\s?uhr\b"
+    r"|\b(?:19|20)\d{2}\b",
+    re.IGNORECASE | re.MULTILINE,
+)
+# «weiss nicht, ob …», «verstehe nicht, was …» before the keyword: the persona says it does not know the term.
+_UNKNOWING = re.compile(
+    r"(?<!\w)(?:weiss|wüsste|verstehe|kenne|begreife)\W+(?:\w+\W+){0,3}?nicht(?!\w)|(?<!\w)keine ahnung",
+    re.IGNORECASE,
+)
 _JOB_SITUATION = re.compile(
     r"^\s*(wenn\b.+?),\s*(?:möchte|will|muss|brauche|wünsche|hätte)\b", re.IGNORECASE | re.DOTALL
 )
@@ -559,6 +600,8 @@ class ProbeResult:
     form_collapse: bool = False
     context_markers: tuple[str, ...] = DEFAULT_CONTEXT_MARKERS
     context_custom: bool = False
+    report_markers: tuple[str, ...] = DEFAULT_REPORT_MARKERS
+    report_custom: bool = False
     answered: int = 0
     samples: int = 0
 
@@ -596,8 +639,24 @@ def _whole_word_re(word: str) -> re.Pattern[str]:
     return re.compile(r"(?<!\w)" + re.escape(_ss(word.strip())) + r"(?!\w)", re.IGNORECASE)
 
 
-def hit_context(text: str, start: int, end: int, markers: list[re.Pattern[str]]) -> str:
-    """Is the keyword at ``start:end`` mentioned rather than used? Quoted, negated or asked in its sentence."""
+def _marker_re(marker: str) -> re.Pattern[str]:
+    """Open marker; «…» (or «...») stands for up to four words in between."""
+    parts = [re.escape(_ss(x.strip())) for x in re.split(r"…|\.\.\.", marker) if x.strip()]
+    return re.compile(r"(?<!\w)" + r"\W+(?:\w+\W+){0,4}?".join(parts), re.IGNORECASE)
+
+
+def hit_context(
+    text: str,
+    start: int,
+    end: int,
+    markers: list[re.Pattern[str]],
+    reports: list[re.Pattern[str]] | None = None,
+) -> str:
+    """Is the keyword at ``start:end`` mentioned rather than used?
+
+    Quoted; negated nearby; «weiss nicht, ob …» before it; someone else's words («sagt», «steht») before it;
+    or asked. Checked in this order, within the keyword's sentence.
+    """
     if any(m.start() < start and end <= m.end() for m in _QUOTED_SPAN.finditer(text)):
         return QUOTED
     left = max(text.rfind(c, 0, start) for c in _SENTENCE_END) + 1
@@ -610,6 +669,11 @@ def hit_context(text: str, start: int, end: int, markers: list[re.Pattern[str]])
     near = " ".join(before + after)
     if any(m.search(near) for m in markers):
         return NEGATED
+    head = text[left:start]
+    if _UNKNOWING.search(head):
+        return UNKNOWING
+    if any(m.search(head) for m in reports or []):
+        return REPORTED
     if sentence.rstrip().endswith("?"):
         return ASKED
     return ""
@@ -660,7 +724,7 @@ def _classify_unknown(text: str, markers: list[re.Pattern[str]]) -> str:
     text = _ss(text)
     if any(m.search(text) for m in markers):
         return OPEN
-    return CLAIM if _NUMBER.search(text) else NOT_OPEN
+    return CLAIM if _NUMBER.search(_NOT_A_FIGURE.sub(" ", text)) else NOT_OPEN
 
 
 def _ids(values: list[str], limit: int = 5) -> str:
@@ -866,6 +930,9 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
     custom_context = keywords.get("context_markers")
     context_markers = tuple(str(m) for m in custom_context) if custom_context else DEFAULT_CONTEXT_MARKERS
     context_res = [_whole_word_re(m) for m in context_markers if m.strip()]
+    custom_reports = keywords.get("report_markers")
+    report_markers = tuple(str(m) for m in custom_reports) if custom_reports else DEFAULT_REPORT_MARKERS
+    report_res = [_whole_word_re(m) for m in report_markers if m.strip()]
     configured = keywords.get("must_not") or {}
     for pid, rules in configured.items():
         if pid not in personas:
@@ -901,7 +968,7 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
                         m = _word_re(w).search(sample)
                         if m:
                             in_q = bool(_word_re(w).search(_ss(questions[qid]["text"])))
-                            context = hit_context(sample, m.start(), m.end(), context_res)
+                            context = hit_context(sample, m.start(), m.end(), context_res, report_res)
                             snippet = _snippet(sample, m.start(), m.end(), 120)
                             check.hits.append(Hit(pid, r["id"], qid, w, snippet, in_q, context))
             if check.uses:
@@ -934,7 +1001,7 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
     # ---- unknowns
     custom = keywords.get("open_markers")
     markers = tuple(str(m) for m in custom) if custom else DEFAULT_OPEN_MARKERS
-    marker_res = [_word_re(m) for m in markers if m.strip()]
+    marker_res = [_marker_re(m) for m in markers if m.strip()]
     unknown_checks: list[UnknownCheck] = []
     for q in plan["questions"]:
         if q["kind"] != "unknown" or not q.get("origin"):
@@ -979,6 +1046,8 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
         form_collapse=form_collapse,
         context_markers=context_markers,
         context_custom=bool(custom_context),
+        report_markers=report_markers,
+        report_custom=bool(custom_reports),
         answered=len(texts),
         samples=sum(len(v) for v in texts.values()),
     )
@@ -996,9 +1065,11 @@ LIMITS = (
     "nicht aber Tonfall, Register oder Höflichkeit; ob eine lange, gegliederte Antwort zur Persona passt, "
     "entscheidet ihre `simulation.voice`, nicht die Zahl.",
     "**Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine "
-    "Einhaltung. Die Einordnung «zitiert», «verneint», «gefragt» ist eine Satzregel: Sie trennt Erwähnen von "
-    "Verwenden meistens, aber nicht immer («Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff).",
-    "**Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein; eine offene Antwort ohne Marker wird übersehen.",
+    "Einhaltung. Die Einordnung «zitiert», «verneint», «nicht gewusst», «wiedergegeben», «gefragt» ist eine "
+    "Satzregel: Sie trennt Erwähnen von Verwenden meistens, aber nicht immer («Die Kreisschulbehörde ist nicht "
+    "zuständig» verwendet den Begriff; eine Aufzählung «Schulamt, Kreisschulbehörde, Schule» gilt als Verwendung).",
+    "**Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein; eine offene Antwort ohne Marker wird "
+    "übersehen. Als konkrete Angabe zählt jede Zahl ausser Listennummern, Datum, Uhrzeit und Jahreszahl.",
     "**Unterscheidbar heisst nicht treu.** Personas können sich deutlich unterscheiden und trotzdem alle falsch liegen "
     "(Fidelity Gap, docs/METHOD.md 1.6). Die Probe ersetzt keine Validierung mit realen Personen.",
 )
@@ -1126,9 +1197,10 @@ def render_report(r: ProbeResult, plan_name: str = "", answers_name: str = "") -
         o.append("")
     if any(c.mentions for c in r.rules):
         o += [
-            "Im Kontext = das Wort steht in Anführungszeichen (zitiert), im selben Satz wie eine Verneinung "
-            "(verneint) oder in einer Frage (gefragt). Solche Treffer zählen nicht als möglicher Verstoss (Q017), "
-            "bleiben aber zum Lesen aufgeführt.",
+            "Im Kontext = das Wort steht in Anführungszeichen (zitiert), höchstens vier Wörter neben einer "
+            "Verneinung (verneint), nach «weiss/verstehe/kenne … nicht» (nicht gewusst), nach einem Verb des "
+            "Sagens oder Schreibens wie «sagt», «steht» (wiedergegeben) oder in einer Frage (gefragt). Solche "
+            "Treffer zählen nicht als möglicher Verstoss (Q017), bleiben aber zum Lesen aufgeführt.",
             "",
         ]
 
@@ -1178,6 +1250,8 @@ def render_report(r: ProbeResult, plan_name: str = "", answers_name: str = "") -
         "Endungen grob gekürzt; Wörter der Frage zählen nicht",
         f"- Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Kontextwörter: {len(r.context_markers)}"
         + (" (eigene Liste)" if r.context_custom else " (Standardliste)")
+        + f" · Redeverben: {len(r.report_markers)}"
+        + (" (eigene Liste)" if r.report_custom else " (Standardliste)")
         + f" · Unsicherheitsmarker: {len(r.open_markers)}"
         + (" (eigene Liste)" if r.markers_custom else " (Standardliste)"),
         f"- Plan erzeugt mit {r.plan.get('generator') or 'unbekannt'} · ausgewertet mit personakit {__version__}",

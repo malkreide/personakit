@@ -415,6 +415,7 @@ must_not:
     N2: [Tagesstruktur, Einschulung]
 open_markers: [weiss nicht, keine ahnung, vielleicht]   # optional: ersetzt die Standardliste
 context_markers: [nicht, kein, keine, nie]               # optional: ersetzt die Standardliste der Verneinungen
+report_markers: [sagt, meint, steht]                     # optional: ersetzt die Standardliste der Redeverben
 ```
 
 Schema `schema/probe-keywords.schema.json`. Schlüsselwörter treffen am Wortanfang, Gross-/Kleinschreibung egal (`Kreisschulbehörde` trifft `Kreisschulbehörden`). Kontextwörter (Verneinungen) treffen nur ganze Wörter (`nie` trifft nicht `niedrig`); Standardliste: nicht, nichts, kein, keine, keinen, keinem, keiner, keines, nie, niemals, weder, ohne, unklar, unbekannt, unverständlich.
@@ -451,9 +452,9 @@ Der Markdown-Bericht enthält: Ampel pro Persona-Paar (Ø und maximale Ähnlichk
 
 Zwei Personas haben **gleiche Form**, wenn die kürzere Ø-Länge mindestens 80 % der längeren beträgt und der Anteil gegliederter Antworten höchstens 20 Prozentpunkte auseinanderliegt (Spalte «Form» in der Ampeltabelle; fliesst nicht in die Ampel ein). **Formkollaps** (Q020): alle Paare gleiche Form, und alle Personas antworten in Assistentenform (mindestens 50 % gegliedert oder Ø mindestens 150 Wörter). Kurze, ungegliederte Antworten gleicher Länge sind kein Formkollaps: So sprechen Menschen. Ob eine lange Antwort zur Persona passt, sagt ihre `simulation.voice`.
 
-**Treffer im Kontext:** Ein Schlüsselwort ist *erwähnt*, nicht *verwendet*, wenn es in Anführungszeichen steht (`«…»`, `„…“`, `“…”`, `"…"`, `‹…›` – *zitiert*), wenn höchstens vier Wörter davor oder danach im selben Satz ein Kontextwort steht (*verneint*: «Ich weiss nicht, was die Kreisschulbehörde ist») oder wenn der Satz mit `?` endet (*gefragt*). Erwähnungen zählen nicht als möglicher Verstoss (Q012), sondern als Q017, und stehen im Bericht mit `[zitiert]`, `[verneint]` oder `[gefragt]` zum Lesen. Grenze der Satzregel: «Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff und gilt trotzdem als verneint.
+**Treffer im Kontext:** Ein Schlüsselwort ist *erwähnt*, nicht *verwendet*, wenn es in Anführungszeichen steht (`«…»`, `„…“`, `“…”`, `"…"`, `‹…›` – *zitiert*), wenn höchstens vier Wörter davor oder danach im selben Satz ein Kontextwort steht (*verneint*: «Ich weiss nicht, was die Kreisschulbehörde ist») wenn vor dem Wort im selben Satz «weiss/wüsste/verstehe/kenne/begreife» mit «nicht» (höchstens drei Wörter dazwischen) oder «keine Ahnung» steht (*nicht gewusst*: «Ich weiss aber nicht, ob das Schulamt, die Kreisschulbehörde …»), wenn vor dem Wort im selben Satz ein Redeverb steht (*wiedergegeben*: «Eine sagt, ich muss zur Kreisschulbehörde», «da steht noch etwas von der Kreisschulbehörde»; Standardliste: sagt, sagte, sagen, meint, meinte, meinen, schreibt, schrieb, schreiben, steht, stand, stehen, heisst es, hiess es, hört man, liest man – die erste Person «sage» fehlt bewusst) oder wenn der Satz mit `?` endet (*gefragt*). Erwähnungen zählen nicht als möglicher Verstoss (Q012), sondern als Q017, und stehen im Bericht mit `[zitiert]`, `[verneint]`, `[nicht gewusst]`, `[wiedergegeben]` oder `[gefragt]` zum Lesen. Grenzen der Satzregel: «Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff und gilt trotzdem als verneint; eine Aufzählung («Schulamt, Kreisschulbehörde, die Schule») gilt als Verwendung – auch wenn sie Verwirrung ausdrückt, weil eine Aufzählung ebenso gut Fachwissen zeigen kann («Rechtsgrundlage, Zuständigkeit der Kreisschulbehörde, Merkblatt-Link»).
 
-**Unknowns:** Eine Antwort auf eine Unknown-Frage ist *offen*, wenn sie einen Unsicherheitsmarker enthält; ohne Marker *nicht erkennbar offen*; ohne Marker, aber mit Zahl oder «Prozent» eine *konkrete Angabe ohne Vorbehalt*. Bei mehreren Durchgängen zählt der ungünstigste.
+**Unknowns:** Eine Antwort auf eine Unknown-Frage ist *offen*, wenn sie einen Unsicherheitsmarker enthält; ohne Marker *nicht erkennbar offen*; ohne Marker, aber mit Zahl oder «Prozent» eine *konkrete Angabe ohne Vorbehalt*. Listennummern (`1.` am Zeilenanfang), Datumsangaben (`1. November`, `15.11.2026`), Uhrzeiten (`20:40`, `8 Uhr`) und Jahreszahlen zählen nicht als Zahl. In einem Marker steht `…` für bis zu vier Wörter: `weiss … nicht` trifft «weiss nicht» und «weiss ich das selbst nicht». Standardliste: weiss … nicht, keine Ahnung, nicht sicher, nicht genau, unsicher, kann … nicht … sagen, kann … nicht … beurteilen, ich schätze, schätzungsweise, schwer zu sagen, kommt darauf an, kommt drauf an, vielleicht, vermutlich, wahrscheinlich, ich glaube, nie darüber nachgedacht, müsste ich nachfragen, don't know, not sure, maybe. Bei mehreren Durchgängen zählt der ungünstigste.
 
 Exit-Codes: 0 nach der Auswertung, mit `--strict` 1 bei mindestens einer Warnung, 2 bei unlesbaren oder ungültigen Dateien, fehlenden Pfaden und ungültigen Schwellen.
 
@@ -474,7 +475,7 @@ Exit-Codes: 0 nach der Auswertung, mit `--strict` 1 bei mindestens einer Warnung
 | Q014 | INFO | Unknown nicht erkennbar als offen behandelt |
 | Q015 | INFO | Durchgänge einer Persona fast gleich (Ø ≥ 0.80): Varianz kollabiert |
 | Q016 | INFO | Weniger als 3 gemeinsame Fragen – Ampel wenig belastbar |
-| Q017 | INFO | Treffer einer `must_not`-Regel nur im Kontext (zitiert, verneint, gefragt) – lesen, nicht zählen |
+| Q017 | INFO | Treffer einer `must_not`-Regel nur im Kontext (zitiert, verneint, nicht gewusst, wiedergegeben, gefragt) – lesen, nicht zählen |
 | Q020 | WARN | Formkollaps: alle Personas gleich lang und gleich gegliedert, in Assistentenform |
 | Q021 | INFO | Dasselbe Wort ist bei mindestens zwei Personas der häufigste Antwortanfang (je mindestens 10 %) |
 

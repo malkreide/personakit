@@ -103,7 +103,7 @@ Frage `X4` (Ähnlichkeit 0.16): Woran merkst du, dass ein Angebot nicht für dic
 
 - [zitiert] N1 · `eltern-neu-in-zuerich.P1` · «Auftragsdatenbearbeitung»: … Datenschutz-Merkblättern oder Schreiben zu KI steht dann «Auftragsdatenbearbeitung», «Personendaten», «Einwilligung» drin, und ich weiss …
 
-Im Kontext = das Wort steht in Anführungszeichen (zitiert), im selben Satz wie eine Verneinung (verneint) oder in einer Frage (gefragt). Solche Treffer zählen nicht als möglicher Verstoss (Q017), bleiben aber zum Lesen aufgeführt.
+Im Kontext = das Wort steht in Anführungszeichen (zitiert), höchstens vier Wörter neben einer Verneinung (verneint), nach «weiss/verstehe/kenne … nicht» (nicht gewusst), nach einem Verb des Sagens oder Schreibens wie «sagt», «steht» (wiedergegeben) oder in einer Frage (gefragt). Solche Treffer zählen nicht als möglicher Verstoss (Q017), bleiben aber zum Lesen aufgeführt.
 
 ## Unknowns
 
@@ -146,8 +146,8 @@ INFO  Q021   Gleicher häufigster Antwortanfang «ehrlich» bei 4 Personas (elte
 - **Lexikalische Ähnlichkeit ist ein grober Proxy.** Gemessen wird Wortüberlappung, nicht Bedeutung. Gleicher Inhalt in anderen Worten bleibt unentdeckt (falsch grün); gemeinsames Fachvokabular der Domäne hebt die Werte ohne Collapse (falsch rot). Ton, Haltung und Entscheidungen misst die Probe nicht.
 - **Die Schwellen sind Faustwerte, nicht kalibriert.** Aussagekräftiger als der Absolutwert ist der Vergleich: dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan. Mit mindestens zwei Durchgängen pro Frage misst die Spalte «Trennung» relativ zur eigenen Streuung jeder Persona.
 - **Die Form ist nur grob gemessen.** Länge, Gliederung und Antwortanfang zeigen den Assistenten-Kollaps, nicht aber Tonfall, Register oder Höflichkeit; ob eine lange, gegliederte Antwort zur Persona passt, entscheidet ihre `simulation.voice`, nicht die Zahl.
-- **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine Einhaltung. Die Einordnung «zitiert», «verneint», «gefragt» ist eine Satzregel: Sie trennt Erwähnen von Verwenden meistens, aber nicht immer («Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff).
-- **Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein; eine offene Antwort ohne Marker wird übersehen.
+- **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine Einhaltung. Die Einordnung «zitiert», «verneint», «nicht gewusst», «wiedergegeben», «gefragt» ist eine Satzregel: Sie trennt Erwähnen von Verwenden meistens, aber nicht immer («Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff; eine Aufzählung «Schulamt, Kreisschulbehörde, Schule» gilt als Verwendung).
+- **Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein; eine offene Antwort ohne Marker wird übersehen. Als konkrete Angabe zählt jede Zahl ausser Listennummern, Datum, Uhrzeit und Jahreszahl.
 - **Unterscheidbar heisst nicht treu.** Personas können sich deutlich unterscheiden und trotzdem alle falsch liegen (Fidelity Gap, docs/METHOD.md 1.6). Die Probe ersetzt keine Validierung mit realen Personen.
 
 ## Parameter
@@ -155,5 +155,5 @@ INFO  Q021   Gleicher häufigster Antwortanfang «ehrlich» bei 4 Personas (elte
 - Schwellen: Warnung 0.30, Alarm 0.50, Varianz 0.80
 - Ähnlichkeit: TF-IDF (1 + ln tf, geglättete IDF über alle Antworten dieses Laufs), Kosinus; pro Frage Mittel über alle Kombinationen der Durchgänge
 - Wörter: Kleinschreibung, Buchstabenwörter ab 3 Zeichen, ß → ss, Füllwörter entfernt, Endungen grob gekürzt; Wörter der Frage zählen nicht
-- Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Kontextwörter: 15 (Standardliste) · Unsicherheitsmarker: 20 (Standardliste)
+- Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Kontextwörter: 15 (Standardliste) · Redeverben: 16 (Standardliste) · Unsicherheitsmarker: 21 (Standardliste)
 - Plan erzeugt mit personakit 0.2.0 · ausgewertet mit personakit 0.2.0

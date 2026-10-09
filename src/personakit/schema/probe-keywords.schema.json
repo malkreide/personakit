@@ -25,11 +25,17 @@
       "items": {"type": "string", "minLength": 1},
       "description": "Ersetzt die Standardliste der Kontextwörter (Verneinungen): Ein Schlüsselwort im selben Satz gilt als erwähnt, nicht verwendet."
     },
+    "report_markers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "description": "Ersetzt die Standardliste der Redeverben: Ein Schlüsselwort nach einem dieser Wörter im selben Satz gilt als wiedergegeben, nicht verwendet."
+    },
     "open_markers": {
       "type": "array",
       "minItems": 1,
       "items": {"type": "string", "minLength": 1},
-      "description": "Ersetzt die Standardliste der Unsicherheitsmarker für die Unknown-Prüfung."
+      "description": "Ersetzt die Standardliste der Unsicherheitsmarker für die Unknown-Prüfung; «…» steht für bis zu vier Wörter dazwischen."
     }
   }
 }
