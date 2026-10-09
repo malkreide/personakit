@@ -95,6 +95,17 @@ Erster Lauf am 9.10.2026: vier Beispiel-Personas, 32 Fragen, je 3 Durchgänge, 3
 - **`must_not` nur Fehlalarme:** 30 Schlüsselwort-Treffer, alle Erwähnungen («Bei Wörtern wie «Kreisschulbehörde» kommt Unsinn heraus», «bin ich nicht begeistert»). Mit der Kontextregel: 30 von 30 als erwähnt eingeordnet (28 zitiert, 2 verneint), kein Q012 mehr.
 - **Schwellen:** Lange echte Antworten liegen bei etwa 0.1 – weit unter Warnung (0.30) und Alarm (0.50). Absolute Schwellen sind bei langen Antworten stumpf; die Trennung (ab zwei Durchgängen) ist das belastbarere Signal. Die Schwellen bleiben vorerst, bis ein Lauf mit echtem inhaltlichem Collapse vorliegt.
 
+### Lauf 2: Haiku statt Sonnet
+
+Am 9.10.2026 lief derselbe Plan mit `claude-haiku-5-5`. Beide Läufe liegen mit Berichten und Vergleich unter [`probe/beispiel/`](../probe/beispiel/).
+
+- **Inhalt:** wieder alle Paare grün; die Trennung ist mit 0.14–0.20 etwas kleiner als bei Sonnet.
+- **Form:** kürzere Antworten (226–254 Wörter) und weniger gegliedert (51–75 %), knapp kein Formkollaps; «Ehrlich» ist bei allen Personas noch häufiger der Anfang.
+- **`must_not`:** 6 Treffer als Verwendung. Gelesen ergibt das ein echter Rollenbruch (die Elternpersona berät als Kommunikationsfachperson), ein Grenzfall und vier Erwähnungen ohne Anführungszeichen (indirekte Rede, Aufzählungen), die die Satzregel nicht erkennt.
+- **Unknowns:** ein Fehlalarm (Q013). «weiss ich das selbst nicht genau» trifft den Marker «weiss nicht» nicht, und das Datum «1. November» zählt als Zahl.
+
+Beide Läufe enthalten keinen inhaltlichen Collapse. Die Schwellen sind weiterhin nicht kalibriert.
+
 ## 5. Befunde und Exit-Codes
 
 Q-Codes stehen in `docs/FORMAT.md`. `evaluate` endet mit 0, mit `--strict` mit 1, sobald eine Warnung vorliegt (rotes Paar, Treffer in `must_not`, Unknown mit konkreter Angabe, fehlende Antworten), mit 2 bei unlesbaren Dateien.

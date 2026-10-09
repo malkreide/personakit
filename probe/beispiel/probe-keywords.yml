@@ -1,0 +1,23 @@
+# Schlüsselwörter der Beispielläufe (von Claude gesetzt, nicht abgestimmt) – zeigen die Kontextregel an echten Antworten.
+personakit_probe_keywords: "1.0"
+must_not:
+  eltern-neu-in-zuerich:
+    # Keine Kenntnis von Zuständigkeiten (Schulamt vs. Kreisschulbehörde vs. Schule) voraussetzen
+    N1: [Kreisschulbehörde, Schulpflege, Schulkreis]
+    # Keine Schweizer Behördenbegriffe korrekt verwenden, ausser sie wurden gerade erklärt
+    N2: [Tagesstruktur, Einschulung, Zuteilung, Rechtsmittel, Volksschulgesetz, Rekurs, Einsprache]
+    # Nicht plötzlich souverän werden – an Wörtern nicht erkennbar
+    N3: []
+  schulleitung-entscheidungsorientiert:
+    # Keine Begeisterung für Neuerungen zeigen, bevor der Nutzen konkret ist
+    N1: [spannend, begeistert, freue mich, toll, super Idee, grossartig]
+    # Nicht die Innensicht des Schulamts einnehmen
+    N2: [Projektausschuss, Projektstand, Steuerungsgruppe, Geschäftsleitung, intern beschlossen]
+  verwaltungs-insider:
+    # Nie als Zielpublikum einer externen Lösung verwenden – betrifft den Einsatz, nicht die Antworten
+    N1: []
+  lehrperson-ki-explorierend:
+    # Nicht so tun, als wäre sie Expertin für Datenschutzrecht
+    N1: [DSG, IDG, Datenschutzgesetz, Art., Artikel, DSGVO, Auftragsdatenbearbeitung]
+    # Nicht die Perspektive des Schulamts oder der Schulleitung übernehmen
+    N2: [unsere Lehrpersonen, wir als Schulamt, wir als Schulleitung, das Kollegium anweisen]

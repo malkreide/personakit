@@ -119,7 +119,7 @@ Zählen ist Werkzeug, Deuten nicht. Ein Studienordner `factoids/<studie>/` enth�
 | Notion-Datenbank «Personas» | `render -f notion`: eine Seite pro Persona, `ID` als Schlüssel zum Aktualisieren; `--target api` für die Notion-API, `--target mcp` für die Notion-MCP-Tools ([`docs/FORMAT.md`](docs/FORMAT.md#notion-export-render--f-notion)) |
 | Wiki | `render -f md` / `-f card` |
 | Team-Galerie, offline | `render -f html` |
-| Prüfen, ob simulierte Personas unterscheidbar bleiben | `probe build` → Modell nach Wahl → `probe evaluate` ([`docs/PROBE.md`](docs/PROBE.md)) |
+| Prüfen, ob simulierte Personas unterscheidbar bleiben | `probe build` → Modell nach Wahl → `probe evaluate` ([`docs/PROBE.md`](docs/PROBE.md), Beispielläufe in [`probe/beispiel/`](probe/beispiel/)) |
 
 Der Prompt-Export trägt die Guardrails der Persona mit: eine konkrete Einzelperson statt Durchschnitt, keine erfundenen Fakten, offene Fragen bleiben offen, Proto-Status wird als Hypothese markiert.
 
@@ -160,6 +160,7 @@ personakit/
 │   └── templates/        # persona.template.md
 ├── personas/             # vier synthetische Beispiel-Personas in zwei Sets (set.yml)
 ├── factoids/beispiel/    # synthetische Beispielstudie (reale Studienordner ignoriert Git)
+├── probe/beispiel/       # zwei echte Läufe der Collapse-Probe (Sonnet, Haiku) mit Berichten und Laufskript
 ├── skills/persona-kit/   # Claude-Skill + Erhebungsleitfaden
 ├── docs/                 # METHOD.md, FORMAT.md, JOURNEYKIT.md, PROBE.md, demo.png
 ├── scripts/              # validate_repo.py (Repo-Strukturprüfung)
