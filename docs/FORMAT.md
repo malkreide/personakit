@@ -350,7 +350,7 @@ F011 prüft wörtlich «von allen anderen»: Zwei Teilnehmende, die gemeinsam ab
 
 ## Collapse-Probe (`probe`)
 
-Die Probe misst, ob simulierte Personas unterscheidbar bleiben (Persona Collapse, `docs/METHOD.md` 1.6). personakit erzeugt Fragen und wertet Antworten aus; das Modell, das antwortet, wählt und betreibt der Mensch. Begründung und Abwägungen: [`PROBE.md`](PROBE.md).
+Die Probe misst, ob simulierte Personas unterscheidbar bleiben (Persona Collapse, `docs/METHOD.md` 1.6). personakit erzeugt Fragen und wertet Antworten aus; das Modell, das antwortet, wählt und betreibt der Mensch. Begründung und Abwägungen: [`PROBE.md`](PROBE.md). Zwei echte Läufe (Sonnet und Haiku gegen die Beispiel-Personas) mit Berichten: [`probe/beispiel/`](../probe/beispiel/).
 
 ```bash
 personakit probe build personas/<set> -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml

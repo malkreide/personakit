@@ -119,7 +119,7 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 | Notion database «Personas» | `render -f notion`: one page per persona, `ID` as the key for updates; `--target api` for the Notion API, `--target mcp` for the Notion MCP tools ([`docs/FORMAT.md`](docs/FORMAT.md#notion-export-render--f-notion), German) |
 | Wiki | `render -f md` / `-f card` |
 | Team gallery, offline | `render -f html` |
-| Check whether simulated personas stay distinguishable | `probe build` → model of your choice → `probe evaluate` ([`docs/PROBE.md`](docs/PROBE.md)) |
+| Check whether simulated personas stay distinguishable | `probe build` → model of your choice → `probe evaluate` ([`docs/PROBE.md`](docs/PROBE.md), example runs in [`probe/beispiel/`](probe/beispiel/)) |
 
 The prompt export carries the persona's guardrails: one concrete individual instead of an average, no invented facts, open questions stay open, proto status is marked as a hypothesis.
 
@@ -160,6 +160,7 @@ personakit/
 │   └── templates/        # persona.template.md
 ├── personas/             # four synthetic example personas in two sets (set.yml)
 ├── factoids/beispiel/    # synthetic example study (real study folders are git-ignored)
+├── probe/beispiel/       # two real collapse-probe runs (Sonnet, Haiku) with reports and the runner script
 ├── skills/persona-kit/   # Claude skill + elicitation guide
 ├── docs/                 # METHOD.md, FORMAT.md, JOURNEYKIT.md, PROBE.md, demo.png
 ├── scripts/              # validate_repo.py (repo structure check)
