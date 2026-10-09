@@ -317,10 +317,16 @@ def cmd_probe_build(a: argparse.Namespace) -> int:
 def cmd_probe_evaluate(a: argparse.Namespace) -> int:
     if not 0 < a.warn <= a.alarm <= 1:
         raise UsageError(f"Schwellen ungültig: es muss 0 < --warn ({a.warn}) ≤ --alarm ({a.alarm}) ≤ 1 gelten")
+    if not 0 < a.ratio_warn <= a.ratio_alarm:
+        raise UsageError(
+            f"Schwellen ungültig: es muss 0 < --ratio-warn ({a.ratio_warn}) ≤ --ratio-alarm ({a.ratio_alarm}) gelten"
+        )
     plan = load_plan(a.plan)
     answers = load_answers(a.answers)
     keywords = load_keywords(a.keywords) if a.keywords else None
-    result = evaluate(plan, answers, keywords, warn=a.warn, alarm=a.alarm)
+    result = evaluate(
+        plan, answers, keywords, warn=a.warn, alarm=a.alarm, ratio_warn=a.ratio_warn, ratio_alarm=a.ratio_alarm
+    )
     if a.json:
         _out(json.dumps(probe_report_json(result), ensure_ascii=False, indent=2) + "\n", a.output)
     else:
@@ -489,8 +495,20 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("plan", help="probe.json aus probe build")
     s.add_argument("answers", help="answers.json mit den Modellantworten")
     s.add_argument("--keywords", "-k", metavar="DATEI", help="Schlüsselwörter je must_not-Regel (YAML)")
-    s.add_argument("--warn", type=float, default=0.30, help="Ø Ähnlichkeit ab der ein Paar gelb wird (Default: 0.30)")
-    s.add_argument("--alarm", type=float, default=0.50, help="Ähnlichkeit ab der ein Paar rot wird (Default: 0.50)")
+    s.add_argument(
+        "--ratio-warn",
+        type=float,
+        default=0.50,
+        help="Nähe ab der ein Paar gelb wird (ab 2 Durchgängen; Default: 0.50)",
+    )
+    s.add_argument(
+        "--ratio-alarm",
+        type=float,
+        default=0.85,
+        help="Nähe ab der ein Paar rot wird (ab 2 Durchgängen; Default: 0.85)",
+    )
+    s.add_argument("--warn", type=float, default=0.15, help="Ohne Nähe: Ø Ähnlichkeit für gelb (Default: 0.15)")
+    s.add_argument("--alarm", type=float, default=0.18, help="Ohne Nähe: Ähnlichkeit für rot (Default: 0.18)")
     s.add_argument("--json", action="store_true", help="Ergebnis als JSON statt Markdown")
     s.add_argument("--strict", action="store_true", help="Exit-Code 1 bei Warnungen (rotes Paar, must_not-Treffer …)")
     s.add_argument("--output", "-o", default=None, help="Bericht als Datei (sonst stdout)")
