@@ -161,6 +161,7 @@ personakit/
 ├── personas/             # four synthetic example personas in two sets (set.yml)
 ├── factoids/beispiel/    # synthetic example study (real study folders are git-ignored)
 ├── probe/beispiel/       # two real collapse-probe runs (Sonnet, Haiku) with reports and the runner script
+├── probe/kalibrierung/   # calibration runs with deliberately washed-out personas (the default thresholds)
 ├── skills/persona-kit/   # Claude skill + elicitation guide
 ├── docs/                 # METHOD.md, FORMAT.md, JOURNEYKIT.md, PROBE.md, demo.png
 ├── scripts/              # validate_repo.py (repo structure check)

@@ -6,16 +6,16 @@
 
 ## Ampel pro Persona-Paar
 
-| Paar | Ampel | Ø Ähnlichkeit | Max | Fragen ≥ 0.50 | Gemeinsame Fragen | Trennung | Form |
+| Paar | Ampel | Nähe | Ø Ähnlichkeit | Max | Fragen ≥ 0.18 | Gemeinsame Fragen | Form |
 |---|---|---:|---:|---:|---:|---:|---|
-| eltern-neu-in-zuerich ↔ lehrperson-ki-explorierend | 🟢 grün | 0.10 | 0.15 | 0/26 | 26 | 0.18 | gleich |
-| eltern-neu-in-zuerich ↔ schulleitung-entscheidungsorientiert | 🟢 grün | 0.10 | 0.20 | 0/26 | 26 | 0.20 | verschieden |
-| schulleitung-entscheidungsorientiert ↔ lehrperson-ki-explorierend | 🟢 grün | 0.10 | 0.14 | 0/26 | 26 | 0.15 | gleich |
-| schulleitung-entscheidungsorientiert ↔ verwaltungs-insider | 🟢 grün | 0.10 | 0.17 | 0/26 | 26 | 0.14 | gleich |
-| eltern-neu-in-zuerich ↔ verwaltungs-insider | 🟢 grün | 0.09 | 0.21 | 0/26 | 26 | 0.18 | gleich |
-| verwaltungs-insider ↔ lehrperson-ki-explorierend | 🟢 grün | 0.07 | 0.12 | 0/26 | 26 | 0.15 | gleich |
+| eltern-neu-in-zuerich ↔ lehrperson-ki-explorierend | 🟢 grün | 0.36 | 0.10 | 0.15 | 0/26 | 26 | gleich |
+| eltern-neu-in-zuerich ↔ schulleitung-entscheidungsorientiert | 🟢 grün | 0.34 | 0.10 | 0.20 | 1/26 | 26 | verschieden |
+| schulleitung-entscheidungsorientiert ↔ lehrperson-ki-explorierend | 🟢 grün | 0.39 | 0.10 | 0.14 | 0/26 | 26 | gleich |
+| schulleitung-entscheidungsorientiert ↔ verwaltungs-insider | 🟢 grün | 0.40 | 0.10 | 0.17 | 0/26 | 26 | gleich |
+| eltern-neu-in-zuerich ↔ verwaltungs-insider | 🟢 grün | 0.33 | 0.09 | 0.21 | 1/26 | 26 | gleich |
+| verwaltungs-insider ↔ lehrperson-ki-explorierend | 🟢 grün | 0.31 | 0.07 | 0.12 | 0/26 | 26 | gleich |
 
-🔴 rot: Ø ≥ 0.50, mindestens die Hälfte der Fragen ≥ 0.50 oder Trennung ≤ 0 bei Ø ≥ 0.30. 🟡 gelb: Ø ≥ 0.30, mindestens ein Viertel der Fragen ≥ 0.50 oder Trennung ≤ 0. Trennung = eigene Streuung minus Ähnlichkeit zum Gegenüber (nur ab zwei Durchgängen pro Frage; ≤ 0 heisst: die beiden sind einander so ähnlich wie sich selbst). Form: siehe nächster Abschnitt; sie fliesst nicht in die Ampel ein.
+**Nähe** = Ähnlichkeit zum Gegenüber geteilt durch die Ähnlichkeit jeder Persona zu sich selbst (über die Fragen mit mindestens zwei Durchgängen je Persona). 1 heisst: einander so ähnlich wie sich selbst. Mit Nähe: 🔴 rot ab 0.85, 🟡 gelb ab 0.50. Ohne Nähe (ein Durchgang): 🔴 rot ab Ø 0.18 oder wenn mindestens die Hälfte der Fragen ≥ 0.18 liegt, 🟡 gelb ab Ø 0.15 oder ab einem Viertel der Fragen ≥ 0.18. Form: siehe nächster Abschnitt; sie fliesst nicht in die Ampel ein.
 
 ## Form der Antworten
 
@@ -172,7 +172,7 @@ INFO  Q021   Gleicher häufigster Antwortanfang «ehrlich» bei 4 Personas (elte
 ## Grenzen der Methode
 
 - **Lexikalische Ähnlichkeit ist ein grober Proxy.** Gemessen wird Wortüberlappung, nicht Bedeutung. Gleicher Inhalt in anderen Worten bleibt unentdeckt (falsch grün); gemeinsames Fachvokabular der Domäne hebt die Werte ohne Collapse (falsch rot). Ton, Haltung und Entscheidungen misst die Probe nicht.
-- **Die Schwellen sind Faustwerte, nicht kalibriert.** Aussagekräftiger als der Absolutwert ist der Vergleich: dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan. Mit mindestens zwei Durchgängen pro Frage misst die Spalte «Trennung» relativ zur eigenen Streuung jeder Persona.
+- **Die Schwellen sind an einem Modell kalibriert.** Grundlage sind künstlich verwaschene Personas mit `claude-haiku-5-5` (probe/kalibrierung/). Die Nähe (ab zwei Durchgängen) ist relativ zur eigenen Streuung und darum robuster; mit einem Durchgang erkennen die absoluten Schwellen nur den vollständigen Collapse und hängen von Modell und Antwortlänge ab. Aussagekräftig bleibt der Vergleich: dasselbe Modell vor und nach einer Änderung, oder zwei Modelle mit demselben Plan.
 - **Die Form ist nur grob gemessen.** Länge, Gliederung und Antwortanfang zeigen den Assistenten-Kollaps, nicht aber Tonfall, Register oder Höflichkeit; ob eine lange, gegliederte Antwort zur Persona passt, entscheidet ihre `simulation.voice`, nicht die Zahl.
 - **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine Einhaltung. Die Einordnung «zitiert», «verneint», «nicht gewusst», «wiedergegeben», «gefragt» ist eine Satzregel: Sie trennt Erwähnen von Verwenden meistens, aber nicht immer («Die Kreisschulbehörde ist nicht zuständig» verwendet den Begriff; eine Aufzählung «Schulamt, Kreisschulbehörde, Schule» gilt als Verwendung).
 - **Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein; eine offene Antwort ohne Marker wird übersehen. Als konkrete Angabe zählt jede Zahl ausser Listennummern, Datum, Uhrzeit und Jahreszahl.
@@ -180,7 +180,7 @@ INFO  Q021   Gleicher häufigster Antwortanfang «ehrlich» bei 4 Personas (elte
 
 ## Parameter
 
-- Schwellen: Warnung 0.30, Alarm 0.50, Varianz 0.80
+- Schwellen: Nähe gelb 0.50, rot 0.85; ohne Nähe Warnung 0.15, Alarm 0.18; Varianz 0.80
 - Ähnlichkeit: TF-IDF (1 + ln tf, geglättete IDF über alle Antworten dieses Laufs), Kosinus; pro Frage Mittel über alle Kombinationen der Durchgänge
 - Wörter: Kleinschreibung, Buchstabenwörter ab 3 Zeichen, ß → ss, Füllwörter entfernt, Endungen grob gekürzt; Wörter der Frage zählen nicht
 - Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Kontextwörter: 15 (Standardliste) · Redeverben: 16 (Standardliste) · Unsicherheitsmarker: 21 (Standardliste)

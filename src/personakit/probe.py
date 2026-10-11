@@ -37,8 +37,14 @@ QUESTIONS_MIN = 6
 QUESTIONS_MAX = 10
 MAX_JOBS = 3
 MAX_PAINS = 3
-WARN_SIMILARITY = 0.30  # pair mean at or above → yellow
-ALARM_SIMILARITY = 0.50  # pair mean at or above → red; per question: counts as "high"
+# Calibrated on washed-out personas (probe/kalibrierung/): see docs/PROBE.md, «Kalibrierung».
+# With ≥ 2 samples the light uses the nearness: similarity to the other persona / similarity to itself.
+RATIO_WARN = 0.50  # nearness at or above → yellow (personas reduced to their archetype: 0.53–0.61)
+RATIO_ALARM = 0.85  # nearness at or above → red (identical prompts: 0.95–1.04; full personas: 0.26–0.41)
+MIN_OWN = 0.05  # below this own similarity the nearness is unstable → absolute thresholds instead
+# With one sample only the absolute similarity is left (calibrated on answers of about 230 words).
+WARN_SIMILARITY = 0.15  # pair mean at or above → yellow
+ALARM_SIMILARITY = 0.18  # pair mean at or above → red; per question: counts as "high"
 SHARE_RED = 0.5  # share of shared questions ≥ alarm → red
 SHARE_YELLOW = 0.25  # … → yellow
 VARIANCE_HIGH = 0.80  # mean similarity of a persona's own samples at or above → variance collapsed (Q015)
@@ -477,6 +483,7 @@ class Pair:
     b: str
     similarity: dict[str, float] = field(default_factory=dict)  # question id → mean cosine
     separation: float | None = None  # mean(own similarity) − similarity between, over questions with ≥ 2 samples each
+    nearness: float | None = None  # similarity between / mean(own similarity), over the same questions
     light: str = NONE
     same_form: bool | None = None  # same length and structure (FormStats.same_form); None without answers
     top_terms: list[str] = field(default_factory=list)  # terms that carry the most similar question
@@ -594,6 +601,8 @@ class ProbeResult:
     texts: dict[tuple[str, str], list[str]]
     warn: float = WARN_SIMILARITY
     alarm: float = ALARM_SIMILARITY
+    ratio_warn: float = RATIO_WARN
+    ratio_alarm: float = RATIO_ALARM
     open_markers: tuple[str, ...] = DEFAULT_OPEN_MARKERS
     markers_custom: bool = False
     form: dict[str, FormStats] = field(default_factory=dict)
@@ -707,15 +716,26 @@ def form_stats(samples: list[str]) -> FormStats:
     )
 
 
-def _light(pair: Pair, warn: float, alarm: float) -> str:
+def _basis(pair: Pair, alarm: float) -> str:
+    """What the light of a pair rests on, for the findings."""
+    if pair.nearness is not None:
+        return f"Nähe {pair.nearness:.2f} (Ähnlichkeit zum Gegenüber / zu sich selbst), Ø Ähnlichkeit {pair.mean:.2f}"
+    return f"Ø Ähnlichkeit {pair.mean:.2f}, {pair.high(alarm)}/{pair.shared} Fragen ≥ {alarm:.2f} (ein Durchgang, ohne Nähe)"
+
+
+def _light(pair: Pair, warn: float, alarm: float, ratio_warn: float, ratio_alarm: float) -> str:
+    """Nearness when there is a baseline (≥ 2 samples), else the absolute similarity."""
     if not pair.similarity:
         return NONE
+    if pair.nearness is not None:
+        if pair.nearness >= ratio_alarm:
+            return RED
+        return YELLOW if pair.nearness >= ratio_warn else GREEN
     mean = pair.mean or 0.0
     share = pair.high(alarm) / pair.shared
-    sep = pair.separation
-    if mean >= alarm or share >= SHARE_RED or (sep is not None and sep <= 0 and mean >= warn):
+    if mean >= alarm or share >= SHARE_RED:
         return RED
-    if mean >= warn or share >= SHARE_YELLOW or (sep is not None and sep <= 0):
+    if mean >= warn or share >= SHARE_YELLOW:
         return YELLOW
     return GREEN
 
@@ -738,6 +758,8 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
     keywords: dict[str, Any] | None = None,
     warn: float = WARN_SIMILARITY,
     alarm: float = ALARM_SIMILARITY,
+    ratio_warn: float = RATIO_WARN,
+    ratio_alarm: float = RATIO_ALARM,
 ) -> ProbeResult:
     keywords = keywords or {}
     findings: list[ProbeFinding] = []
@@ -837,6 +859,7 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
     for a, b in combinations(order, 2):
         pair = Pair(a, b)
         gaps: list[float] = []
+        based: list[tuple[float, float]] = []  # (between, own) on questions with a baseline
         for qid in questions:
             va, vb = vectors.get((a, qid)), vectors.get((b, qid))
             if not va or not vb:
@@ -846,8 +869,11 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
             wa, wb = own(a, qid), own(b, qid)
             if wa is not None and wb is not None:
                 gaps.append((wa + wb) / 2 - between)
+                based.append((between, (wa + wb) / 2))
         pair.separation = _mean(gaps) if gaps else None
-        pair.light = _light(pair, warn, alarm)
+        if based and _mean([w for _, w in based]) >= MIN_OWN:
+            pair.nearness = _mean([b_ for b_, _ in based]) / _mean([w for _, w in based])
+        pair.light = _light(pair, warn, alarm, ratio_warn, ratio_alarm)
         if a in form and b in form:
             pair.same_form = form[a].same_form(form[b])
         top = pair.top_question
@@ -864,7 +890,7 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
                 ProbeFinding(
                     WARN,
                     "Q010",
-                    f"Collapse-Verdacht: Ø Ähnlichkeit {pair.mean:.2f}, {pair.high(alarm)}/{pair.shared} Fragen ≥ {alarm:.2f}",
+                    f"Collapse-Verdacht: {_basis(pair, alarm)}",
                     pair.label,
                 )
             )
@@ -873,7 +899,7 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
                 ProbeFinding(
                     INFO,
                     "Q011",
-                    f"Prüfen: Ø Ähnlichkeit {pair.mean:.2f}, {pair.high(alarm)}/{pair.shared} Fragen ≥ {alarm:.2f}",
+                    f"Prüfen: {_basis(pair, alarm)}",
                     pair.label,
                 )
             )
@@ -882,6 +908,15 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
                 ProbeFinding(INFO, "Q016", f"Nur {pair.shared} gemeinsame Frage(n) – Ampel wenig belastbar", pair.label)
             )
     pairs.sort(key=lambda p: (_LIGHT_ORDER[p.light], -(p.mean or 0.0), p.label))
+    if any(p.shared for p in pairs) and all(p.nearness is None for p in pairs):
+        findings.append(
+            ProbeFinding(
+                INFO,
+                "Q018",
+                "Ohne zweiten Durchgang keine Nähe: Die Ampel erkennt so nur den vollständigen Collapse, "
+                "nicht Personas, die auf ihren Archetyp geschrumpft sind (probe build --samples 3)",
+            )
+        )
 
     # ---- variance of each persona's own samples
     variance: dict[str, float | None] = {}
@@ -1040,6 +1075,8 @@ def evaluate(  # noqa: C901 – one pass over the answers, intentionally flat
         texts=texts,
         warn=warn,
         alarm=alarm,
+        ratio_warn=ratio_warn,
+        ratio_alarm=ratio_alarm,
         open_markers=markers,
         markers_custom=bool(custom),
         form=form,
@@ -1058,9 +1095,11 @@ LIMITS = (
     "**Lexikalische Ähnlichkeit ist ein grober Proxy.** Gemessen wird Wortüberlappung, nicht Bedeutung. "
     "Gleicher Inhalt in anderen Worten bleibt unentdeckt (falsch grün); gemeinsames Fachvokabular der Domäne "
     "hebt die Werte ohne Collapse (falsch rot). Ton, Haltung und Entscheidungen misst die Probe nicht.",
-    "**Die Schwellen sind Faustwerte, nicht kalibriert.** Aussagekräftiger als der Absolutwert ist der Vergleich: "
-    "dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan. "
-    "Mit mindestens zwei Durchgängen pro Frage misst die Spalte «Trennung» relativ zur eigenen Streuung jeder Persona.",
+    "**Die Schwellen sind an einem Modell kalibriert.** Grundlage sind künstlich verwaschene Personas mit "
+    "`claude-haiku-5-5` (probe/kalibrierung/). Die Nähe (ab zwei Durchgängen) ist relativ zur eigenen Streuung "
+    "und darum robuster; mit einem Durchgang erkennen die absoluten Schwellen nur den vollständigen Collapse und "
+    "hängen von Modell und Antwortlänge ab. Aussagekräftig bleibt der Vergleich: dasselbe Modell vor und nach "
+    "einer Änderung, oder zwei Modelle mit demselben Plan.",
     "**Die Form ist nur grob gemessen.** Länge, Gliederung und Antwortanfang zeigen den Assistenten-Kollaps, "
     "nicht aber Tonfall, Register oder Höflichkeit; ob eine lange, gegliederte Antwort zur Persona passt, "
     "entscheidet ihre `simulation.voice`, nicht die Zahl.",
@@ -1100,23 +1139,24 @@ def render_report(r: ProbeResult, plan_name: str = "", answers_name: str = "") -
         "",
         "## Ampel pro Persona-Paar",
         "",
-        f"| Paar | Ampel | Ø Ähnlichkeit | Max | Fragen ≥ {r.alarm:.2f} | Gemeinsame Fragen | Trennung | Form |",
+        f"| Paar | Ampel | Nähe | Ø Ähnlichkeit | Max | Fragen ≥ {r.alarm:.2f} | Gemeinsame Fragen | Form |",
         "|---|---|---:|---:|---:|---:|---:|---|",
     ]
     form_label = {True: "gleich", False: "verschieden", None: "–"}
     for p in r.pairs:
         high = f"{p.high(r.alarm)}/{p.shared}" if p.shared else "–"
         o.append(
-            f"| {p.label} | {LIGHT_LABEL[p.light]} | {_fmt(p.mean)} | {_fmt(p.max)} | {high} | {p.shared} "
-            f"| {_fmt(p.separation)} | {form_label[p.same_form]} |"
+            f"| {p.label} | {LIGHT_LABEL[p.light]} | {_fmt(p.nearness)} | {_fmt(p.mean)} | {_fmt(p.max)} | {high} "
+            f"| {p.shared} | {form_label[p.same_form]} |"
         )
     o += [
         "",
-        f"🔴 rot: Ø ≥ {r.alarm:.2f}, mindestens die Hälfte der Fragen ≥ {r.alarm:.2f} oder Trennung ≤ 0 bei Ø ≥ {r.warn:.2f}. "
-        f"🟡 gelb: Ø ≥ {r.warn:.2f}, mindestens ein Viertel der Fragen ≥ {r.alarm:.2f} oder Trennung ≤ 0. "
-        "Trennung = eigene Streuung minus Ähnlichkeit zum Gegenüber (nur ab zwei Durchgängen pro Frage; ≤ 0 heisst: "
-        "die beiden sind einander so ähnlich wie sich selbst). Form: siehe nächster Abschnitt; sie fliesst nicht "
-        "in die Ampel ein.",
+        "**Nähe** = Ähnlichkeit zum Gegenüber geteilt durch die Ähnlichkeit jeder Persona zu sich selbst (über die "
+        "Fragen mit mindestens zwei Durchgängen je Persona). 1 heisst: einander so ähnlich wie sich selbst. "
+        f"Mit Nähe: 🔴 rot ab {r.ratio_alarm:.2f}, 🟡 gelb ab {r.ratio_warn:.2f}. "
+        f"Ohne Nähe (ein Durchgang): 🔴 rot ab Ø {r.alarm:.2f} oder wenn mindestens die Hälfte der Fragen ≥ {r.alarm:.2f} "
+        f"liegt, 🟡 gelb ab Ø {r.warn:.2f} oder ab einem Viertel der Fragen ≥ {r.alarm:.2f}. "
+        "Form: siehe nächster Abschnitt; sie fliesst nicht in die Ampel ein.",
         "",
     ]
 
@@ -1243,7 +1283,8 @@ def render_report(r: ProbeResult, plan_name: str = "", answers_name: str = "") -
         "",
         "## Parameter",
         "",
-        f"- Schwellen: Warnung {r.warn:.2f}, Alarm {r.alarm:.2f}, Varianz {VARIANCE_HIGH:.2f}",
+        f"- Schwellen: Nähe gelb {r.ratio_warn:.2f}, rot {r.ratio_alarm:.2f}; ohne Nähe Warnung {r.warn:.2f}, "
+        f"Alarm {r.alarm:.2f}; Varianz {VARIANCE_HIGH:.2f}",
         "- Ähnlichkeit: TF-IDF (1 + ln tf, geglättete IDF über alle Antworten dieses Laufs), Kosinus; "
         "pro Frage Mittel über alle Kombinationen der Durchgänge",
         "- Wörter: Kleinschreibung, Buchstabenwörter ab 3 Zeichen, ß → ss, Füllwörter entfernt, "
@@ -1265,7 +1306,13 @@ def report_json(r: ProbeResult) -> dict[str, Any]:
         "generator": f"personakit {__version__}",
         "plan_id": r.plan["plan_id"],
         "model": r.answers.get("model") or None,
-        "thresholds": {"warn": r.warn, "alarm": r.alarm, "variance": VARIANCE_HIGH},
+        "thresholds": {
+            "ratio_warn": r.ratio_warn,
+            "ratio_alarm": r.ratio_alarm,
+            "warn": r.warn,
+            "alarm": r.alarm,
+            "variance": VARIANCE_HIGH,
+        },
         "pairs": [
             {
                 "a": p.a,
@@ -1276,6 +1323,7 @@ def report_json(r: ProbeResult) -> dict[str, Any]:
                 "high": p.high(r.alarm),
                 "shared": p.shared,
                 "separation": p.separation,
+                "nearness": p.nearness,
                 "same_form": p.same_form,
                 "similarity": p.similarity,
                 "top_terms": p.top_terms,

@@ -363,7 +363,7 @@ personakit probe evaluate probe.json answers.json -k probe-keywords.yml -o beric
 | Option | Bedeutung |
 |---|---|
 | `-n`, `--questions` | Fragen pro Persona, 6–10 (Default 8) |
-| `--samples` | Empfohlene Durchgänge pro Frage (Default 1); ab 2 misst `evaluate` Trennung und Varianz |
+| `--samples` | Empfohlene Durchgänge pro Frage (Default 1). Ab 2 misst `evaluate` die Nähe und die Varianz; mit einem Durchgang erkennt die Ampel nur den vollständigen Collapse. Empfohlen: 3 |
 | `-o` | Plan als Datei, sonst stdout |
 | `--answers-template` | Leere `answers.json` mit allen Persona-/Fragen-Kombinationen |
 | `--keywords-template` | `probe-keywords.yml` mit einer leeren Liste pro `must_not`-Regel, Regeltext als Kommentar |
@@ -425,21 +425,24 @@ Schema `schema/probe-keywords.schema.json`. Schlüsselwörter treffen am Wortanf
 | Option | Bedeutung |
 |---|---|
 | `-k`, `--keywords` | Schlüsselwort-Datei; ohne sie gelten alle `must_not`-Regeln als «nicht geprüft» |
-| `--warn`, `--alarm` | Schwellen für die Ampel (Default 0.30 und 0.50; `0 < warn ≤ alarm ≤ 1`) |
+| `--ratio-warn`, `--ratio-alarm` | Schwellen für die Nähe ab zwei Durchgängen (Default 0.50 und 0.85; `0 < ratio-warn ≤ ratio-alarm`) |
+| `--warn`, `--alarm` | Schwellen für die Ø Ähnlichkeit, wenn keine Nähe messbar ist (Default 0.15 und 0.18; `0 < warn ≤ alarm ≤ 1`) |
 | `--json` | Ergebnis als JSON (`pairs` mit `same_form`, `variance`, `form`, `form_collapse`, `must_not` mit `context` je Treffer, `unknowns`, `findings`, `limits`) |
 | `--strict` | Exit 1 bei jeder Warnung |
 | `-o` | Bericht als Datei, sonst stdout |
 
-Der Markdown-Bericht enthält: Ampel pro Persona-Paar (Ø und maximale Ähnlichkeit, Anteil der Fragen ≥ Alarm, gemeinsame Fragen, Trennung, Form gleich oder verschieden), die **Form der Antworten** je Persona, die ähnlichsten Antworten der auffälligen Paare mit den Wörtern, die die Ähnlichkeit tragen, die `must_not`-Prüfung pro Regel mit Treffern (Verwendungen und Erwähnungen getrennt), die Unknown-Prüfung, bei mehreren Durchgängen die Varianz je Persona, die Befunde, die **Grenzen der Methode** und die Parameter.
+Der Markdown-Bericht enthält: Ampel pro Persona-Paar (Nähe, Ø und maximale Ähnlichkeit, Anteil der Fragen ≥ Alarm, gemeinsame Fragen, Form gleich oder verschieden), die **Form der Antworten** je Persona, die ähnlichsten Antworten der auffälligen Paare mit den Wörtern, die die Ähnlichkeit tragen, die `must_not`-Prüfung pro Regel mit Treffern (Verwendungen und Erwähnungen getrennt), die Unknown-Prüfung, bei mehreren Durchgängen die Varianz je Persona, die Befunde, die **Grenzen der Methode** und die Parameter.
 
-**Ähnlichkeit:** TF-IDF-Kosinus (`1 + ln tf`, geglättete IDF über alle Antworten des Laufs) auf Buchstabenwörtern ab drei Zeichen, Füllwörter entfernt, Endungen grob gekürzt, ohne die Wörter der Frage. Pro Frage und Paar das Mittel über alle Kombinationen der Durchgänge; **Trennung** = Ø(Ähnlichkeit der eigenen Durchgänge beider Personas) − Ähnlichkeit zwischen ihnen, nur über Fragen mit mindestens zwei Durchgängen je Persona.
+**Ähnlichkeit:** TF-IDF-Kosinus (`1 + ln tf`, geglättete IDF über alle Antworten des Laufs) auf Buchstabenwörtern ab drei Zeichen, Füllwörter entfernt, Endungen grob gekürzt, ohne die Wörter der Frage. Pro Frage und Paar das Mittel über alle Kombinationen der Durchgänge. **Nähe** = Ø Ähnlichkeit zwischen den beiden Personas geteilt durch Ø Ähnlichkeit der eigenen Durchgänge beider Personas, nur über Fragen mit mindestens zwei Durchgängen je Persona; liegt diese Basis unter 0.05, gibt es keine Nähe. Im JSON stehen zusätzlich `separation` (Basis minus Ähnlichkeit) und `nearness`.
 
-| Ampel | Bedingung (eine genügt) |
-|---|---|
-| 🔴 rot | Ø ≥ Alarm · mindestens die Hälfte der gemeinsamen Fragen ≥ Alarm · Trennung ≤ 0 und Ø ≥ Warnung |
-| 🟡 gelb | Ø ≥ Warnung · mindestens ein Viertel der gemeinsamen Fragen ≥ Alarm · Trennung ≤ 0 |
-| 🟢 grün | sonst |
-| ⚪ keine Daten | keine gemeinsam beantwortete Frage |
+| Ampel | mit Nähe (ab zwei Durchgängen) | ohne Nähe (eine Bedingung genügt) |
+|---|---|---|
+| 🔴 rot | Nähe ≥ ratio-alarm | Ø ≥ Alarm · mindestens die Hälfte der gemeinsamen Fragen ≥ Alarm |
+| 🟡 gelb | Nähe ≥ ratio-warn | Ø ≥ Warnung · mindestens ein Viertel der gemeinsamen Fragen ≥ Alarm |
+| 🟢 grün | sonst | sonst |
+| ⚪ keine Daten | keine gemeinsam beantwortete Frage | |
+
+Die Defaults sind an künstlich verwaschenen Personas kalibriert ([`probe/kalibrierung/`](../probe/kalibrierung/)): vollständige Personas Nähe 0.25–0.40, nur Archetyp 0.53–0.61, identische Prompts 0.97–1.03.
 
 **Form der Antworten:** Die Ampel vergleicht Wörter; den Assistenten-Kollaps – alle Personas antworten gleich lang, gegliedert und mit denselben Floskeln, nur mit anderem Vokabular – sieht sie nicht. Deshalb misst `evaluate` je Persona über alle ihre Antworten:
 
@@ -476,7 +479,8 @@ Exit-Codes: 0 nach der Auswertung, mit `--strict` 1 bei mindestens einer Warnung
 | Q015 | INFO | Durchgänge einer Persona fast gleich (Ø ≥ 0.80): Varianz kollabiert |
 | Q016 | INFO | Weniger als 3 gemeinsame Fragen – Ampel wenig belastbar |
 | Q017 | INFO | Treffer einer `must_not`-Regel nur im Kontext (zitiert, verneint, nicht gewusst, wiedergegeben, gefragt) – lesen, nicht zählen |
+| Q018 | INFO | Keine Nähe messbar (ein Durchgang): Die Ampel erkennt nur den vollständigen Collapse |
 | Q020 | WARN | Formkollaps: alle Personas gleich lang und gleich gegliedert, in Assistentenform |
 | Q021 | INFO | Dasselbe Wort ist bei mindestens zwei Personas der häufigste Antwortanfang (je mindestens 10 %) |
 
-Alle Q-Befunde gehen auf `docs/METHOD.md` 1.6 zurück: Collapse (Q010/Q011), Collapse der Form – «zu rational», Assistentenregister (Q020/Q021), kollabierte Varianz (Q015), erfundene Fakten statt offener Fragen (Q013/Q014), Verletzung der Simulationsregeln (Q012). Q001–Q006 und Q016 sichern ab, dass fehlende oder unpassende Daten nicht still als Ergebnis zählen.
+Alle Q-Befunde gehen auf `docs/METHOD.md` 1.6 zurück: Collapse (Q010/Q011), Collapse der Form – «zu rational», Assistentenregister (Q020/Q021), kollabierte Varianz (Q015), erfundene Fakten statt offener Fragen (Q013/Q014), Verletzung der Simulationsregeln (Q012). Q001–Q006, Q016 und Q018 sichern ab, dass fehlende oder unpassende Daten nicht still als Ergebnis zählen.

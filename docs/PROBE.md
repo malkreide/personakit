@@ -68,15 +68,17 @@ Pro Persona und Frage ein String oder eine Liste von Durchgängen. `plan_id` und
 
 - Pro Frage und Paar: Mittel über alle Kombinationen der Durchgänge.
 - Pro Paar: Ø über die gemeinsamen Fragen, Maximum, Anteil der Fragen ≥ Alarmschwelle.
-- **Basis (ab zwei Durchgängen):** Ø-Ähnlichkeit der Durchgänge einer Persona untereinander. Sind zwei Personas einander so ähnlich wie sich selbst (Trennung ≤ 0), sind sie im Modell nicht unterscheidbar – unabhängig von absoluten Schwellen. Liegt die eigene Ähnlichkeit sehr hoch, ist die Varianz kollabiert (Q015).
+- **Basis (ab zwei Durchgängen):** Ø-Ähnlichkeit der Durchgänge einer Persona untereinander. **Nähe** = Ähnlichkeit zum Gegenüber geteilt durch diese Basis (Mittel beider Personas, über die Fragen mit mindestens zwei Durchgängen je Persona). Bei 1 sind zwei Personas einander so ähnlich wie sich selbst. Liegt die eigene Ähnlichkeit sehr hoch, ist die Varianz kollabiert (Q015).
 
-**Ampel pro Paar** (Schwellen mit `--warn`, `--alarm` änderbar). Die Defaults sind an synthetischen Antworten geprüft (`tests/fixtures/probe/`): deutlich verschiedene Personas liegen um 0.05, wörtlich kollabierte über 0.8, sinngleich umformulierte zwischen 0.25 und 0.5 – genau dort, wo der lexikalische Proxy unsicher wird.
+**Ampel pro Paar**, kalibriert an künstlich verwaschenen Personas ([`probe/kalibrierung/`](../probe/kalibrierung/), siehe unten):
 
-| Ampel | Bedingung (eine genügt) |
-|---|---|
-| 🔴 rot – Collapse-Verdacht | Ø ≥ Alarm (0.50) · mindestens die Hälfte der Fragen ≥ Alarm · Trennung ≤ 0 und Ø ≥ Warnung |
-| 🟡 gelb – prüfen | Ø ≥ Warnung (0.30) · mindestens ein Viertel der Fragen ≥ Alarm · Trennung ≤ 0 |
-| 🟢 grün | sonst |
+| | Ab zwei Durchgängen (Nähe) | Mit einem Durchgang (absolut) |
+|---|---|---|
+| 🔴 rot – Collapse-Verdacht | Nähe ≥ 0.85 (`--ratio-alarm`) | Ø ≥ 0.18 (`--alarm`) · mindestens die Hälfte der Fragen ≥ 0.18 |
+| 🟡 gelb – prüfen | Nähe ≥ 0.50 (`--ratio-warn`) | Ø ≥ 0.15 (`--warn`) · mindestens ein Viertel der Fragen ≥ 0.18 |
+| 🟢 grün | sonst | sonst |
+
+Fällt die Basis unter 0.05, ist die Nähe instabil, und es gelten die absoluten Schwellen. Mit nur einem Durchgang erkennt die Ampel nur den vollständigen Collapse; der Bericht sagt das (Q018).
 
 **`must_not` über Schlüsselwörter.** Eine Datei `probe-keywords.yml` (Vorlage mit `--keywords-template`) ordnet jeder Regel `N1…` einer Persona Schlüsselwörter zu. Treffer: Gross-/Kleinschreibung egal, am Wortanfang (`Kreisschulbehörde` trifft `Kreisschulbehörden`). Jeder Treffer mit Frage, Wort und Ausschnitt; steht das Wort schon in der Frage, wird das vermerkt (die Persona kann es übernommen haben). Regeln ohne Schlüsselwörter heissen «nicht geprüft», nie «eingehalten».
 
@@ -95,6 +97,15 @@ Erster Lauf am 9.10.2026: vier Beispiel-Personas, 32 Fragen, je 3 Durchgänge, 3
 - **`must_not` nur Fehlalarme:** 30 Schlüsselwort-Treffer, alle Erwähnungen («Bei Wörtern wie «Kreisschulbehörde» kommt Unsinn heraus», «bin ich nicht begeistert»). Mit der Kontextregel: 30 von 30 als erwähnt eingeordnet (28 zitiert, 2 verneint), kein Q012 mehr.
 - **Schwellen:** Lange echte Antworten liegen bei etwa 0.1 – weit unter Warnung (0.30) und Alarm (0.50). Absolute Schwellen sind bei langen Antworten stumpf; die Trennung (ab zwei Durchgängen) ist das belastbarere Signal. Die Schwellen bleiben vorerst, bis ein Lauf mit echtem inhaltlichem Collapse vorliegt.
 
+### Kalibrierung (Lauf 3)
+
+Die ersten beiden Läufe enthielten keinen Collapse, die Schwellen 0.30/0.50 waren an synthetischen Texten gesetzt. Für eine bekannte Wahrheit liefen dieselben Fragen mit Haiku gegen die vier Beispiel-Personas in drei verwaschenen Stufen: ohne Stimme und Simulationsregeln, nur mit dem Archetyp, und mit einem für alle identischen generischen Prompt. Ergebnisse, Tabelle und Grenzen: [`probe/kalibrierung/README.md`](../probe/kalibrierung/README.md).
+
+- **Die alten Schwellen erkannten selbst den vollständigen Collapse nicht.** Identische Prompts ergaben eine Ähnlichkeit von nur 0.20; die Regel «Trennung ≤ 0» kippte im Rauschen zufällig.
+- **Die Nähe trennt die Stufen ohne Überlappung:** vollständig 0.31–0.40, ohne Stimme 0.38–0.44, nur Archetyp 0.53–0.61, identisch 0.97–1.03. Daraus die Schwellen gelb 0.50 und rot 0.85.
+- **Ein Durchgang** trennt nur den vollständigen Collapse (0.20–0.23 gegen höchstens 0.14). Daraus die absoluten Schwellen 0.15 und 0.18.
+- **Grenzen:** Die Schwellen sind an denselben Daten gewählt und geprüft. Unabhängig bestätigt ist bisher nur der Sonnet-Lauf mit vollständigen Personas (grün). Die Kalibrierung gilt für ein Modell, eine Domäne und Deutsch. `tests/test_probe_calibration.py` hält die Stufenleiter als Regressionstest fest.
+
 ### Lauf 2: Haiku statt Sonnet
 
 Am 9.10.2026 lief derselbe Plan mit `claude-haiku-5-5`. Beide Läufe liegen mit Berichten und Vergleich unter [`probe/beispiel/`](../probe/beispiel/).
@@ -104,7 +115,7 @@ Am 9.10.2026 lief derselbe Plan mit `claude-haiku-5-5`. Beide Läufe liegen mit 
 - **`must_not`:** zunächst 6 Treffer als Verwendung. Gelesen ergab das einen echten Rollenbruch (die Elternpersona berät als Kommunikationsfachperson), einen Grenzfall und vier Erwähnungen ohne Anführungszeichen: indirekte Rede, «weiss nicht, ob …» mit weitem Abstand, eine Aufzählung. Mit den Kontexten *nicht gewusst* und *wiedergegeben* bleiben 3: Rollenbruch, Grenzfall, Aufzählung.
 - **Unknowns:** zunächst ein Fehlalarm (Q013): «weiss ich das selbst nicht genau» traf den Marker «weiss nicht» nicht, und das Datum «1. November» zählte als Zahl. Mit Markern mit Lücke und ohne Datum als Zahl: 18 von 18 offen.
 
-Beide Läufe enthalten keinen inhaltlichen Collapse. Die Schwellen sind weiterhin nicht kalibriert.
+Beide Läufe enthalten keinen inhaltlichen Collapse; die Schwellen waren danach noch nicht kalibriert (siehe Lauf 3).
 
 ## 5. Befunde und Exit-Codes
 
@@ -113,7 +124,7 @@ Q-Codes stehen in `docs/FORMAT.md`. `evaluate` endet mit 0, mit `--strict` mit 1
 ## 6. Grenzen (stehen auch im Bericht)
 
 - **Lexikalische Ähnlichkeit ist ein grober Proxy.** Gleicher Inhalt in anderen Worten bleibt unentdeckt (falsch grün); gemeinsames Fachvokabular einer Domäne hebt die Werte ohne Collapse (falsch rot). Ton, Haltung und Entscheidungen misst sie nicht.
-- **Schwellen sind Faustwerte**, nicht kalibriert. Aussagekräftiger als der Absolutwert ist der Vergleich: dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan. Mit mehreren Durchgängen misst die Basis relativ statt absolut.
+- **Die Schwellen sind an einem Modell kalibriert** (Haiku, verwaschene Beispiel-Personas). Die Nähe (ab zwei Durchgängen) ist relativ und darum robuster; die absoluten Schwellen hängen an Modell und Antwortlänge. Aussagekräftig bleibt der Vergleich: dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan.
 - **Die Form ist nur grob gemessen.** Länge, Gliederung und Antwortanfang zeigen den Assistenten-Kollaps, nicht Tonfall, Register oder Höflichkeit.
 - **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine Einhaltung. Die Einordnung «zitiert/verneint/gefragt» ist eine Satzregel und trennt Erwähnen von Verwenden meistens, nicht immer.
 - **Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein, eine offene Antwort ohne Marker wird übersehen.
