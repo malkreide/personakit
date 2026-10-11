@@ -104,7 +104,7 @@ Die Persona-Datei bleibt unverändert bei `personakit: "1.0"`; Sets sind eine re
 
 ```json
 {
-  "generator": "personakit 0.2.0",
+  "generator": "personakit 0.3.0",
   "target": "api",
   "database": { "title": […], "properties": {…} },
   "pages": [ { "properties": {…}, "children": […] } ]
