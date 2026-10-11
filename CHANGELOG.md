@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Out-of-sample check of the probe calibration: stages 2 and 3 run again with `claude-sonnet-5-5` (330 answers each, `probe/kalibrierung/stufe-{2,3}/answers-sonnet.json`, reports `bericht-sonnet.md`), thresholds unchanged. Red holds (nearness 0.98–1.02, all pairs red, also with one sample); yellow holds narrowly – five of six «archetype only» pairs are yellow, Eltern ↔ Schulleitung stays green at 0.475. `tests/test_probe_calibration.py` records both
+
 ### Changed
 - Collapse probe thresholds calibrated on deliberately washed-out personas (`probe/kalibrierung/`: the example personas without voice, as archetype only, and with one identical generic prompt; 3 × 330 answers from `claude-haiku-5-5`). The old thresholds (0.30/0.50 and «separation ≤ 0») did not flag even identical prompts. With two or more samples the light now uses the **nearness** – similarity to the other persona divided by each persona's similarity to itself – yellow from 0.50, red from 0.85 (`--ratio-warn`, `--ratio-alarm`); full personas measured 0.25–0.40, archetype only 0.53–0.61, identical prompts 0.97–1.03. With one sample the absolute thresholds are now 0.15/0.18 (were 0.30/0.50) and only a total collapse is visible, which the new finding Q018 states. The report shows «Nähe» instead of «Trennung»; JSON carries `nearness` next to `separation`. `tests/test_probe_calibration.py` keeps the ladder as a regression test
 
