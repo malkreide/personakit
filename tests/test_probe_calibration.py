@@ -91,9 +91,10 @@ def test_cli_rejects_inverted_ratio_thresholds(capsys):
     assert "--ratio-warn" in capsys.readouterr().err
 
 
-# --------------------------------------------- out-of-sample check: Sonnet on stages 2 and 3
+# --------------------------------------------- out-of-sample check: Sonnet on stages 1 to 3
 SONNET = {
-    s: (CALIBRATION / f"stufe-{s}" / "probe.json", CALIBRATION / f"stufe-{s}" / "answers-sonnet.json") for s in (2, 3)
+    s: (CALIBRATION / f"stufe-{s}" / "probe.json", CALIBRATION / f"stufe-{s}" / "answers-sonnet.json")
+    for s in (1, 2, 3)
 }
 
 
@@ -108,7 +109,7 @@ def _sonnet(stage: int, sample: int | None = None):
     return evaluate(load_plan(plan_path), answers)
 
 
-@pytest.mark.parametrize("stage", [2, 3])
+@pytest.mark.parametrize("stage", [1, 2, 3])
 def test_sonnet_answers_are_complete_and_reports_current(stage):
     plan_path, answers_path = SONNET[stage]
     plan, answers = load_plan(plan_path), load_answers(answers_path)
@@ -137,3 +138,13 @@ def test_sonnet_confirms_yellow_for_archetype_stage():
     assert RATIO_WARN <= least.nearness < 0.50
     old = evaluate(load_plan(SONNET[2][0]), load_answers(SONNET[2][1]), ratio_warn=0.50)
     assert Counter(p.light for p in old.pairs) == Counter({YELLOW: 5, GREEN: 1})
+
+
+def test_sonnet_keeps_the_voiceless_stage_green_with_a_margin():
+    """The narrow margin of the 0.45 threshold to stage 1 is Haiku's (0.44); Sonnet stays clearly below."""
+    stage1, stage2 = _sonnet(1), _sonnet(2)
+    assert {p.light for p in stage1.pairs} == {GREEN}
+    assert max(p.nearness for p in stage1.pairs) <= RATIO_WARN - 0.05
+    assert max(p.nearness for p in stage1.pairs) < min(p.nearness for p in stage2.pairs)
+    for sample in range(3):
+        assert {p.light for p in _sonnet(1, sample).pairs} == {GREEN}

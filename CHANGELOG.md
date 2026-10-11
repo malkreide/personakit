@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Probe calibration: stage 1 («without voice») also run with `claude-sonnet-5-5` (330 answers, `probe/kalibrierung/stufe-1/answers-sonnet.json`, report `bericht-sonnet.md`). All pairs stay green with a margin (nearness 0.32–0.39 against the yellow threshold 0.45 and 0.475 for the least close «archetype only» pair); the narrow margin is Haiku's (up to 0.44). `tests/test_probe_calibration.py` records it
+
 ### Changed
 - Collapse probe: yellow now starts at a nearness of **0.45** (`--ratio-warn`, was 0.50) after the Sonnet out-of-sample check, where one «archetype only» pair stayed green at 0.475. All «archetype only» pairs are now yellow with both models (Haiku 0.53–0.61, Sonnet 0.48–0.63), full personas stay green (at most 0.40); the price is a narrow margin to «without voice» (Haiku at most 0.44). Example and calibration reports regenerated; the lights of the example runs are unchanged
 
