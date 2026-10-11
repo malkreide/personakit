@@ -425,7 +425,7 @@ Schema `schema/probe-keywords.schema.json`. Schlüsselwörter treffen am Wortanf
 | Option | Bedeutung |
 |---|---|
 | `-k`, `--keywords` | Schlüsselwort-Datei; ohne sie gelten alle `must_not`-Regeln als «nicht geprüft» |
-| `--ratio-warn`, `--ratio-alarm` | Schwellen für die Nähe ab zwei Durchgängen (Default 0.50 und 0.85; `0 < ratio-warn ≤ ratio-alarm`) |
+| `--ratio-warn`, `--ratio-alarm` | Schwellen für die Nähe ab zwei Durchgängen (Default 0.45 und 0.85; `0 < ratio-warn ≤ ratio-alarm`) |
 | `--warn`, `--alarm` | Schwellen für die Ø Ähnlichkeit, wenn keine Nähe messbar ist (Default 0.15 und 0.18; `0 < warn ≤ alarm ≤ 1`) |
 | `--json` | Ergebnis als JSON (`pairs` mit `same_form`, `variance`, `form`, `form_collapse`, `must_not` mit `context` je Treffer, `unknowns`, `findings`, `limits`) |
 | `--strict` | Exit 1 bei jeder Warnung |

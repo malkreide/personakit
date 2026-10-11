@@ -13,9 +13,9 @@
 | schulleitung-entscheidungsorientiert ↔ lehrperson-ki-explorierend | 🟡 gelb | 0.56 | 0.13 | 0.19 | 1/26 | 26 | gleich |
 | eltern-neu-in-zuerich ↔ lehrperson-ki-explorierend | 🟡 gelb | 0.51 | 0.13 | 0.18 | 1/26 | 26 | gleich |
 | verwaltungs-insider ↔ lehrperson-ki-explorierend | 🟡 gelb | 0.55 | 0.13 | 0.22 | 2/26 | 26 | gleich |
-| eltern-neu-in-zuerich ↔ schulleitung-entscheidungsorientiert | 🟢 grün | 0.47 | 0.12 | 0.17 | 0/26 | 26 | gleich |
+| eltern-neu-in-zuerich ↔ schulleitung-entscheidungsorientiert | 🟡 gelb | 0.47 | 0.12 | 0.17 | 0/26 | 26 | gleich |
 
-**Nähe** = Ähnlichkeit zum Gegenüber geteilt durch die Ähnlichkeit jeder Persona zu sich selbst (über die Fragen mit mindestens zwei Durchgängen je Persona). 1 heisst: einander so ähnlich wie sich selbst. Mit Nähe: 🔴 rot ab 0.85, 🟡 gelb ab 0.50. Ohne Nähe (ein Durchgang): 🔴 rot ab Ø 0.18 oder wenn mindestens die Hälfte der Fragen ≥ 0.18 liegt, 🟡 gelb ab Ø 0.15 oder ab einem Viertel der Fragen ≥ 0.18. Form: siehe nächster Abschnitt; sie fliesst nicht in die Ampel ein.
+**Nähe** = Ähnlichkeit zum Gegenüber geteilt durch die Ähnlichkeit jeder Persona zu sich selbst (über die Fragen mit mindestens zwei Durchgängen je Persona). 1 heisst: einander so ähnlich wie sich selbst. Mit Nähe: 🔴 rot ab 0.85, 🟡 gelb ab 0.45. Ohne Nähe (ein Durchgang): 🔴 rot ab Ø 0.18 oder wenn mindestens die Hälfte der Fragen ≥ 0.18 liegt, 🟡 gelb ab Ø 0.15 oder ab einem Viertel der Fragen ≥ 0.18. Form: siehe nächster Abschnitt; sie fliesst nicht in die Ampel ein.
 
 ## Form der Antworten
 
@@ -72,6 +72,14 @@ Frage `lehrperson-ki-explorierend.J1` (Ähnlichkeit 0.22): Die Situation: «Wenn
 - **lehrperson-ki-explorierend:** «Ehrlich gesagt läuft das bei mir eher unsystematisch ab, und ein Teil davon ist Unsicherheit. **Was ich tue** 1. **Ich überlege kurz, ob ich das darf.** Das passiert meistens im Hinterkopf, bevor ich etwas eintippe. Ich weiss nicht genau, …»
 - Tragende Wörter: schülerinnen, lehrplan, entwurf, spare, passt
 
+### eltern-neu-in-zuerich ↔ schulleitung-entscheidungsorientiert – 🟡 gelb
+
+Frage `X3` (Ähnlichkeit 0.17): Wie viel Zeit hast du realistischerweise für so etwas, und wann?
+
+- **eltern-neu-in-zuerich:** «Kommt drauf an, was «so etwas» genau ist. Ein Online-Formular, ein Infoabend oder ein Gespräch wären für mich ganz unterschiedlich. Ehrlich gesagt ist die Zeit bei uns knapp. Wir sind erst angekommen, und es ist noch so vieles offen: …»
+- **schulleitung-entscheidungsorientiert:** «Ehrlich gesagt: wenig. Und es hängt davon ab, was «so etwas» konkret ist. Das weiss ich noch nicht genau. **Grobe Einschätzung:** - **Ein kurzes Gespräch oder Telefonat von 20 bis 30 Minuten** liegt drin, aber nur, wenn ich vorher weiss, …»
+- Tragende Wörter: termine, abends, wochenende, stück, vorab
+
 ## Simulationsregeln (`must_not`)
 
 Keine Persona im Plan hat `simulation.must_not`.
@@ -105,6 +113,7 @@ Ab 0.80 antwortet die Persona fast immer gleich (Q015).
 ```
 WARN  Q020   Formkollaps: alle Personas antworten gleich lang (Ø Wörter: eltern-neu-in-zuerich 306, schulleitung-entscheidungsorientiert 294, verwaltungs-insider 292, lehrperson-ki-explorierend 282) und gleich gegliedert (88%–98% mit Gliederung) – simulation.voice um Länge und Form ergänzen
 INFO  Q011   [eltern-neu-in-zuerich ↔ lehrperson-ki-explorierend] Prüfen: Nähe 0.51 (Ähnlichkeit zum Gegenüber / zu sich selbst), Ø Ähnlichkeit 0.13
+INFO  Q011   [eltern-neu-in-zuerich ↔ schulleitung-entscheidungsorientiert] Prüfen: Nähe 0.47 (Ähnlichkeit zum Gegenüber / zu sich selbst), Ø Ähnlichkeit 0.12
 INFO  Q011   [eltern-neu-in-zuerich ↔ verwaltungs-insider] Prüfen: Nähe 0.52 (Ähnlichkeit zum Gegenüber / zu sich selbst), Ø Ähnlichkeit 0.13
 INFO  Q011   [schulleitung-entscheidungsorientiert ↔ lehrperson-ki-explorierend] Prüfen: Nähe 0.56 (Ähnlichkeit zum Gegenüber / zu sich selbst), Ø Ähnlichkeit 0.13
 INFO  Q011   [schulleitung-entscheidungsorientiert ↔ verwaltungs-insider] Prüfen: Nähe 0.63 (Ähnlichkeit zum Gegenüber / zu sich selbst), Ø Ähnlichkeit 0.15
@@ -123,7 +132,7 @@ INFO  Q021   Gleicher häufigster Antwortanfang «ehrlich» bei 4 Personas (elte
 
 ## Parameter
 
-- Schwellen: Nähe gelb 0.50, rot 0.85; ohne Nähe Warnung 0.15, Alarm 0.18; Varianz 0.80
+- Schwellen: Nähe gelb 0.45, rot 0.85; ohne Nähe Warnung 0.15, Alarm 0.18; Varianz 0.80
 - Ähnlichkeit: TF-IDF (1 + ln tf, geglättete IDF über alle Antworten dieses Laufs), Kosinus; pro Frage Mittel über alle Kombinationen der Durchgänge
 - Wörter: Kleinschreibung, Buchstabenwörter ab 3 Zeichen, ß → ss, Füllwörter entfernt, Endungen grob gekürzt; Wörter der Frage zählen nicht
 - Schlüsselwörter: am Wortanfang, Gross-/Kleinschreibung egal · Kontextwörter: 15 (Standardliste) · Redeverben: 16 (Standardliste) · Unsicherheitsmarker: 21 (Standardliste)

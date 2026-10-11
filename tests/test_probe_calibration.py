@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from personakit.cli import main
-from personakit.probe import GREEN, RED, YELLOW, evaluate, load_answers, load_plan, render_report
+from personakit.probe import GREEN, RATIO_WARN, RED, YELLOW, evaluate, load_answers, load_plan, render_report
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE = ROOT / "probe" / "beispiel"
@@ -50,8 +50,8 @@ def test_calibration_answers_are_complete_and_reports_current(stage):
     ("stage", "light", "low", "high"),
     [
         (0, GREEN, 0.25, 0.45),  # full personas
-        (1, GREEN, 0.30, 0.48),  # without voice, quotes, patterns: lexically still apart
-        (2, YELLOW, 0.50, 0.70),  # archetype only
+        (1, GREEN, 0.30, 0.45),  # without voice, quotes, patterns: lexically still apart (max 0.44)
+        (2, YELLOW, 0.45, 0.70),  # archetype only
         (3, RED, 0.90, 1.10),  # identical prompts: as close to each other as to themselves
     ],
 )
@@ -82,7 +82,7 @@ def test_old_thresholds_missed_the_total_collapse():
 def test_sonnet_example_stays_green():
     result = evaluate(load_plan(EXAMPLE / "probe.json"), load_answers(EXAMPLE / "answers-sonnet.json"))
     assert {p.light for p in result.pairs} == {GREEN}
-    assert max(p.nearness for p in result.pairs) < 0.5
+    assert max(p.nearness for p in result.pairs) < RATIO_WARN
 
 
 def test_cli_rejects_inverted_ratio_thresholds(capsys):
@@ -125,14 +125,15 @@ def test_sonnet_confirms_red_for_total_collapse():
         assert {p.light for p in _sonnet(3, sample).pairs} == {RED}
 
 
-def test_sonnet_archetype_stage_is_mostly_but_not_all_yellow():
-    """The yellow threshold holds only narrowly on a second model: one pair of six stays green (nearness 0.475).
+def test_sonnet_confirms_yellow_for_archetype_stage():
+    """Why yellow starts at 0.45: with 0.50, chosen on Haiku, one Sonnet pair of six stayed green (nearness 0.475).
 
     Eltern ↔ Schulleitung is also the least close pair with Haiku; their archetypes differ most.
     """
     result = _sonnet(2)
-    lights = Counter(p.light for p in result.pairs)
-    assert lights == Counter({YELLOW: 5, GREEN: 1})
-    green = next(p for p in result.pairs if p.light == GREEN)
-    assert {green.a, green.b} == {"eltern-neu-in-zuerich", "schulleitung-entscheidungsorientiert"}
-    assert 0.45 <= green.nearness < 0.50
+    assert Counter(p.light for p in result.pairs) == Counter({YELLOW: 6})
+    least = min(result.pairs, key=lambda p: p.nearness)
+    assert {least.a, least.b} == {"eltern-neu-in-zuerich", "schulleitung-entscheidungsorientiert"}
+    assert RATIO_WARN <= least.nearness < 0.50
+    old = evaluate(load_plan(SONNET[2][0]), load_answers(SONNET[2][1]), ratio_warn=0.50)
+    assert Counter(p.light for p in old.pairs) == Counter({YELLOW: 5, GREEN: 1})

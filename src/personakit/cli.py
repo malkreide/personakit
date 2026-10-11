@@ -498,8 +498,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument(
         "--ratio-warn",
         type=float,
-        default=0.50,
-        help="Nähe ab der ein Paar gelb wird (ab 2 Durchgängen; Default: 0.50)",
+        default=0.45,
+        help="Nähe ab der ein Paar gelb wird (ab 2 Durchgängen; Default: 0.45)",
     )
     s.add_argument(
         "--ratio-alarm",

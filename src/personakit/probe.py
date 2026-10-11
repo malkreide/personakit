@@ -39,7 +39,7 @@ MAX_JOBS = 3
 MAX_PAINS = 3
 # Calibrated on washed-out personas (probe/kalibrierung/): see docs/PROBE.md, «Kalibrierung».
 # With ≥ 2 samples the light uses the nearness: similarity to the other persona / similarity to itself.
-RATIO_WARN = 0.50  # nearness at or above → yellow (personas reduced to their archetype: 0.53–0.61)
+RATIO_WARN = 0.45  # nearness at or above → yellow (archetype only: Haiku 0.53–0.61, Sonnet 0.48–0.63)
 RATIO_ALARM = 0.85  # nearness at or above → red (identical prompts: 0.95–1.04; full personas: 0.26–0.41)
 MIN_OWN = 0.05  # below this own similarity the nearness is unstable → absolute thresholds instead
 # With one sample only the absolute similarity is left (calibrated on answers of about 230 words).
