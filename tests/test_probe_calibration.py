@@ -89,3 +89,50 @@ def test_cli_rejects_inverted_ratio_thresholds(capsys):
     plan, answers = STAGES[3]
     assert main(["probe", "evaluate", str(plan), str(answers), "--ratio-warn", "0.9", "--ratio-alarm", "0.5"]) == 2
     assert "--ratio-warn" in capsys.readouterr().err
+
+
+# --------------------------------------------- out-of-sample check: Sonnet on stages 2 and 3
+SONNET = {
+    s: (CALIBRATION / f"stufe-{s}" / "probe.json", CALIBRATION / f"stufe-{s}" / "answers-sonnet.json") for s in (2, 3)
+}
+
+
+def _sonnet(stage: int, sample: int | None = None):
+    plan_path, answers_path = SONNET[stage]
+    answers = load_answers(answers_path)
+    if sample is not None:
+        answers = {
+            **answers,
+            "answers": {p: {q: [v[sample]] for q, v in by.items()} for p, by in answers["answers"].items()},
+        }
+    return evaluate(load_plan(plan_path), answers)
+
+
+@pytest.mark.parametrize("stage", [2, 3])
+def test_sonnet_answers_are_complete_and_reports_current(stage):
+    plan_path, answers_path = SONNET[stage]
+    plan, answers = load_plan(plan_path), load_answers(answers_path)
+    assert answers["plan_id"] == plan["plan_id"] and "claude-sonnet-5-5: 330" in answers["model"]
+    report = render_report(evaluate(plan, answers), "probe.json", "answers-sonnet.json")
+    assert (plan_path.parent / "bericht-sonnet.md").read_text(encoding="utf-8") == report
+
+
+def test_sonnet_confirms_red_for_total_collapse():
+    result = _sonnet(3)
+    assert {p.light for p in result.pairs} == {RED}
+    assert all(0.90 <= p.nearness <= 1.10 for p in result.pairs)
+    for sample in range(3):
+        assert {p.light for p in _sonnet(3, sample).pairs} == {RED}
+
+
+def test_sonnet_archetype_stage_is_mostly_but_not_all_yellow():
+    """The yellow threshold holds only narrowly on a second model: one pair of six stays green (nearness 0.475).
+
+    Eltern ↔ Schulleitung is also the least close pair with Haiku; their archetypes differ most.
+    """
+    result = _sonnet(2)
+    lights = Counter(p.light for p in result.pairs)
+    assert lights == Counter({YELLOW: 5, GREEN: 1})
+    green = next(p for p in result.pairs if p.light == GREEN)
+    assert {green.a, green.b} == {"eltern-neu-in-zuerich", "schulleitung-entscheidungsorientiert"}
+    assert 0.45 <= green.nearness < 0.50

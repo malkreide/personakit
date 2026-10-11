@@ -21,7 +21,9 @@ Woran erkennt die Collapse-Probe einen Collapse? Damit die Schwellen nicht gerat
 | 0 vollständig (Sonnet, zur Kontrolle) | 0.25–0.36 | 0.08–0.11 | – | – | 6 × grün | 6 × grün |
 | 1 ohne Stimme | 0.38–0.44 | 0.08–0.11 | 0.09–0.13 | 0–8 % | 6 × grün | 6 × grün |
 | 2 nur Archetyp | 0.53–0.61 | 0.11–0.12 | 0.11–0.14 | 0–19 % | 6 × grün | 6 × gelb |
+| 2 nur Archetyp (Sonnet, zur Kontrolle) | 0.48–0.63 | 0.12–0.15 | 0.12–0.16 | 4–42 % | – | 5 × gelb, 1 × grün |
 | 3 identisch | 0.97–1.03 | 0.20–0.21 | 0.20–0.23 | 54–85 % | 3 × grün, 3 × gelb | 6 × rot |
+| 3 identisch (Sonnet, zur Kontrolle) | 0.98–1.02 | 0.24–0.25 | 0.24–0.28 | 81–96 % | – | 6 × rot |
 
 Die Werte für einen Durchgang umfassen alle drei Durchgänge je einzeln ausgewertet. Die Berichte liegen in `stufe-*/bericht-haiku.md`.
 
@@ -32,9 +34,17 @@ Die Werte für einen Durchgang umfassen alle drei Durchgänge je einzeln ausgewe
 3. **Mit einem Durchgang bleibt nur die absolute Ähnlichkeit.** Sie trennt Stufe 3 von allen anderen, Stufe 2 aber nicht von Stufe 0. Neue Schwellen: **Warnung 0.15, Alarm 0.18** (statt 0.30 und 0.50). Der Bericht sagt in diesem Fall, dass nur ein vollständiger Collapse sichtbar ist (Q018).
 4. **Stufe 1 bleibt grün, und das ist richtig gemessen.** Ohne Stimme und Simulationsregeln unterscheiden sich die Personas weiter über Kontext, Ziele und Jobs. Was verloren geht, ist Ton und Haltung. Das misst die Wortähnlichkeit nicht; die Form der Antworten zeigt es teilweise (Stufe 1 meldet einen Formkollaps, Stufe 0 nicht).
 
+## Gegenprobe mit Sonnet
+
+Gewählt wurden die Schwellen an Haiku; danach liefen die Stufen 2 und 3 mit `claude-sonnet-5-5` (je 330 Antworten, 11.10.2026, rund 22 Franken) als Prüfung an einem zweiten Modell, ohne die Schwellen anzupassen.
+
+- **Rot hält.** Identische Prompts ergeben auch bei Sonnet eine Nähe von 0.98–1.02; alle sechs Paare sind rot, mit drei Durchgängen und mit jedem einzelnen.
+- **Gelb hält knapp.** Fünf von sechs Paaren der Stufe «nur Archetyp» sind gelb, eines bleibt grün: Eltern ↔ Schulleitung mit einer Nähe von 0.475. Dasselbe Paar ist auch bei Haiku das am wenigsten nahe (0.533). Die beiden Archetypen liegen inhaltlich am weitesten auseinander; mehr als das Etikett unterscheidet sie in dieser Stufe nicht. Stufe 2 ist deshalb keine harte Wahrheit wie Stufe 3, aber das grüne Paar zeigt, dass die Gelb-Schwelle von 0.50 an einem zweiten Modell nicht alle geschrumpften Personas erfasst.
+- **Absolut, mit einem Durchgang,** liegt Sonnet etwas höher als Haiku (Stufe 2 bis 0.16, Stufe 3 ab 0.24): Stufe 3 bleibt rot, in Stufe 2 wird in zwei von drei Durchgängen ein Paar gelb.
+
 ## Grenzen dieser Kalibrierung
 
-- **Gewählt und geprüft an denselben Daten.** Die Schwellen liegen jeweils in der Lücke zwischen zwei Stufen. Unabhängig bestätigt ist bisher nur der Sonnet-Lauf in Stufe 0 (Nähe 0.25–0.36, grün). Ein Sonnet-Lauf der Stufen 2 und 3 würde die Schwellen für ein zweites Modell prüfen.
+- **Gewählt an Haiku, geprüft an Sonnet.** Die Schwellen liegen in der Lücke zwischen zwei Haiku-Stufen. Sonnet bestätigt Grün für vollständige Personas (0.25–0.36) und Rot für identische Prompts (0.98–1.02); bei «nur Archetyp» bleibt ein Paar von sechs grün (siehe oben). Stufe 1 ist mit Sonnet nicht gelaufen.
 - **Ein Modell, eine Domäne, Deutsch.** Andere Modelle, kürzere Antworten oder ein anderes Fachgebiet können die Werte verschieben. Das gilt vor allem für die absoluten Schwellen; die Nähe ist robuster, aber auch nicht modellfrei.
 - **Die Lücke zwischen Stufe 1 und 2 ist schmal** (0.44 gegen 0.53). Die Gelb-Schwelle 0.50 liegt dazwischen, ein Paar knapp darunter ist nicht sicher unverdächtig.
 - **Stufe 3 ist ein künstlicher Extremfall.** Realer Collapse ist meist partiell: Personas, die sich nur noch im Etikett unterscheiden (Stufe 2), sind das realistischere Warnsignal. Gelb heisst deshalb: Antworten lesen.

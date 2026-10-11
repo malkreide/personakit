@@ -104,7 +104,8 @@ Die ersten beiden Läufe enthielten keinen Collapse, die Schwellen 0.30/0.50 war
 - **Die alten Schwellen erkannten selbst den vollständigen Collapse nicht.** Identische Prompts ergaben eine Ähnlichkeit von nur 0.20; die Regel «Trennung ≤ 0» kippte im Rauschen zufällig.
 - **Die Nähe trennt die Stufen ohne Überlappung:** vollständig 0.31–0.40, ohne Stimme 0.38–0.44, nur Archetyp 0.53–0.61, identisch 0.97–1.03. Daraus die Schwellen gelb 0.50 und rot 0.85.
 - **Ein Durchgang** trennt nur den vollständigen Collapse (0.20–0.23 gegen höchstens 0.14). Daraus die absoluten Schwellen 0.15 und 0.18.
-- **Grenzen:** Die Schwellen sind an denselben Daten gewählt und geprüft. Unabhängig bestätigt ist bisher nur der Sonnet-Lauf mit vollständigen Personas (grün). Die Kalibrierung gilt für ein Modell, eine Domäne und Deutsch. `tests/test_probe_calibration.py` hält die Stufenleiter als Regressionstest fest.
+- **Gegenprobe mit Sonnet** (Stufen 2 und 3, ohne die Schwellen anzupassen): Rot hält (Nähe 0.98–1.02, alle Paare rot), Gelb hält knapp: Bei «nur Archetyp» bleibt ein Paar von sechs grün (Eltern ↔ Schulleitung, 0.475), das auch bei Haiku das am wenigsten nahe ist.
+- **Grenzen:** Gewählt an Haiku, geprüft an Sonnet; eine Domäne, Deutsch. `tests/test_probe_calibration.py` hält die Stufenleiter als Regressionstest fest.
 
 ### Lauf 2: Haiku statt Sonnet
 
