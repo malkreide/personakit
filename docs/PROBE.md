@@ -75,7 +75,7 @@ Pro Persona und Frage ein String oder eine Liste von Durchgängen. `plan_id` und
 | | Ab zwei Durchgängen (Nähe) | Mit einem Durchgang (absolut) |
 |---|---|---|
 | 🔴 rot – Collapse-Verdacht | Nähe ≥ 0.85 (`--ratio-alarm`) | Ø ≥ 0.18 (`--alarm`) · mindestens die Hälfte der Fragen ≥ 0.18 |
-| 🟡 gelb – prüfen | Nähe ≥ 0.50 (`--ratio-warn`) | Ø ≥ 0.15 (`--warn`) · mindestens ein Viertel der Fragen ≥ 0.18 |
+| 🟡 gelb – prüfen | Nähe ≥ 0.45 (`--ratio-warn`) | Ø ≥ 0.15 (`--warn`) · mindestens ein Viertel der Fragen ≥ 0.18 |
 | 🟢 grün | sonst | sonst |
 
 Fällt die Basis unter 0.05, ist die Nähe instabil, und es gelten die absoluten Schwellen. Mit nur einem Durchgang erkennt die Ampel nur den vollständigen Collapse; der Bericht sagt das (Q018).
@@ -102,9 +102,9 @@ Erster Lauf am 9.10.2026: vier Beispiel-Personas, 32 Fragen, je 3 Durchgänge, 3
 Die ersten beiden Läufe enthielten keinen Collapse, die Schwellen 0.30/0.50 waren an synthetischen Texten gesetzt. Für eine bekannte Wahrheit liefen dieselben Fragen mit Haiku gegen die vier Beispiel-Personas in drei verwaschenen Stufen: ohne Stimme und Simulationsregeln, nur mit dem Archetyp, und mit einem für alle identischen generischen Prompt. Ergebnisse, Tabelle und Grenzen: [`probe/kalibrierung/README.md`](../probe/kalibrierung/README.md).
 
 - **Die alten Schwellen erkannten selbst den vollständigen Collapse nicht.** Identische Prompts ergaben eine Ähnlichkeit von nur 0.20; die Regel «Trennung ≤ 0» kippte im Rauschen zufällig.
-- **Die Nähe trennt die Stufen ohne Überlappung:** vollständig 0.31–0.40, ohne Stimme 0.38–0.44, nur Archetyp 0.53–0.61, identisch 0.97–1.03. Daraus die Schwellen gelb 0.50 und rot 0.85.
+- **Die Nähe trennt die Stufen ohne Überlappung:** vollständig 0.31–0.40, ohne Stimme 0.38–0.44, nur Archetyp 0.53–0.61, identisch 0.97–1.03. Daraus die Schwellen gelb 0.50 und rot 0.85; nach der Gegenprobe mit Sonnet gelb 0.45 (siehe unten).
 - **Ein Durchgang** trennt nur den vollständigen Collapse (0.20–0.23 gegen höchstens 0.14). Daraus die absoluten Schwellen 0.15 und 0.18.
-- **Gegenprobe mit Sonnet** (Stufen 2 und 3, ohne die Schwellen anzupassen): Rot hält (Nähe 0.98–1.02, alle Paare rot), Gelb hält knapp: Bei «nur Archetyp» bleibt ein Paar von sechs grün (Eltern ↔ Schulleitung, 0.475), das auch bei Haiku das am wenigsten nahe ist.
+- **Gegenprobe mit Sonnet** (Stufen 2 und 3, ohne die Schwellen anzupassen): Rot hält (Nähe 0.98–1.02, alle Paare rot), Gelb hielt nur knapp: Bei «nur Archetyp» blieb ein Paar von sechs grün (Eltern ↔ Schulleitung, 0.475), das auch bei Haiku das am wenigsten nahe ist. Deshalb liegt Gelb jetzt bei **0.45**: Alle Paare der Stufe «nur Archetyp» sind mit beiden Modellen gelb, vollständige Personas bleiben grün (höchstens 0.40). Der Preis: Stufe «ohne Stimme» liegt mit höchstens 0.44 knapp darunter.
 - **Grenzen:** Gewählt an Haiku, geprüft an Sonnet; eine Domäne, Deutsch. `tests/test_probe_calibration.py` hält die Stufenleiter als Regressionstest fest.
 
 ### Lauf 2: Haiku statt Sonnet

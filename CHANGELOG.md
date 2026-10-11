@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Collapse probe: yellow now starts at a nearness of **0.45** (`--ratio-warn`, was 0.50) after the Sonnet out-of-sample check, where one «archetype only» pair stayed green at 0.475. All «archetype only» pairs are now yellow with both models (Haiku 0.53–0.61, Sonnet 0.48–0.63), full personas stay green (at most 0.40); the price is a narrow margin to «without voice» (Haiku at most 0.44). Example and calibration reports regenerated; the lights of the example runs are unchanged
+
 ### Added
 - Out-of-sample check of the probe calibration: stages 2 and 3 run again with `claude-sonnet-5-5` (330 answers each, `probe/kalibrierung/stufe-{2,3}/answers-sonnet.json`, reports `bericht-sonnet.md`), thresholds unchanged. Red holds (nearness 0.98–1.02, all pairs red, also with one sample); yellow holds narrowly – five of six «archetype only» pairs are yellow, Eltern ↔ Schulleitung stays green at 0.475. `tests/test_probe_calibration.py` records both
 
