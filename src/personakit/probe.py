@@ -1095,8 +1095,10 @@ LIMITS = (
     "**Lexikalische Ähnlichkeit ist ein grober Proxy.** Gemessen wird Wortüberlappung, nicht Bedeutung. "
     "Gleicher Inhalt in anderen Worten bleibt unentdeckt (falsch grün); gemeinsames Fachvokabular der Domäne "
     "hebt die Werte ohne Collapse (falsch rot). Ton, Haltung und Entscheidungen misst die Probe nicht.",
-    "**Die Schwellen sind an einem Modell kalibriert.** Grundlage sind künstlich verwaschene Personas mit "
-    "`claude-haiku-5-5` (probe/kalibrierung/). Die Nähe (ab zwei Durchgängen) ist relativ zur eigenen Streuung "
+    "**Die Schwellen sind schmal kalibriert.** Grundlage sind künstlich verwaschene Beispiel-Personas "
+    "(probe/kalibrierung/): gewählt an `claude-haiku-5-5`, gegengeprüft an `claude-sonnet-5-5`; die Gelb-Schwelle "
+    "ist danach auf 0.45 gesenkt, also an denselben Daten gewählt, an denen sie geprüft ist. Eine Domäne "
+    "(Volksschule), Deutsch. Die Nähe (ab zwei Durchgängen) ist relativ zur eigenen Streuung "
     "und darum robuster; mit einem Durchgang erkennen die absoluten Schwellen nur den vollständigen Collapse und "
     "hängen von Modell und Antwortlänge ab. Aussagekräftig bleibt der Vergleich: dasselbe Modell vor und nach "
     "einer Änderung, oder zwei Modelle mit demselben Plan.",

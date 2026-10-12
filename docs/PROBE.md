@@ -129,7 +129,7 @@ Q-Codes stehen in `docs/FORMAT.md`. `evaluate` endet mit 0, mit `--strict` mit 1
 ## 6. Grenzen (stehen auch im Bericht)
 
 - **Lexikalische Ähnlichkeit ist ein grober Proxy.** Gleicher Inhalt in anderen Worten bleibt unentdeckt (falsch grün); gemeinsames Fachvokabular einer Domäne hebt die Werte ohne Collapse (falsch rot). Ton, Haltung und Entscheidungen misst sie nicht.
-- **Die Schwellen sind an einem Modell kalibriert** (Haiku, verwaschene Beispiel-Personas). Die Nähe (ab zwei Durchgängen) ist relativ und darum robuster; die absoluten Schwellen hängen an Modell und Antwortlänge. Aussagekräftig bleibt der Vergleich: dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan.
+- **Die Schwellen sind schmal kalibriert:** an verwaschenen Beispiel-Personas, gewählt an Haiku, gegengeprüft an Sonnet; Gelb danach auf 0.45 gesenkt, also an denselben Daten gewählt und geprüft. Eine Domäne (Volksschule), Deutsch. Die Nähe (ab zwei Durchgängen) ist relativ und darum robuster; die absoluten Schwellen hängen an Modell und Antwortlänge. Aussagekräftig bleibt der Vergleich: dasselbe Modell vor und nach einer Änderung an den Personas, oder zwei Modelle mit demselben Plan.
 - **Die Form ist nur grob gemessen.** Länge, Gliederung und Antwortanfang zeigen den Assistenten-Kollaps, nicht Tonfall, Register oder Höflichkeit.
 - **Schlüsselwörter finden nur, was vorher aufgeschrieben wurde.** Ein Treffer ist kein Beweis, kein Treffer keine Einhaltung. Die Einordnung «zitiert/verneint/gefragt» ist eine Satzregel und trennt Erwähnen von Verwenden meistens, nicht immer.
 - **Unsicherheitsmarker sind oberflächlich.** «Vielleicht» kann Floskel sein, eine offene Antwort ohne Marker wird übersehen.
