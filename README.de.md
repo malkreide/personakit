@@ -80,6 +80,7 @@ personakit skeleton factoids/beispiel -p p1,p3,p4,p6,p8 --id eltern-entwurf -a "
 personakit probe build personas/elternkommunikation-schuleintritt -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml
 #   … Plan gegen ein Modell nach Wahl laufen lassen, answers.json füllen …
 personakit probe evaluate probe.json answers.json -k probe-keywords.yml -o probe-bericht.md
+personakit probe status personas probe --strict   # passen die Läufe unter probe/ noch zu den heutigen Personas?
 ```
 
 Die Beispiel-Personas in [`personas/`](personas/) sind **synthetisch** (Kontext Schulverwaltung) und dokumentieren keine reale Erhebung.
@@ -106,6 +107,7 @@ Zählen ist Werkzeug, Deuten nicht. Ein Studienordner `factoids/<studie>/` enth�
 | `factoids <ordner>` | Studienordner mit `*.factoids.md` prüfen: Matrix Teilnehmer × Variable, Verteilung, dünne Variablen (F010), Ausreisser (F011); `--json` |
 | `skeleton <ordner> -p … --id … -a …` | Persona-Skelett aus gewählten Teilnehmenden: Verhaltensvariablen (Median), Evidenz, Zitate, Evidenzniveau und Abschnitt `## Herleitung` mit Factoid-IDs |
 | `probe build <pfade>` | Plan der Collapse-Probe: Simulate-Prompt und 6–10 Prüffragen pro Persona (Szenario, Jobs, Schmerzpunkte, Unknowns, Endziele), jede Frage an alle Personas; deterministisch, ohne Modellaufruf; Vorlagen für Antworten und Schlüsselwörter |
+| `probe status <pfade> <probe-ordner>` | Welche vorhandenen Probe-Läufe noch zum heutigen Stand der Personas passen: vergleicht den Simulate-Prompt jedes Plans mit dem heutigen (die Version allein reicht nicht), wertet die aktuellen Läufe aus, nennt veraltete mit Grund und übersprungene Dateien; `--set`, `--id`, `--json`, `--strict` (Exit 1, wenn eine Persona keine aktuelle Probe hat) |
 | `probe evaluate <plan> <antworten>` | Markdown-Bericht mit Ampel pro Persona-Paar (TF-IDF-Kosinus der Antworten auf dieselbe Frage, nur Standardbibliothek), Form der Antworten je Persona (Länge, Gliederung, Antwortanfang – meldet den Formkollaps, den die Ampel nicht sieht), `must_not`-Prüfung über konfigurierbare Schlüsselwörter, bei der zitierte, verneinte oder gefragte Erwähnungen getrennt von Verwendungen stehen, Unknowns offen gelassen oder nicht, Grenzen der Methode; `--json`, `--strict` |
 
 ## Persona als Input für andere Lösungen
@@ -156,6 +158,7 @@ personakit/
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
 │   ├── notion.py         # Notion-Export: API-Blöcke und Notion-Markdown (ohne Netzwerkaufrufe)
 │   ├── probe.py          # Collapse-Probe: Prüffragen, TF-IDF-Ähnlichkeit pro Paar, Bericht
+│   ├── probe_status.py   # Probe-Status: vorhandene Läufe gegen den heutigen Stand prüfen
 │   ├── schema/           # Persona, Set, Factoids, Variablen, Probe (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # vier synthetische Beispiel-Personas in zwei Sets (set.yml)

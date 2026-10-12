@@ -5,6 +5,7 @@ server must not go blank because one draft in the folder is broken. ``load_works
 keeps the valid personas and sets and reports the rest as problems, with the same codes
 ``personakit lint`` uses. ``lint_workspace`` is exactly what ``personakit lint`` checks, including the
 journeykit cross-lint when journeys are passed (``personakit lint --journeys``).
+``probe_status`` is ``personakit probe status``: existing collapse-probe runs checked against today's personas.
 """
 
 from __future__ import annotations
@@ -16,6 +17,8 @@ from pathlib import Path
 from .journeys import JourneyRef, lint_journeys, load_journeys
 from .lint import ERROR, Finding, lint_persona, lint_sets
 from .model import Persona, PersonaError, find_persona_files
+from .probe_status import ProbeStatus, StatusProblem
+from .probe_status import probe_status as _probe_status
 from .sets import Group, PersonaSet, build_groups, load_sets
 from .validate import validate
 
@@ -112,3 +115,22 @@ def lint_workspace(paths: Iterable[str | Path], journeys: Iterable[str | Path] |
         findings.extend(journey_problems)
         findings.extend(lint_journeys(personas, journey_refs, known=members))
     return LintReport(findings=findings, personas=personas, sets=sets, journeys=journey_refs)
+
+
+def probe_status(
+    paths: Iterable[str | Path],
+    probe_dir: str | Path,
+    set_id: str | None = None,
+    persona_id: str | None = None,
+) -> ProbeStatus:
+    """Exactly ``personakit probe status <paths> <probe_dir> [--set …] [--id …]``.
+
+    Personas come from ``load_workspace_tolerant``; unusable persona files are reported under ``problems``
+    next to the probe files that were skipped. A missing path or probe folder, an unknown set or id raise
+    ``PersonaError``.
+    """
+    ws = load_workspace_tolerant(paths)
+    members = {g.id: [m.persona.id for m in g.members] for g in ws.groups if not g.is_loose}
+    st = _probe_status(ws.personas, probe_dir, members, set_id=set_id, persona_id=persona_id)
+    st.problems = [StatusProblem(str(x.path), str(x.finding)) for x in ws.problems] + st.problems
+    return st

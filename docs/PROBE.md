@@ -118,6 +118,10 @@ Am 9.10.2026 lief derselbe Plan mit `claude-haiku-5-5`. Beide Läufe liegen mit 
 
 Beide Läufe enthalten keinen inhaltlichen Collapse; die Schwellen waren danach noch nicht kalibriert (siehe Lauf 3).
 
+### Probe-Status: passt ein Lauf noch?
+
+Ein Lauf gilt für den Stand der Personas, mit dem sein Plan gebaut wurde. `personakit probe status personas probe` prüft alle Läufe unter einem Ordner gegen die heutigen Dateien. Das Kriterium ist der Simulate-Prompt, nicht die Version: Die Kalibrierungspläne tragen dieselben IDs und Versionen wie die Beispiel-Personas, aber verwaschene Prompts. Ein Abgleich über die Version hätte den künstlichen Totalkollaps der Stufe 3 als Befund über die echten Personas gemeldet. Mit dem Prompt-Vergleich gelten `probe/beispiel/` als aktuell und alle Kalibrierungsstufen als veraltet. `--strict` macht daraus eine CI-Prüfung: Exit 1, sobald eine Persona keine aktuelle Probe mehr hat, etwa nach einem `bump`. Derselbe Status ist über `personakit.api.probe_status` für personakit-mcp verfügbar (dort `docs/DESIGN.md` §12). Optionen und JSON: `docs/FORMAT.md`.
+
 ## 5. Befunde und Exit-Codes
 
 Q-Codes stehen in `docs/FORMAT.md`. `evaluate` endet mit 0, mit `--strict` mit 1, sobald eine Warnung vorliegt (rotes Paar, Treffer in `must_not`, Unknown mit konkreter Angabe, fehlende Antworten), mit 2 bei unlesbaren Dateien.

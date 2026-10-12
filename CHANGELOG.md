@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `personakit probe status <paths> <probe-dir>`: checks existing collapse-probe runs against today's personas. Plans and answers below the folder are found by their keys and paired by `plan_id`; per persona the plan's simulate prompt is compared with today's – current, stale (other version, or same version with another prompt) or unknown. Only runs with at least two current personas are evaluated, only pairs of two current personas count. The version alone is not enough: the calibration plans carry the real ids and versions with thinned prompts and come out stale, `probe/beispiel/` current. Per persona the worst light of its current pairs per run; skipped files (unreadable, neither plan nor answers, answers without plan, plan without answers, symlink out of the folder) and unusable persona files listed; a `hint` when nothing in scope has a current probe; no answer texts in the output. `--set`, `--id`, `--json`, `--strict` (exit 1 when a persona has no current probe), `-o`
+- `personakit.api.probe_status(paths, probe_dir, set_id=…, persona_id=…)` and module `personakit.probe_status` (`render_status`, `status_json`) – step 0 for a read-only `probe_status` tool in personakit-mcp (its `docs/DESIGN.md` §12)
+
 ## [0.3.0] - 2026-10-11
 
 ### Added

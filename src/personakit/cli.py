@@ -23,6 +23,7 @@ from .probe import answers_template, build_plan, evaluate, keywords_template, lo
 from .probe import render_report as render_probe_report
 from .probe import report_json as probe_report_json
 from .probe import runs as probe_runs
+from .probe_status import render_status, status_json
 from .render import SET_FORMATS, SINGLE_FORMATS, render, render_list, render_set
 from .sets import Group, group_personas, load_workspace
 from .validate import load_schema, validate
@@ -342,6 +343,24 @@ def cmd_probe_evaluate(a: argparse.Namespace) -> int:
     return 1 if a.strict and n_warn else 0
 
 
+def cmd_probe_status(a: argparse.Namespace) -> int:
+    from .api import probe_status
+
+    st = probe_status(a.paths, a.probe_dir, set_id=a.set, persona_id=a.id)
+    if a.json:
+        _out(json.dumps(status_json(st), ensure_ascii=False, indent=2) + "\n", a.output)
+    else:
+        _out(render_status(st), a.output)
+    without = [p.id for p in st.personas if not p.runs]
+    print(
+        f"— {len(st.runs)} Läufe, {len(st.personas)} Personas, davon {len(st.personas) - len(without)} mit aktueller Probe"
+        + (f"; ohne: {', '.join(without)}" if without else "")
+        + (f"; {len(st.problems)} nicht ausgewertet" if st.problems else ""),
+        file=sys.stderr,
+    )
+    return 1 if a.strict and without else 0
+
+
 def cmd_list(a: argparse.Namespace) -> int:
     personas, groups = load_workspace(a.paths)
     _warn_unresolved(groups)
@@ -513,6 +532,17 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--strict", action="store_true", help="Exit-Code 1 bei Warnungen (rotes Paar, must_not-Treffer …)")
     s.add_argument("--output", "-o", default=None, help="Bericht als Datei (sonst stdout)")
     s.set_defaults(func=cmd_probe_evaluate)
+    s = probe.add_parser(
+        "status", help="Vorhandene Probe-Läufe prüfen: passt der Plan noch zum heutigen Stand jeder Persona?"
+    )
+    s.add_argument("paths", nargs="+", help="Personas: Set-Ordner, personas/ oder einzelne Dateien")
+    s.add_argument("probe_dir", metavar="probe-ordner", help="Ordner mit Plänen und Antwortdateien (rekursiv)")
+    s.add_argument("--set", default=None, help="Nur Läufe, deren Plan dieses Set nennt, und dessen Personas")
+    s.add_argument("--id", default=None, help="Nur Läufe mit dieser Persona und nur ihre Paare")
+    s.add_argument("--json", action="store_true", help="Ergebnis als JSON statt Markdown")
+    s.add_argument("--strict", action="store_true", help="Exit-Code 1, wenn eine Persona keine aktuelle Probe hat")
+    s.add_argument("--output", "-o", default=None, help="Bericht als Datei (sonst stdout)")
+    s.set_defaults(func=cmd_probe_status)
 
     s = sub.add_parser("bump", help="Version erhöhen und Changelog-Eintrag schreiben")
     s.add_argument("path")
