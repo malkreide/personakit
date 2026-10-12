@@ -23,6 +23,7 @@ personakit factoids factoids/<studie> [--json]      # Verortung, dünne Variable
 personakit skeleton factoids/<studie> -p p1,p3,p7 --id <id> -a "<Archetyp>" [-d personas/<set>]
 personakit probe build personas/<set> -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml
 personakit probe evaluate probe.json answers.json -k probe-keywords.yml [-o bericht.md]
+personakit probe status personas probe [--set <set>] [--strict]   # passen vorhandene Läufe noch?
 ```
 
 Ohne installiertes Paket: `python -m personakit.cli …` mit `PYTHONPATH=src`.
@@ -78,6 +79,7 @@ Prüft, ob ein Modell die Personas eines Sets im simulate-Modus auseinanderhält
 2. **Schlüsselwörter setzen:** In `probe-keywords.yml` pro `must_not`-Regel die Wörter eintragen, an denen ein Verstoss sichtbar würde (Fachbegriffe, die die Persona nicht kennt, Begeisterungsfloskeln, Innensicht-Vokabular). Mit dem User abstimmen; Regeln, die sich nicht an Wörtern zeigen, leer lassen – sie erscheinen als «nicht geprüft».
 3. **Ausführen:** Pro Persona, Frage und Durchgang ein **neues** Gespräch ohne Vorgeschichte: Systemprompt `personas[].prompt`, Nutzernachricht `questions[].text`, nur für die Personas in `ask`. Antworten unverändert in `answers.json`, `model` mit Modell und Temperatur füllen. Nie mehrere Personas oder Fragen in einem Gespräch – das erzeugt den Collapse, den die Probe messen soll. Wer das Modell wählt, entscheidet der User; die Skill selbst ist dafür kein neutrales Modell, wenn sie die Personas mitgeschrieben hat – das im Bericht erwähnen.
 4. **Auswerten:** `personakit probe evaluate probe.json answers.json -k probe-keywords.yml -o bericht.md`. Rote Paare: die ähnlichsten Antworten lesen und entscheiden, ob es echter Collapse ist oder geteiltes Fachvokabular. Auch bei grüner Ampel den Abschnitt «Form der Antworten» lesen: Q020 (Formkollaps) heisst, alle Personas antworten gleich lang und gegliedert – Gegenmittel ist eine `simulation.voice` mit Länge und Form («antwortet in zwei, drei Sätzen, ohne Aufzählung»). `must_not`-Treffer «im Kontext» (Q017) lesen, nicht zählen; nur Q012 ist ein möglicher Verstoss. Gegenmittel liegen in den Personas, nicht im Bericht: schärfere `simulation.voice` und `must_not`, konkretere `variance`, Szenario mit mehr Eigenheit. Danach Plan neu erzeugen und mit demselben Modell vergleichen.
+5. **Aktualität prüfen:** Bevor eine Session sich auf eine frühere Probe beruft, `personakit probe status personas <probe-ordner>`. Er vergleicht den Prompt im Plan mit dem heutigen; nach einem `bump` oder einer Änderung an Stimme, Szenario oder Regeln gilt der Lauf als veraltet. Eine veraltete oder fehlende Probe nie als «geprüft» weitergeben, und auch eine grüne nur als «inhaltlich unterscheidbar», nicht als «Stimme gehalten».
 5. **Grenzen nennen:** Jede Zusammenfassung für den User sagt, dass die Ähnlichkeit lexikalisch ist (Paraphrasen bleiben unentdeckt), dass die Schwellen an einem Modell kalibriert sind (Haiku, verwaschene Beispiel-Personas) und dass Unterscheidbarkeit nicht heisst, dass die Personas reale Nutzende treffen.
 
 ## Ablauf: Nach Notion publizieren

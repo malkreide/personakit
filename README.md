@@ -80,6 +80,7 @@ personakit skeleton factoids/beispiel -p p1,p3,p4,p6,p8 --id parents-draft -a "N
 personakit probe build personas/elternkommunikation-schuleintritt -o probe.json --answers-template answers.json --keywords-template probe-keywords.yml
 #   … run the plan against a model of your choice, fill answers.json …
 personakit probe evaluate probe.json answers.json -k probe-keywords.yml -o probe-report.md
+personakit probe status personas probe --strict   # do the runs under probe/ still match today's personas?
 ```
 
 The example personas in [`personas/`](personas/) are **synthetic** (German, school-administration context) and do not document any real research.
@@ -106,6 +107,7 @@ The counting is a tool, the interpretation is not. A study folder `factoids/<stu
 | `factoids <folder>` | Check a study folder of `*.factoids.md`: participant × variable matrix, distribution, thin variables (F010), outliers (F011); `--json` |
 | `skeleton <folder> -p … --id … -a …` | Persona skeleton from chosen participants: behaviour variables (medians), evidence, quotes, evidence level and a `## Herleitung` section with factoid IDs |
 | `probe build <paths>` | Collapse probe plan: the simulate prompt and 6–10 test questions per persona (scenario, jobs, pains, unknowns, end goals), every question asked to every persona; deterministic, no model call; templates for answers and keywords |
+| `probe status <paths> <probe-dir>` | Which existing probe runs still match today's personas: compares each plan's simulate prompt with today's (the version alone is not enough), evaluates the current runs, lists stale ones with the reason and skipped files; `--set`, `--id`, `--json`, `--strict` (exit 1 when a persona has no current probe) |
 | `probe evaluate <plan> <answers>` | Markdown report with a traffic light per persona pair (TF-IDF cosine of the answers to the same question, standard library only), the form of the answers per persona (length, structure, opening word – flags a form collapse the traffic light cannot see), `must_not` check via configurable keywords with quoted, negated or asked mentions kept apart from uses, unknowns left open or not, limits of the method; `--json`, `--strict` |
 
 ## Persona as input for other solutions
@@ -156,6 +158,7 @@ personakit/
 │   ├── render.py         # md, card, json, yaml, prompt, matrix, html, bundle
 │   ├── notion.py         # Notion export: API blocks and Notion Markdown (no network calls)
 │   ├── probe.py          # collapse probe: test questions, TF-IDF similarity per pair, report
+│   ├── probe_status.py   # probe status: existing runs checked against today's personas
 │   ├── schema/           # persona, set, factoids, variables, probe (JSON Schema)
 │   └── templates/        # persona.template.md
 ├── personas/             # four synthetic example personas in two sets (set.yml)

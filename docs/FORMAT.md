@@ -461,6 +461,30 @@ Zwei Personas haben **gleiche Form**, wenn die kürzere Ø-Länge mindestens 80 
 
 Exit-Codes: 0 nach der Auswertung, mit `--strict` 1 bei mindestens einer Warnung, 2 bei unlesbaren oder ungültigen Dateien, fehlenden Pfaden und ungültigen Schwellen.
 
+### `probe status <pfade> <probe-ordner>`
+
+Prüft vorhandene Läufe gegen den heutigen Stand der Personas. personakit misst dabei nichts Neues: Es sucht unter `<probe-ordner>` rekursiv alle `*.json`, erkennt Pläne am Schlüssel `personakit_probe` und Antworten an `personakit_probe_answers`, paart sie über `plan_id` (bei mehreren Plänen mit derselben `plan_id` gilt der im Ordner der Antworten) und wertet jedes Paar mit `probe-keywords.yml` aus dem Ordner des Plans aus, wenn es die Datei gibt.
+
+**Aktualität pro Persona:** Der Prompt im Plan wird mit `render -f prompt -m simulate` der heutigen Datei verglichen.
+
+| Stand | Bedeutung |
+|---|---|
+| aktuell | Prompt identisch |
+| veraltet | Persona vorhanden, Prompt anders; Grund: andere Version, oder gleiche Version mit anderem Prompt (Persona ohne Versionssprung geändert, anderer Renderer oder absichtlich veränderter Plan) |
+| unbekannt | Persona nicht im Workspace oder ID mehrfach vorhanden |
+
+Ein Lauf ist *aktuell*, wenn alle seine Personas aktuell sind, *teilweise aktuell* bei mindestens zwei, sonst *veraltet*. Veraltete Läufe werden nicht ausgewertet. Nur Paare zweier aktueller Personas zählen; die übrigen stehen mit «zählt: nein» im Bericht. Die Version allein reicht nicht: Die Kalibrierungspläne unter `probe/kalibrierung/` tragen die echten IDs und Versionen, aber absichtlich ausgedünnte Prompts.
+
+| Option | Bedeutung |
+|---|---|
+| `--set` | nur Läufe, deren Plan dieses Set nennt, und nur dessen Personas; unbekanntes Set → Fehler |
+| `--id` | nur Läufe mit dieser Persona und nur ihre Paare; unbekannte ID → Fehler |
+| `--json` | Ergebnis als JSON (`limits`, `hint`, `personas` mit `light`, `runs`, `stale`; `runs` mit `state`, `personas`, `pairs` mit `current`, WARN-`findings`; `problems`) |
+| `--strict` | Exit 1, wenn eine Persona im Umfang keine aktuelle Probe hat |
+| `-o` | Bericht als Datei, sonst stdout |
+
+Im Umfang sind alle Personas ausser `retired`. Pro Persona nennt der Bericht die Ampel ihres ungünstigsten aktuellen Paars je Lauf; Läufe verschiedener Modelle werden nicht zusammengelegt. Übersprungene Dateien (nicht lesbar, weder Plan noch Antworten, Antworten ohne Plan, Plan ohne Antworten, Symlink aus dem Ordner hinaus) und unbrauchbare Persona-Dateien stehen unter «Nicht ausgewertet». Ohne aktuelle Probe nennt der Bericht den nächsten Schritt. Antworttexte gibt `status` nicht aus. Exit-Codes: 0, mit `--strict` 1 wie oben, 2 bei fehlendem Pfad oder Probe-Ordner, unbekanntem Set oder unbekannter ID. In Python: `personakit.api.probe_status(paths, probe_dir, set_id=…, persona_id=…)`.
+
 ### Probe-Befunde
 
 | Code | Stufe | Regel |
