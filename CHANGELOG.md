@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-12
+
 ### Fixed
 - Collapse probe: the limits text in every report (and `docs/PROBE.md`, the skill) still said the thresholds were calibrated on one model. It now says what the calibration is: washed-out example personas, chosen on `claude-haiku-5-5`, checked on `claude-sonnet-5-5`, yellow lowered to 0.45 afterwards and so chosen on the same data it is checked on, one domain, German. Example and calibration reports regenerated
 

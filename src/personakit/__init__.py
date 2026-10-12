@@ -5,5 +5,5 @@ validated against ``schema/persona.schema.json``) plus a Markdown body (scenario
 narrative). Everything else – JSON, YAML, prompt blocks, cards, HTML – is rendered.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 FORMAT_VERSION = "1.0"
