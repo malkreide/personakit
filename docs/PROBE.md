@@ -19,7 +19,7 @@ Kein Netzwerk, kein Modell-SDK, keine Abhängigkeit über `ruamel.yaml` und `jso
 ```json
 {
   "personakit_probe": "1.0",
-  "generator": "personakit 0.4.0",
+  "generator": "personakit 0.5.0",
   "plan_id": "3f9a1c0b7e21",
   "samples": 1,
   "sets": ["elternkommunikation-schuleintritt"],
